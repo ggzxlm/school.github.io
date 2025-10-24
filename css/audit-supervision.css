@@ -80,6 +80,19 @@
     color: #10B981;
 }
 
+/* 卡片样式 */
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card:last-child {
+    margin-bottom: 0;
+}
+
 /* 卡片标题 */
 .card-title {
     font-size: 20px;

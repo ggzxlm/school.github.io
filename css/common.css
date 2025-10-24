@@ -399,6 +399,15 @@ html, body {
     animation: fadeInDown 0.3s ease-out;
 }
 
+.submenu .menu-link.active {
+    background-color: rgba(30, 64, 175, 0.15);
+    font-weight: 600;
+}
+
+.submenu .menu-link.active::before {
+    width: 4px;
+}
+
 @keyframes fadeInDown {
     from {
         opacity: 0;

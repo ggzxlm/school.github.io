@@ -694,39 +694,33 @@ const minutesMatchData = [
 
 // 初始化页面
 document.addEventListener('DOMContentLoaded', function () {
-    initNavigation();
-
     // 检查 URL 参数，如果有 type 参数则加载对应模块
     const urlParams = new URLSearchParams(window.location.search);
     const moduleType = urlParams.get('type');
 
     if (moduleType) {
-        // 激活对应的导航项
-        const navItem = document.querySelector(`.supervision-nav-item[data-module="${moduleType}"]`);
-        if (navItem) {
-            // 移除所有活动状态
-            document.querySelectorAll('.supervision-nav-item').forEach(nav => nav.classList.remove('active'));
-            document.querySelectorAll('.supervision-content').forEach(content => content.classList.remove('active'));
+        // 移除所有内容区域的活动状态
+        document.querySelectorAll('.supervision-content').forEach(content => content.classList.remove('active'));
 
-            // 激活当前项
-            navItem.classList.add('active');
-            const content = document.getElementById(`${moduleType}-content`);
-            if (content) {
-                content.classList.add('active');
-            }
-
+        // 激活当前模块的内容区域
+        const content = document.getElementById(`${moduleType}-content`);
+        if (content) {
+            content.classList.add('active');
             // 加载对应模块内容
             loadModuleContent(moduleType);
         } else {
+            // 如果找不到对应模块，加载第一议题
             loadFirstTopicModule();
         }
     } else {
+        // 没有参数，默认加载第一议题
         loadFirstTopicModule();
     }
 });
 
-// 初始化导航
+// 初始化导航（已移除页面内导航，此函数保留以防其他地方调用）
 function initNavigation() {
+    // 页面内导航已移除，通过侧边栏菜单切换
     const navItems = document.querySelectorAll('.supervision-nav-item');
 
     navItems.forEach(item => {
@@ -4178,6 +4172,7 @@ function viewMisuseDetail(projectId) {
 // 加载八项规定监督模块
 function loadEightRulesModule() {
     loadHiddenDiningDetection();
+    initVehicleTrackMap();
     loadVehicleTrackMonitoring();
     loadGiftReceiptScreening();
 }
@@ -4271,13 +4266,13 @@ const hiddenDiningData = [
 // 公车轨迹监控数据
 const vehicleTrackData = [
     {
-        plate: '京A12345',
+        plate: '粤A12345',
         vehicleId: 'VEH-001',
         dept: '机关办公室',
         driver: '张某某',
         time: '2025-10-20 19:30',
         location: '某高档会所',
-        address: '朝阳区某某路88号',
+        address: '天河区某某路88号',
         type: '非工作时间使用',
         risk: 'high',
         duration: '2小时30分钟',
@@ -4297,13 +4292,13 @@ const vehicleTrackData = [
         suggestedAction: '对驾驶员和审批人进行问责，追究私用公车责任，加强公车管理'
     },
     {
-        plate: '京B67890',
+        plate: '粤AB7890',
         vehicleId: 'VEH-002',
         dept: '后勤服务中心',
         driver: '李某某',
         time: '2025-10-19 14:20',
         location: '某景区',
-        address: '怀柔区某某景区',
+        address: '白云区某某景区',
         type: '工作时间私用',
         risk: 'high',
         duration: '4小时',
@@ -4323,13 +4318,13 @@ const vehicleTrackData = [
         suggestedAction: '严肃处理私用公车行为，追缴相关费用，给予纪律处分'
     },
     {
-        plate: '京C11111',
+        plate: '粤AC1111',
         vehicleId: 'VEH-003',
         dept: '学生工作处',
         driver: '王某某',
         time: '2025-10-18 21:00',
         location: '某娱乐场所',
-        address: '海淀区某某街99号',
+        address: '越秀区某某街99号',
         type: '非工作时间使用',
         risk: 'high',
         duration: '3小时',
@@ -4349,7 +4344,7 @@ const vehicleTrackData = [
         suggestedAction: '严肃查处违规行为，给予党纪政纪处分，通报批评'
     },
     {
-        plate: '京D22222',
+        plate: '粤AD2222',
         vehicleId: 'VEH-004',
         dept: '科研处',
         driver: '赵某某',
@@ -4374,7 +4369,7 @@ const vehicleTrackData = [
         suggestedAction: '核实公务用车情况，如属私用需追究责任'
     },
     {
-        plate: '京E33333',
+        plate: '粤AE3333',
         vehicleId: 'VEH-005',
         dept: '教务处',
         driver: '孙某某',
@@ -4547,6 +4542,258 @@ function loadHiddenDiningDetection() {
             </td>
         </tr>
     `).join('');
+}
+
+// 初始化公车轨迹地图
+function initVehicleTrackMap() {
+    const chartDom = document.getElementById('vehicleTrackMap');
+    if (!chartDom) return;
+    
+    const myChart = echarts.init(chartDom);
+    
+    // 广州市各区的真实经纬度坐标
+    const guangzhouDistricts = {
+        '天河区': [113.3616, 23.1372],
+        '越秀区': [113.2644, 23.1291],
+        '白云区': [113.2733, 23.1579],
+        '海珠区': [113.3178, 23.0838],
+        '荔湾区': [113.2442, 23.1253],
+        '番禺区': [113.3838, 22.9379],
+        '黄埔区': [113.4786, 23.1062],
+        '花都区': [113.2191, 23.3965],
+        '南沙区': [113.5253, 22.7745],
+        '增城区': [113.8107, 23.2617],
+        '从化区': [113.5868, 23.5451]
+    };
+    
+    // 为每个车辆分配真实的地理坐标
+    const scatterData = vehicleTrackData.map((item) => {
+        // 根据地址提取区域
+        let coords = [113.2644, 23.1291]; // 默认越秀区
+        for (const [district, coord] of Object.entries(guangzhouDistricts)) {
+            if (item.address.includes(district.replace('区', ''))) {
+                coords = coord;
+                break;
+            }
+        }
+        
+        // 添加一些随机偏移，避免重叠
+        const offset = 0.015;
+        coords = [
+            coords[0] + (Math.random() - 0.5) * offset,
+            coords[1] + (Math.random() - 0.5) * offset
+        ];
+        
+        return {
+            name: item.plate,
+            value: [...coords],
+            itemStyle: {
+                color: item.risk === 'high' ? '#EF4444' : item.risk === 'medium' ? '#F59E0B' : '#10B981',
+                borderColor: '#fff',
+                borderWidth: 2
+            }
+        };
+    });
+    
+    // 使用简化的可视化方案（不依赖复杂的GeoJSON）
+    const option = {
+        title: {
+            text: '广州市公车异常轨迹分布图',
+            subtext: '各区域异常车辆分布情况',
+            left: 'center',
+            top: 10,
+            textStyle: {
+                fontSize: 16,
+                fontWeight: 600,
+                color: '#111827'
+            },
+            subtextStyle: {
+                fontSize: 12,
+                color: '#6B7280'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+            borderColor: '#E5E7EB',
+            borderWidth: 1,
+            textStyle: {
+                color: '#374151'
+            },
+            formatter: function(params) {
+                const item = vehicleTrackData.find(v => v.plate === params.name);
+                if (item) {
+                    const riskColor = item.risk === 'high' ? '#EF4444' : item.risk === 'medium' ? '#F59E0B' : '#10B981';
+                    const riskText = item.risk === 'high' ? '高风险' : item.risk === 'medium' ? '中风险' : '低风险';
+                    return `
+                        <div style="padding: 8px; min-width: 200px;">
+                            <div style="font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #111827;">
+                                ${item.plate}
+                                <span style="float: right; color: ${riskColor}; font-size: 12px;">${riskText}</span>
+                            </div>
+                            <div style="font-size: 12px; color: #6B7280; line-height: 1.8;">
+                                <div>📍 ${item.address}</div>
+                                <div>🏢 ${item.dept}</div>
+                                <div>🕐 ${item.time}</div>
+                                <div>📌 ${item.location}</div>
+                                <div>⚠️ ${item.type}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+                return params.name;
+            }
+        },
+        grid: {
+            left: '5%',
+            right: '5%',
+            bottom: '5%',
+            top: 80,
+            containLabel: true
+        },
+        xAxis: {
+            type: 'value',
+            show: false,
+            min: 113.15,
+            max: 113.60
+        },
+        yAxis: {
+            type: 'value',
+            show: false,
+            min: 22.85,
+            max: 23.25
+        },
+        series: [
+            {
+                name: '异常车辆',
+                type: 'effectScatter',
+                data: scatterData,
+                symbolSize: 22,
+                showEffectOn: 'render',
+                rippleEffect: {
+                    brushType: 'stroke',
+                    scale: 3.5,
+                    period: 4
+                },
+                label: {
+                    show: true,
+                    formatter: '{b}',
+                    position: 'top',
+                    fontSize: 10,
+                    color: '#111827',
+                    fontWeight: 600,
+                    backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                    padding: [3, 6],
+                    borderRadius: 4,
+                    borderColor: '#E5E7EB',
+                    borderWidth: 1
+                },
+                emphasis: {
+                    scale: 1.5,
+                    focus: 'self',
+                    label: {
+                        show: true,
+                        fontSize: 12
+                    }
+                },
+                zlevel: 2
+            }
+        ],
+        graphic: [
+            {
+                type: 'text',
+                left: 'center',
+                top: 'middle',
+                z: 0,
+                style: {
+                    text: '广州市',
+                    fontSize: 60,
+                    fontWeight: 'bold',
+                    fill: 'rgba(59, 130, 246, 0.08)'
+                }
+            },
+            // 添加区域标注
+            {
+                type: 'text',
+                left: '25%',
+                top: '35%',
+                z: 1,
+                style: {
+                    text: '越秀区',
+                    fontSize: 14,
+                    fill: '#6B7280',
+                    fontWeight: 500
+                }
+            },
+            {
+                type: 'text',
+                left: '55%',
+                top: '35%',
+                z: 1,
+                style: {
+                    text: '天河区',
+                    fontSize: 14,
+                    fill: '#6B7280',
+                    fontWeight: 500
+                }
+            },
+            {
+                type: 'text',
+                left: '35%',
+                top: '60%',
+                z: 1,
+                style: {
+                    text: '海珠区',
+                    fontSize: 14,
+                    fill: '#6B7280',
+                    fontWeight: 500
+                }
+            },
+            {
+                type: 'text',
+                left: '25%',
+                top: '20%',
+                z: 1,
+                style: {
+                    text: '白云区',
+                    fontSize: 14,
+                    fill: '#6B7280',
+                    fontWeight: 500
+                }
+            },
+            {
+                type: 'text',
+                left: '75%',
+                top: '40%',
+                z: 1,
+                style: {
+                    text: '黄埔区',
+                    fontSize: 14,
+                    fill: '#6B7280',
+                    fontWeight: 500
+                }
+            },
+            {
+                type: 'text',
+                left: '50%',
+                top: '75%',
+                z: 1,
+                style: {
+                    text: '番禺区',
+                    fontSize: 14,
+                    fill: '#6B7280',
+                    fontWeight: 500
+                }
+            }
+        ]
+    };
+    
+    myChart.setOption(option);
+    
+    // 响应式调整
+    window.addEventListener('resize', function() {
+        myChart.resize();
+    });
 }
 
 // 加载公车轨迹监控

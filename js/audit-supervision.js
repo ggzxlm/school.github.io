@@ -18,27 +18,30 @@ function initializePage() {
 }
 
 /**
- * 设置导航
+ * 设置导航（页面内导航已移除，通过侧边栏菜单切换）
  */
 function setupNavigation() {
+    // 页面内导航已移除，此函数保留以防其他地方调用
     const navItems = document.querySelectorAll('.supervision-nav-item');
+    
+    if (navItems.length > 0) {
+        navItems.forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.preventDefault();
 
-    navItems.forEach(item => {
-        item.addEventListener('click', function (e) {
-            e.preventDefault();
+                // 更新导航状态
+                navItems.forEach(nav => nav.classList.remove('active'));
+                this.classList.add('active');
 
-            // 更新导航状态
-            navItems.forEach(nav => nav.classList.remove('active'));
-            this.classList.add('active');
+                // 显示对应内容
+                const module = this.dataset.module;
+                showModule(module);
 
-            // 显示对应内容
-            const module = this.dataset.module;
-            showModule(module);
-
-            // 更新URL
-            window.history.pushState({}, '', `?type=${module}`);
+                // 更新URL
+                window.history.pushState({}, '', `?type=${module}`);
+            });
         });
-    });
+    }
 }
 
 /**
@@ -50,15 +53,9 @@ function loadModuleFromURL() {
 
     if (type) {
         showModule(type);
-
-        // 更新导航状态
-        const navItems = document.querySelectorAll('.supervision-nav-item');
-        navItems.forEach(item => {
-            item.classList.remove('active');
-            if (item.dataset.module === type) {
-                item.classList.add('active');
-            }
-        });
+    } else {
+        // 默认显示预算执行模块
+        showModule('budget');
     }
 }
 

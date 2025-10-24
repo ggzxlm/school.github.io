@@ -737,7 +737,7 @@ const SideNavbar = {
                 { id: 'first-topic', icon: 'fa-flag', text: '第一议题', link: 'discipline-supervision.html?type=first-topic' },
                 { id: 'major-decision', icon: 'fa-balance-scale', text: '重大决策', link: 'discipline-supervision.html?type=major-decision' },
                 { id: 'enrollment', icon: 'fa-user-graduate', text: '招生录取', link: 'discipline-supervision.html?type=enrollment' },
-                { id: 'research-fund', icon: 'fa-flask', text: '科研经费', link: 'discipline-supervision.html?type=research-fund' },
+                { id: 'research-funds', icon: 'fa-flask', text: '科研经费', link: 'discipline-supervision.html?type=research-funds' },
                 { id: 'construction', icon: 'fa-building', text: '基建采购', link: 'discipline-supervision.html?type=construction' },
                 { id: 'procurement-projects', icon: 'fa-tasks', text: '采购项目监督', link: 'procurement-project.html' },
                 { id: 'finance', icon: 'fa-coins', text: '财务管理', link: 'discipline-supervision.html?type=finance' },
@@ -828,7 +828,17 @@ const SideNavbar = {
     render() {
         const renderMenuItem = (item, level = 0) => {
             const hasChildren = item.children && item.children.length > 0;
-            const isActive = this.isActive(item);
+
+            // 对于父菜单项，检查是否有子菜单激活
+            // 对于子菜单项，只检查自己的链接
+            let isActive = false;
+            if (level === 0) {
+                // 父菜单项：检查自己或子菜单是否激活
+                isActive = this.isActive(item);
+            } else {
+                // 子菜单项：只检查自己的链接
+                isActive = this.isChildActive(item);
+            }
 
             if (hasChildren) {
                 return `
@@ -869,15 +879,59 @@ const SideNavbar = {
         `;
     },
 
-    isActive(item) {
+    isChildActive(item) {
+        // 只检查子菜单项自己的链接，不检查子菜单
         const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const currentSearch = window.location.search;
 
-        if (item.link && item.link.includes(currentPage)) {
-            return true;
+        if (item.link) {
+            // 如果链接包含查询参数，需要精确匹配
+            if (item.link.includes('?')) {
+                const [linkPage, linkParams] = item.link.split('?');
+                // 精确匹配：页面名称和查询参数都要完全一致
+                return currentPage === linkPage && currentSearch === '?' + linkParams;
+            } else {
+                // 简单页面匹配
+                return item.link.includes(currentPage);
+            }
         }
 
+        return false;
+    },
+
+    isActive(item) {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const currentSearch = window.location.search;
+
+        // 检查当前菜单项是否激活
+        if (item.link) {
+            // 如果链接包含查询参数，需要精确匹配
+            if (item.link.includes('?')) {
+                const [linkPage, linkParams] = item.link.split('?');
+                if (currentPage === linkPage && currentSearch === '?' + linkParams) {
+                    return true;
+                }
+            } else {
+                // 简单页面匹配
+                if (item.link.includes(currentPage)) {
+                    return true;
+                }
+            }
+        }
+
+        // 检查子菜单项是否有激活的
         if (item.children) {
-            return item.children.some(child => child.link && child.link.includes(currentPage));
+            return item.children.some(child => {
+                if (child.link) {
+                    if (child.link.includes('?')) {
+                        const [linkPage, linkParams] = child.link.split('?');
+                        return currentPage === linkPage && currentSearch === '?' + linkParams;
+                    } else {
+                        return child.link.includes(currentPage);
+                    }
+                }
+                return false;
+            });
         }
 
         return false;
