@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/system-management.css">
+</head>
+<body class="bg-gray-50">
+    <!-- 顶部导航栏 -->
+    <div id="top-navbar"></div>
+
+    <div class="main-wrapper">
+        <!-- 侧边导航栏 -->
+        <div id="side-navbar"></div>
+
+        <!-- 主内容区 -->
+        <main class="content-area">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-cog"></i>
+                        系统管理
+                    </h1>
+                    <p class="page-subtitle">管理系统用户、角色、权限和配置</p>
+                </div>
+            </div>
+
+            <!-- 管理功能导航 -->
+            <div class="card" style="margin-bottom: 24px;">
+                <div style="border-bottom: 1px solid #E5E7EB;">
+                    <nav style="display: flex; gap: 32px; padding: 0 24px;" aria-label="管理功能">
+                        <button class="management-tab active" data-tab="users">
+                            <i class="fas fa-users" style="margin-right: 8px;"></i>用户管理
+                        </button>
+                        <button class="management-tab" data-tab="roles">
+                            <i class="fas fa-user-tag" style="margin-right: 8px;"></i>角色管理
+                        </button>
+                        <button class="management-tab" data-tab="organizations">
+                            <i class="fas fa-sitemap" style="margin-right: 8px;"></i>组织管理
+                        </button>
+                        <button class="management-tab" data-tab="parameters">
+                            <i class="fas fa-cog" style="margin-right: 8px;"></i>参数配置
+                        </button>
+                        <button class="management-tab" data-tab="logs">
+                            <i class="fas fa-history" style="margin-right: 8px;"></i>日志审计
+                        </button>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- 管理内容区域 -->
+            <div id="managementContent">
+                    <!-- 用户管理模块 -->
+                    <div id="usersModule" class="management-module active">
+                        <!-- 用户管理内容将在这里动态加载 -->
+                    </div>
+
+                    <!-- 角色管理模块 -->
+                    <div id="rolesModule" class="management-module hidden">
+                        <!-- 角色管理内容将在这里动态加载 -->
+                    </div>
+
+                    <!-- 组织管理模块 -->
+                    <div id="organizationsModule" class="management-module hidden">
+                        <!-- 组织管理内容将在这里动态加载 -->
+                    </div>
+
+                    <!-- 参数配置模块 -->
+                    <div id="parametersModule" class="management-module hidden">
+                        <!-- 参数配置内容将在这里动态加载 -->
+                    </div>
+
+                    <!-- 日志审计模块 -->
+                    <div id="logsModule" class="management-module hidden">
+                        <!-- 日志审计内容将在这里动态加载 -->
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer id="footer"></footer>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/system-management.js"></script>
+</body>
+</html>

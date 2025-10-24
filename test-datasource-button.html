@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>测试新建数据源按钮</title>
+    <style>
+        body { padding: 20px; font-family: sans-serif; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ddd; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .log { background: #f5f5f5; padding: 10px; margin: 10px 0; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>新建数据源按钮测试</h1>
+    
+    <div class="test-section">
+        <h2>测试步骤</h2>
+        <ol>
+            <li>打开浏览器开发者工具（F12）</li>
+            <li>切换到Console标签</li>
+            <li>打开数据源管理页面</li>
+            <li>点击"新建数据源"按钮</li>
+            <li>查看控制台输出</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>预期输出</h2>
+        <div class="log">
+[数据源管理] 打开新建数据源模态框<br>
+[数据源管理] 模态框元素找到，准备显示<br>
+[数据源管理] 模态框已显示
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>可能的问题</h2>
+        <ul>
+            <li><strong>找不到模态框元素</strong>: 检查HTML中是否有id="createDatasourceModal"</li>
+            <li><strong>按钮没有响应</strong>: 检查事件绑定是否正确</li>
+            <li><strong>模态框不显示</strong>: 检查CSS样式</li>
+            <li><strong>JavaScript错误</strong>: 查看控制台错误信息</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>手动测试</h2>
+        <p>在浏览器控制台执行以下命令：</p>
+        <div class="log">
+// 检查按钮是否存在<br>
+document.getElementById('createDatasourceBtn')<br>
+<br>
+// 检查模态框是否存在<br>
+document.getElementById('createDatasourceModal')<br>
+<br>
+// 手动调用函数<br>
+createDatasource()<br>
+<br>
+// 检查模态框样式<br>
+const modal = document.getElementById('createDatasourceModal');<br>
+console.log('display:', modal.style.display);<br>
+console.log('classes:', modal.className);
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>快速链接</h2>
+        <button onclick="window.open('datasource-management.html', '_blank')">
+            打开数据源管理页面
+        </button>
+    </div>
+</body>
+</html>

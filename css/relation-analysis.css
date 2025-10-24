@@ -1,0 +1,402 @@
+/* 智能关联分析样式 */
+
+.main-content {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 80px);
+    padding: 20px;
+}
+
+/* 控制面板 */
+.control-panel {
+    width: 280px;
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.panel-section {
+    margin-bottom: 24px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.panel-section:last-child {
+    border-bottom: none;
+}
+
+.panel-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    color: #595959;
+    margin-bottom: 8px;
+}
+
+.form-group select {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 13px;
+    background: white;
+}
+
+.form-group select[multiple] {
+    height: 120px;
+}
+
+.checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.checkbox-group label {
+    display: flex;
+    align-items: center;
+    font-size: 13px;
+    color: #595959;
+    cursor: pointer;
+    margin: 0;
+}
+
+.checkbox-group input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+/* 图谱容器 */
+.graph-container {
+    flex: 1;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.graph-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.toolbar-left {
+    font-size: 13px;
+    color: #595959;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s;
+}
+
+.btn-icon:hover {
+    border-color: #1890ff;
+    color: #1890ff;
+}
+
+#graphCanvas {
+    flex: 1;
+    position: relative;
+}
+
+/* 加载遮罩 */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f0f0f0;
+    border-top-color: #1890ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    margin-top: 16px;
+    color: #595959;
+    font-size: 14px;
+}
+
+/* 详情面板 */
+.detail-panel {
+    width: 320px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-tabs {
+    display: flex;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: #595959;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.tab-btn:hover {
+    color: #1890ff;
+}
+
+.tab-btn.active {
+    color: #1890ff;
+    font-weight: 500;
+}
+
+.tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: #1890ff;
+}
+
+.tab-content {
+    display: none;
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+.empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    color: #8c8c8c;
+    font-size: 13px;
+}
+
+/* 详情内容 */
+.detail-content h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #262626;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 13px;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-item label {
+    color: #8c8c8c;
+    margin: 0;
+}
+
+.detail-item span {
+    color: #262626;
+    font-weight: 500;
+}
+
+/* 风险标签 */
+.risk-badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.risk-badge.risk-high {
+    background: #fff1f0;
+    color: #cf1322;
+}
+
+.risk-badge.risk-medium {
+    background: #fffbe6;
+    color: #d48806;
+}
+
+.risk-badge.risk-low {
+    background: #f6ffed;
+    color: #389e0d;
+}
+
+.risk-badge.risk-normal {
+    background: #f0f0f0;
+    color: #595959;
+}
+
+/* 徽章 */
+.badge {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.badge-warning {
+    background: #fffbe6;
+    color: #d48806;
+}
+
+/* 统计摘要 */
+.summary-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.stat-item {
+    padding: 12px;
+    background: #fafafa;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.stat-item label {
+    display: block;
+    font-size: 12px;
+    color: #8c8c8c;
+    margin-bottom: 4px;
+}
+
+.stat-item span {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.stat-item .risk-high {
+    color: #cf1322;
+}
+
+.stat-item .risk-medium {
+    color: #d48806;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: #1890ff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #40a9ff;
+}
+
+.btn-secondary {
+    background: white;
+    color: #595959;
+    border: 1px solid #d9d9d9;
+}
+
+.btn-secondary:hover {
+    color: #1890ff;
+    border-color: #1890ff;
+}
+
+.btn-block {
+    width: 100%;
+    display: block;
+}
+
+/* 响应式设计 */
+@media (max-width: 1400px) {
+    .control-panel {
+        width: 240px;
+    }
+    
+    .detail-panel {
+        width: 280px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .control-panel,
+    .detail-panel {
+        width: 100%;
+        max-height: 300px;
+    }
+    
+    .graph-container {
+        height: 500px;
+    }
+}

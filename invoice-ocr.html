@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>票据OCR识别与查验 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/invoice-ocr.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-left">
+                <h1>票据OCR识别与查验</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">返回首页</button>
+            </div>
+        </header>
+
+        <!-- 主要内容区 -->
+        <main class="main-content">
+            <!-- 功能选项卡 -->
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="single">单张识别</button>
+                <button class="tab-btn" data-tab="batch">批量处理</button>
+                <button class="tab-btn" data-tab="verify">真伪查验</button>
+                <button class="tab-btn" data-tab="anomaly">异常检测</button>
+                <button class="tab-btn" data-tab="history">历史记录</button>
+            </div>
+
+            <!-- 单张识别 -->
+            <div class="tab-content active" id="single-tab">
+                <div class="upload-section">
+                    <div class="upload-area" id="single-upload-area">
+                        <div class="upload-icon">📄</div>
+                        <p class="upload-text">点击或拖拽发票图片到此处</p>
+                        <p class="upload-hint">支持 JPG、PNG、PDF 格式，文件大小不超过 10MB</p>
+                        <input type="file" id="single-file-input" accept="image/*,.pdf" style="display: none;">
+                        <button class="btn btn-primary" onclick="document.getElementById('single-file-input').click()">
+                            选择文件
+                        </button>
+                    </div>
+                </div>
+
+                <div class="result-section" id="single-result" style="display: none;">
+                    <div class="result-header">
+                        <h3>识别结果</h3>
+                        <div class="result-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.verifySingleInvoice()">
+                                查验真伪
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.exportSingleResult()">
+                                导出结果
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.resetSingle()">
+                                重新识别
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="result-grid">
+                        <div class="result-preview">
+                            <h4>发票预览</h4>
+                            <img id="invoice-preview" src="" alt="发票预览">
+                        </div>
+
+                        <div class="result-details">
+                            <h4>基本信息</h4>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>发票类型：</label>
+                                    <span id="invoice-type"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>发票代码：</label>
+                                    <span id="invoice-code"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>发票号码：</label>
+                                    <span id="invoice-number"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>开票日期：</label>
+                                    <span id="invoice-date"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>金额：</label>
+                                    <span id="invoice-amount"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>税额：</label>
+                                    <span id="invoice-tax"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>价税合计：</label>
+                                    <span id="invoice-total" class="highlight"></span>
+                                </div>
+                                <div class="info-item">
+                                    <label>识别置信度：</label>
+                                    <span id="invoice-confidence"></span>
+                                </div>
+                            </div>
+
+                            <h4>销售方信息</h4>
+                            <div class="info-grid">
+                                <div class="info-item full-width">
+                                    <label>名称：</label>
+                                    <span id="seller-name"></span>
+                                </div>
+                                <div class="info-item full-width">
+                                    <label>纳税人识别号：</label>
+                                    <span id="seller-tax-number"></span>
+                                </div>
+                                <div class="info-item full-width">
+                                    <label>地址电话：</label>
+                                    <span id="seller-address"></span>
+                                </div>
+                                <div class="info-item full-width">
+                                    <label>开户行及账号：</label>
+                                    <span id="seller-bank"></span>
+                                </div>
+                            </div>
+
+                            <h4>购买方信息</h4>
+                            <div class="info-grid">
+                                <div class="info-item full-width">
+                                    <label>名称：</label>
+                                    <span id="buyer-name"></span>
+                                </div>
+                                <div class="info-item full-width">
+                                    <label>纳税人识别号：</label>
+                                    <span id="buyer-tax-number"></span>
+                                </div>
+                            </div>
+
+                            <div id="verification-result" style="display: none;">
+                                <h4>查验结果</h4>
+                                <div class="verification-status" id="verification-status"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 批量处理 -->
+            <div class="tab-content" id="batch-tab">
+                <div class="upload-section">
+                    <div class="upload-area" id="batch-upload-area">
+                        <div class="upload-icon">📁</div>
+                        <p class="upload-text">批量上传发票图片</p>
+                        <p class="upload-hint">可同时选择多个文件，支持 JPG、PNG、PDF 格式</p>
+                        <input type="file" id="batch-file-input" accept="image/*,.pdf" multiple style="display: none;">
+                        <button class="btn btn-primary" onclick="document.getElementById('batch-file-input').click()">
+                            选择文件
+                        </button>
+                    </div>
+
+                    <div class="batch-progress" id="batch-progress" style="display: none;">
+                        <h4>处理进度</h4>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <p class="progress-text" id="progress-text">已处理 0 / 0 (0%)</p>
+                    </div>
+                </div>
+
+                <div class="batch-results" id="batch-results" style="display: none;">
+                    <div class="result-header">
+                        <h3>批量处理结果</h3>
+                        <div class="result-actions">
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.detectAnomalies()">
+                                异常检测
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.exportBatchResults()">
+                                导出结果
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.resetBatch()">
+                                重新处理
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="summary-cards">
+                        <div class="summary-card">
+                            <div class="card-value" id="batch-total">0</div>
+                            <div class="card-label">总数量</div>
+                        </div>
+                        <div class="summary-card success">
+                            <div class="card-value" id="batch-success">0</div>
+                            <div class="card-label">成功</div>
+                        </div>
+                        <div class="summary-card error">
+                            <div class="card-value" id="batch-failed">0</div>
+                            <div class="card-label">失败</div>
+                        </div>
+                        <div class="summary-card">
+                            <div class="card-value" id="batch-amount">¥0</div>
+                            <div class="card-label">总金额</div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>文件名</th>
+                                    <th>发票类型</th>
+                                    <th>发票代码</th>
+                                    <th>发票号码</th>
+                                    <th>开票日期</th>
+                                    <th>金额</th>
+                                    <th>销售方</th>
+                                    <th>置信度</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="batch-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 真伪查验 -->
+            <div class="tab-content" id="verify-tab">
+                <div class="verify-form">
+                    <h3>发票信息查验</h3>
+                    <form id="verify-form">
+                        <div class="form-group">
+                            <label>发票代码：</label>
+                            <input type="text" id="verify-code" placeholder="请输入发票代码" required>
+                        </div>
+                        <div class="form-group">
+                            <label>发票号码：</label>
+                            <input type="text" id="verify-number" placeholder="请输入发票号码" required>
+                        </div>
+                        <div class="form-group">
+                            <label>开票日期：</label>
+                            <input type="date" id="verify-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label>发票金额：</label>
+                            <input type="number" id="verify-amount" placeholder="请输入发票金额" step="0.01" required>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">查验</button>
+                            <button type="reset" class="btn btn-secondary">重置</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="verify-result" id="verify-result" style="display: none;">
+                    <h3>查验结果</h3>
+                    <div id="verify-result-content"></div>
+                </div>
+            </div>
+
+            <!-- 异常检测 -->
+            <div class="tab-content" id="anomaly-tab">
+                <div class="anomaly-section">
+                    <div class="section-header">
+                        <h3>异常检测结果</h3>
+                        <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.refreshAnomalies()">
+                            刷新
+                        </button>
+                    </div>
+
+                    <div class="anomaly-summary" id="anomaly-summary">
+                        <div class="summary-card warning">
+                            <div class="card-value" id="serial-count">0</div>
+                            <div class="card-label">连号发票组</div>
+                        </div>
+                        <div class="summary-card error">
+                            <div class="card-value" id="duplicate-count">0</div>
+                            <div class="card-label">重复发票</div>
+                        </div>
+                        <div class="summary-card error">
+                            <div class="card-value" id="high-risk-count">0</div>
+                            <div class="card-label">高风险</div>
+                        </div>
+                    </div>
+
+                    <div class="anomaly-list" id="anomaly-list">
+                        <p class="empty-message">暂无异常数据</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 历史记录 -->
+            <div class="tab-content" id="history-tab">
+                <div class="history-section">
+                    <div class="section-header">
+                        <h3>识别历史记录</h3>
+                        <div class="filter-group">
+                            <input type="date" id="history-start-date" placeholder="开始日期">
+                            <input type="date" id="history-end-date" placeholder="结束日期">
+                            <button class="btn btn-secondary btn-sm" onclick="invoiceOCR.filterHistory()">
+                                筛选
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>识别时间</th>
+                                    <th>处理类型</th>
+                                    <th>文件数量</th>
+                                    <th>成功数量</th>
+                                    <th>失败数量</th>
+                                    <th>总金额</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body">
+                                <tr>
+                                    <td colspan="7" class="empty-message">暂无历史记录</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/invoice-ocr-service.js"></script>
+    <script src="js/invoice-ocr.js"></script>
+</body>
+</html>

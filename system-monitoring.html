@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统监控 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/system-monitoring.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-left">
+                <h1>系统监控</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">返回首页</button>
+            </div>
+        </header>
+
+        <!-- 主要内容 -->
+        <main class="main-content">
+            <!-- 监控控制面板 -->
+            <section class="control-panel">
+                <div class="panel-header">
+                    <h2>监控控制</h2>
+                    <div class="control-buttons">
+                        <button id="startMonitoringBtn" class="btn btn-primary">
+                            <i class="icon">▶</i> 启动监控
+                        </button>
+                        <button id="stopMonitoringBtn" class="btn btn-secondary" disabled>
+                            <i class="icon">⏸</i> 停止监控
+                        </button>
+                        <button id="refreshBtn" class="btn btn-secondary">
+                            <i class="icon">🔄</i> 刷新
+                        </button>
+                    </div>
+                </div>
+                <div class="monitoring-status">
+                    <span class="status-label">监控状态:</span>
+                    <span id="monitoringStatus" class="status-badge status-inactive">未启动</span>
+                    <span class="status-label">数据点:</span>
+                    <span id="dataPointsCount">0</span>
+                    <span class="status-label">告警数:</span>
+                    <span id="alertCount" class="alert-count">0</span>
+                </div>
+            </section>
+
+            <!-- 资源使用率卡片 -->
+            <section class="metrics-cards">
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>CPU使用率</h3>
+                        <span class="metric-icon">💻</span>
+                    </div>
+                    <div class="metric-value" id="cpuValue">--</div>
+                    <div class="metric-chart">
+                        <canvas id="cpuChart"></canvas>
+                    </div>
+                    <div class="metric-footer">
+                        <span>阈值: <span id="cpuThreshold">80</span>%</span>
+                        <button class="btn-link" onclick="updateThreshold('cpu')">修改</button>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>内存使用率</h3>
+                        <span class="metric-icon">🧠</span>
+                    </div>
+                    <div class="metric-value" id="memoryValue">--</div>
+                    <div class="metric-chart">
+                        <canvas id="memoryChart"></canvas>
+                    </div>
+                    <div class="metric-footer">
+                        <span>阈值: <span id="memoryThreshold">80</span>%</span>
+                        <button class="btn-link" onclick="updateThreshold('memory')">修改</button>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>磁盘使用率</h3>
+                        <span class="metric-icon">💾</span>
+                    </div>
+                    <div class="metric-value" id="diskValue">--</div>
+                    <div class="metric-chart">
+                        <canvas id="diskChart"></canvas>
+                    </div>
+                    <div class="metric-footer">
+                        <span>阈值: <span id="diskThreshold">80</span>%</span>
+                        <button class="btn-link" onclick="updateThreshold('disk')">修改</button>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-header">
+                        <h3>网络使用率</h3>
+                        <span class="metric-icon">🌐</span>
+                    </div>
+                    <div class="metric-value" id="networkValue">--</div>
+                    <div class="metric-chart">
+                        <canvas id="networkChart"></canvas>
+                    </div>
+                    <div class="metric-footer">
+                        <span>阈值: <span id="networkThreshold">80</span>%</span>
+                        <button class="btn-link" onclick="updateThreshold('network')">修改</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 告警列表 -->
+            <section class="alerts-section">
+                <div class="section-header">
+                    <h2>告警列表</h2>
+                    <div class="filter-buttons">
+                        <button class="filter-btn active" data-filter="all">全部</button>
+                        <button class="filter-btn" data-filter="NEW">新告警</button>
+                        <button class="filter-btn" data-filter="HIGH">高级别</button>
+                        <button class="filter-btn" data-filter="RESOURCE">资源告警</button>
+                        <button class="filter-btn" data-filter="TASK">任务告警</button>
+                    </div>
+                </div>
+                <div id="alertsList" class="alerts-list">
+                    <div class="empty-state">暂无告警</div>
+                </div>
+            </section>
+
+            <!-- 容量规划 -->
+            <section class="capacity-section">
+                <div class="section-header">
+                    <h2>容量规划分析</h2>
+                    <button class="btn btn-primary" onclick="analyzeCapacity()">
+                        <i class="icon">📊</i> 执行分析
+                    </button>
+                </div>
+                <div id="capacityAnalysis" class="capacity-analysis">
+                    <div class="empty-state">点击"执行分析"按钮查看容量规划建议</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 阈值设置对话框 -->
+    <div id="thresholdModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>设置告警阈值</h3>
+                <button class="modal-close" onclick="closeThresholdModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label id="thresholdLabel">阈值 (%)</label>
+                    <input type="number" id="thresholdInput" min="0" max="100" step="1" class="form-control">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeThresholdModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveThreshold()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/system-monitoring-service.js"></script>
+    <script src="js/system-monitoring.js"></script>
+</body>
+</html>

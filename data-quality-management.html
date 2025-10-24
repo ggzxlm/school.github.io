@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据质量管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/data-quality-management.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-check-circle"></i>
+                            数据质量管理
+                        </h1>
+                        <p class="page-subtitle">配置质量规则、执行质量检查、管理质量工单</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="refreshDashboard()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                        <button class="btn btn-primary" onclick="showCreateRuleModal()">
+                            <i class="fas fa-plus"></i>
+                            新建规则
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片区 -->
+                <div class="stats-grid mb-3">
+                    <div class="stat-card">
+                        <div class="stat-label">质量规则</div>
+                        <div class="stat-value" id="totalRules">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">平均质量评分</div>
+                        <div class="stat-value" id="avgScore">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">质量检查</div>
+                        <div class="stat-value" id="totalChecks">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">待处理工单</div>
+                        <div class="stat-value" id="openTickets">0</div>
+                    </div>
+                </div>
+
+                <!-- 标签页导航 -->
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="dataQualityPage.switchTab('rules')">
+                        <i class="fas fa-list"></i>
+                        质量规则
+                    </button>
+                    <button class="tab-btn" onclick="dataQualityPage.switchTab('checks')">
+                        <i class="fas fa-history"></i>
+                        检查历史
+                    </button>
+                    <button class="tab-btn" onclick="dataQualityPage.switchTab('reports')">
+                        <i class="fas fa-chart-line"></i>
+                        质量报告
+                    </button>
+                    <button class="tab-btn" onclick="dataQualityPage.switchTab('issues')">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        质量问题
+                    </button>
+                </div>
+
+                <!-- 质量规则标签页 -->
+                <div id="rulesTab" class="tab-content active">
+                    <div class="toolbar">
+                        <button class="btn btn-primary" onclick="dataQualityPage.showCreateRuleModal()">
+                            <i class="fas fa-plus"></i>
+                            创建规则
+                        </button>
+                        <button class="btn btn-secondary" onclick="dataQualityPage.batchExecuteChecks()">
+                            <i class="fas fa-play"></i>
+                            批量检查
+                        </button>
+                        <div class="search-box">
+                            <input type="text" id="ruleSearch" placeholder="搜索规则..." onkeyup="dataQualityPage.filterRules()">
+                            <i class="fas fa-search"></i>
+                        </div>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>规则名称</th>
+                                    <th>规则类型</th>
+                                    <th>目标表</th>
+                                    <th>严重程度</th>
+                                    <th>阈值</th>
+                                    <th>最后检查</th>
+                                    <th>评分</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rulesTableBody">
+                                <tr>
+                                    <td colspan="9" class="empty-state">暂无规则，请创建规则</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 检查历史标签页 -->
+                <div id="checksTab" class="tab-content">
+                    <div class="toolbar">
+                        <select id="checkHistoryFilter" class="filter-select" onchange="dataQualityPage.loadCheckHistory()">
+                            <option value="">全部规则</option>
+                        </select>
+                        <select id="checkStatusFilter" class="filter-select" onchange="dataQualityPage.loadCheckHistory()">
+                            <option value="">全部状态</option>
+                            <option value="PASS">通过</option>
+                            <option value="FAIL">失败</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="dataQualityPage.loadCheckHistory()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>检查时间</th>
+                                    <th>规则名称</th>
+                                    <th>目标表</th>
+                                    <th>检查结果</th>
+                                    <th>质量评分</th>
+                                    <th>问题数量</th>
+                                    <th>执行时长</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="checksTableBody">
+                                <tr>
+                                    <td colspan="8" class="empty-state">暂无检查历史</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 质量报告标签页 -->
+                <div id="reportsTab" class="tab-content">
+                    <div class="charts-grid">
+                        <!-- 质量趋势图 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">质量评分趋势</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="qualityTrendChart" class="simple-chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 规则类型分布 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">规则类型分布</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="ruleTypeChart" class="simple-chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 问题严重程度分布 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">问题严重程度</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="severityChart" class="simple-chart"></div>
+                            </div>
+                        </div>
+
+                        <!-- 表质量排名 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">表质量排名（Top 10）</h3>
+                            </div>
+                            <div class="card-body">
+                                <div id="tableQualityChart" class="simple-chart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 质量问题标签页 -->
+                <div id="issuesTab" class="tab-content">
+                    <div class="toolbar">
+                        <select id="issueStatusFilter" class="filter-select" onchange="dataQualityPage.loadIssues()">
+                            <option value="">全部状态</option>
+                            <option value="OPEN">待处理</option>
+                            <option value="IN_PROGRESS">处理中</option>
+                            <option value="RESOLVED">已解决</option>
+                            <option value="CLOSED">已关闭</option>
+                        </select>
+                        <select id="issueSeverityFilter" class="filter-select" onchange="dataQualityPage.loadIssues()">
+                            <option value="">全部严重程度</option>
+                            <option value="HIGH">高</option>
+                            <option value="MEDIUM">中</option>
+                            <option value="LOW">低</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="dataQualityPage.loadIssues()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>问题ID</th>
+                                    <th>规则名称</th>
+                                    <th>目标表</th>
+                                    <th>严重程度</th>
+                                    <th>问题描述</th>
+                                    <th>发现时间</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="issuesTableBody">
+                                <tr>
+                                    <td colspan="8" class="empty-state">暂无质量问题</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 规则详情模态框 -->
+    <div id="ruleDetailModal" class="modal-overlay">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    规则详情
+                </h2>
+                <button class="modal-close-btn" onclick="dataQualityPage.closeRuleDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">基本信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>规则名称</label>
+                            <div id="detailRuleName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>规则类型</label>
+                            <div id="detailRuleType">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>严重程度</label>
+                            <div id="detailSeverity">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>启用状态</label>
+                            <div id="detailEnabled">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>目标表</label>
+                            <div id="detailTargetTable">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>目标字段</label>
+                            <div id="detailTargetField">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>质量阈值</label>
+                            <div id="detailThreshold">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>规则表达式</label>
+                            <div id="detailExpression" style="font-family: monospace; background: #F3F4F6; padding: 8px; border-radius: 4px;">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>描述</label>
+                            <div id="detailDescription">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 检查统计 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">检查统计</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>最后检查时间</label>
+                            <div id="detailLastCheck">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>最后评分</label>
+                            <div id="detailLastScore">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>检查状态</label>
+                            <div id="detailStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>总检查次数</label>
+                            <div id="detailTotalChecks">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 检查历史 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">最近检查历史</h3>
+                    <div id="ruleCheckHistory" class="check-history-list">
+                        <!-- 检查历史将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="dataQualityPage.closeRuleDetailModal()">关闭</button>
+                <button class="btn btn-success" onclick="dataQualityPage.executeCheckFromDetail()">
+                    <i class="fas fa-play"></i> 执行检查
+                </button>
+                <button class="btn btn-primary" onclick="dataQualityPage.editRuleFromDetail()">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建/编辑规则模态框 -->
+    <div id="createRuleModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title" id="createRuleModalTitle">
+                    <i class="fas fa-plus-circle"></i>新建规则
+                </h2>
+                <button class="modal-close-btn" onclick="dataQualityPage.closeCreateRuleModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="ruleForm">
+                    <div class="form-group">
+                        <label class="form-label required">规则名称</label>
+                        <input type="text" id="ruleName" class="form-control" required placeholder="请输入规则名称">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">规则类型</label>
+                            <select id="ruleType" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option value="COMPLETENESS">完整性</option>
+                                <option value="ACCURACY">准确性</option>
+                                <option value="CONSISTENCY">一致性</option>
+                                <option value="UNIQUENESS">唯一性</option>
+                                <option value="VALIDITY">有效性</option>
+                                <option value="TIMELINESS">及时性</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">严重程度</label>
+                            <select id="ruleSeverity" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option value="HIGH">高</option>
+                                <option value="MEDIUM">中</option>
+                                <option value="LOW">低</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">目标表</label>
+                            <input type="text" id="targetTable" class="form-control" required placeholder="例如: users">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">目标字段</label>
+                            <input type="text" id="targetColumn" class="form-control" placeholder="例如: email">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">阈值 (%)</label>
+                        <input type="number" id="threshold" class="form-control" required min="0" max="100" value="95" placeholder="95">
+                        <small class="form-text">质量评分低于此阈值时将触发告警</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">规则表达式</label>
+                        <textarea id="ruleExpression" class="form-control" rows="3" placeholder="例如: email IS NOT NULL AND email LIKE '%@%'"></textarea>
+                        <small class="form-text">SQL WHERE条件表达式</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">描述</label>
+                        <textarea id="ruleDescription" class="form-control" rows="2" placeholder="请输入规则描述"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="dataQualityPage.closeCreateRuleModal()">取消</button>
+                <button class="btn btn-primary" onclick="dataQualityPage.submitRule()">
+                    <i class="fas fa-check"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-quality-service.js"></script>
+    <script src="js/data-quality-management.js"></script>
+</body>
+</html>

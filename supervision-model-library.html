@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>监督模型库 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/supervision-model-library.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-cubes"></i>
+                            监督模型库
+                        </h1>
+                        <p class="page-subtitle">管理和配置监督模型，支持预置模型和自定义模型</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-primary" onclick="modelLibraryPage.showCustomModelDialog()">
+                            <i class="fas fa-plus"></i>
+                            创建自定义模型
+                        </button>
+                    </div>
+                </div>
+
+            <!-- 统计卡片 -->
+            <div class="stats-cards">
+                <div class="stat-card stat-card-primary">
+                    <div class="stat-icon">
+                        <i class="fas fa-cubes"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">模型总数</div>
+                        <div class="stat-value" id="totalModels">0</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-success">
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">已启用</div>
+                        <div class="stat-value" id="activeModels">0</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-warning">
+                    <div class="stat-icon">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">自定义模型</div>
+                        <div class="stat-value" id="customModels">0</div>
+                    </div>
+                </div>
+                <div class="stat-card stat-card-info">
+                    <div class="stat-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="stat-content">
+                        <div class="stat-label">模型分类</div>
+                        <div class="stat-value" id="categoryCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 筛选器 -->
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="filter-row">
+                        <div class="filter-item">
+                            <label class="filter-label">模型类型</label>
+                            <select id="filterType" class="form-select">
+                                <option value="">全部</option>
+                                <option value="PRESET">预置模型</option>
+                                <option value="CUSTOM">自定义模型</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label class="filter-label">模型分类</label>
+                            <select id="filterCategory" class="form-select">
+                                <option value="">全部</option>
+                                <option value="财务监督">财务监督</option>
+                                <option value="科研监督">科研监督</option>
+                                <option value="资产监督">资产监督</option>
+                                <option value="采购监督">采购监督</option>
+                                <option value="招生监督">招生监督</option>
+                                <option value="作风监督">作风监督</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <label class="filter-label">状态</label>
+                            <select id="filterStatus" class="form-select">
+                                <option value="">全部</option>
+                                <option value="ACTIVE">已启用</option>
+                                <option value="INACTIVE">已禁用</option>
+                                <option value="DRAFT">草稿</option>
+                            </select>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn btn-primary" onclick="modelLibraryPage.loadModels()">
+                                <i class="fas fa-filter"></i>
+                                应用
+                            </button>
+                            <button class="btn btn-secondary" onclick="modelLibraryPage.resetFilters()">
+                                <i class="fas fa-redo"></i>
+                                重置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 模型列表 -->
+            <div class="model-list" id="modelList">
+                <!-- 模型卡片将通过JavaScript动态生成 -->
+            </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 创建/编辑自定义模型对话框 -->
+    <div id="customModelDialog" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>
+                    <span id="customModelDialogTitle">创建自定义模型</span>
+                </h2>
+                <button class="modal-close-btn" onclick="modelLibraryPage.closeCustomModelDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="customModelForm">
+                    <input type="hidden" id="editModelId">
+                    
+                    <div class="form-group">
+                        <label class="form-label required">
+                            <i class="fas fa-cube"></i> 模型名称
+                        </label>
+                        <input type="text" class="form-control" id="customModelName" required 
+                            placeholder="请输入模型名称">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">
+                                <i class="fas fa-folder"></i> 模型分类
+                            </label>
+                            <select class="form-control" id="customModelCategory" required>
+                                <option value="">请选择</option>
+                                <option value="财务监督">财务监督</option>
+                                <option value="科研监督">科研监督</option>
+                                <option value="资产监督">资产监督</option>
+                                <option value="采购监督">采购监督</option>
+                                <option value="招生监督">招生监督</option>
+                                <option value="作风监督">作风监督</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-code-branch"></i> 版本号
+                            </label>
+                            <input type="text" class="form-control" id="customModelVersion" placeholder="例如：1.0.0">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-align-left"></i> 模型描述
+                        </label>
+                        <textarea class="form-control" id="customModelDescription" rows="3" 
+                            placeholder="请描述模型的用途和功能"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-list-ul"></i> 适用场景（每行一个）
+                        </label>
+                        <textarea class="form-control" id="customModelScenarios" rows="4" 
+                            placeholder="例如：&#10;科研经费报销审核&#10;项目预算执行监控"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-list-check"></i> 检查规则
+                        </label>
+                        <div class="rules-selection-container">
+                            <div class="selected-rules-header">
+                                <span class="rules-count">已选择 <strong id="selectedRulesCount">0</strong> 条规则</span>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="modelLibraryPage.showRuleSelector()">
+                                    <i class="fas fa-plus"></i> 添加规则
+                                </button>
+                            </div>
+                            <div class="selected-rules" id="selectedRules">
+                                <!-- 已选规则将显示在这里 -->
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="modelLibraryPage.closeCustomModelDialog()">取消</button>
+                <button class="btn btn-primary" onclick="modelLibraryPage.saveCustomModel()">
+                    <i class="fas fa-check"></i> <span id="saveButtonText">创建</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则选择器对话框 -->
+    <div id="ruleSelectorDialog" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-list-check"></i>
+                    选择检查规则
+                </h2>
+                <button class="modal-close-btn" onclick="modelLibraryPage.closeRuleSelector()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 搜索和筛选 -->
+                <div class="rule-selector-filters">
+                    <div class="search-box">
+                        <input type="text" id="ruleSelectorSearch" placeholder="搜索规则名称..." class="form-control">
+                        <i class="fas fa-search"></i>
+                    </div>
+                    <select id="ruleSelectorCategory" class="form-control">
+                        <option value="">全部分类</option>
+                        <option value="财务监督">财务监督</option>
+                        <option value="科研监督">科研监督</option>
+                        <option value="资产监督">资产监督</option>
+                        <option value="采购监督">采购监督</option>
+                        <option value="招生监督">招生监督</option>
+                        <option value="作风监督">作风监督</option>
+                    </select>
+                </div>
+
+                <!-- 规则列表 -->
+                <div class="rule-selector-list" id="ruleSelectorList">
+                    <!-- 规则列表将通过 JavaScript 动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="modelLibraryPage.closeRuleSelector()">取消</button>
+                <button class="btn btn-primary" onclick="modelLibraryPage.confirmRuleSelection()">
+                    <i class="fas fa-check"></i> 确认选择
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/rule-engine-service.js"></script>
+    <script src="js/supervision-model-service.js"></script>
+    <script src="js/supervision-model-library.js"></script>
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>元数据管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/data-governance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-tags"></i>
+                            元数据管理
+                        </h1>
+                        <p class="page-subtitle">管理数据资产的元数据信息，包括数据表、字段、血缘关系等</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="metadataPage.syncMetadata()">
+                            <i class="fas fa-sync-alt"></i>
+                            同步元数据
+                        </button>
+                        <button class="btn btn-primary" onclick="metadataPage.showCreateModal()">
+                            <i class="fas fa-plus"></i>
+                            新增元数据
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid mb-3">
+                    <div class="stat-card">
+                        <div class="stat-label">数据表总数</div>
+                        <div class="stat-value" id="tableCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">字段总数</div>
+                        <div class="stat-value" id="fieldCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">数据源数量</div>
+                        <div class="stat-value" id="datasourceCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">血缘关系</div>
+                        <div class="stat-value" id="lineageCount">0</div>
+                    </div>
+                </div>
+
+                <!-- 标签页 -->
+                <div class="tabs mb-3">
+                    <button class="tab-btn active" data-tab="tables" onclick="metadataPage.switchTab('tables')">
+                        数据表
+                    </button>
+                    <button class="tab-btn" data-tab="fields" onclick="metadataPage.switchTab('fields')">
+                        字段信息
+                    </button>
+                    <button class="tab-btn" data-tab="lineage" onclick="metadataPage.switchTab('lineage')">
+                        血缘关系
+                    </button>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="搜索表名、字段名..." 
+                                       class="search-input" onkeyup="metadataPage.handleSearch()">
+                            </div>
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">数据源</label>
+                                    <select class="form-select" id="filter-datasource" onchange="metadataPage.loadData()">
+                                        <option value="">全部</option>
+                                    </select>
+                                </div>
+                                <div class="filter-actions">
+                                    <button class="btn btn-secondary" onclick="metadataPage.exportData()">
+                                        <i class="fas fa-download"></i>
+                                        导出
+                                    </button>
+                                    <button class="btn btn-primary" onclick="metadataPage.refreshData()">
+                                        <i class="fas fa-sync-alt"></i>
+                                        刷新
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据列表 -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead id="tableHeader">
+                                <!-- 表头将动态生成 -->
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- 数据行将动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 空状态 -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="32" r="30" stroke="#E5E7EB" stroke-width="2"/>
+                            <path d="M32 20V32L40 40" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <p>暂无数据</p>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="pagination" id="pagination">
+                        <div class="pagination-info">
+                            共 <span id="totalCount">0</span> 条数据
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="btn btn-sm" onclick="metadataPage.prevPage()" id="prevBtn">上一页</button>
+                            <span class="page-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</span>
+                            <button class="btn btn-sm" onclick="metadataPage.nextPage()" id="nextBtn">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- 元数据详情模态框 -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    元数据详情
+                </h2>
+                <button id="closeDetailModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">基本信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>表名</label>
+                            <div id="detailTableName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>表注释</label>
+                            <div id="detailTableComment">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>数据源</label>
+                            <div id="detailDatasource">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>负责人</label>
+                            <div id="detailOwner">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>记录数</label>
+                            <div id="detailRowCount">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>数据大小</label>
+                            <div id="detailSize">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>更新时间</label>
+                            <div id="detailUpdateTime">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 字段信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">字段信息</h3>
+                    <div id="detailFields" class="fields-list">
+                        <!-- 字段列表 -->
+                    </div>
+                </div>
+
+                <!-- 索引信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">索引信息</h3>
+                    <div id="detailIndexes" class="indexes-list">
+                        <!-- 索引列表 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="closeDetailBtn" class="btn btn-secondary">关闭</button>
+                <button id="viewFieldsBtn" class="btn btn-info">
+                    <i class="fas fa-list"></i> 查看字段
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑元数据模态框 -->
+    <div id="createModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title" id="createModalTitle">
+                    <i class="fas fa-plus-circle"></i>新增元数据
+                </h2>
+                <button id="closeCreateModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="metadataForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">表名</label>
+                            <input type="text" id="tableName" class="form-control" required placeholder="例如: student_info">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">数据源</label>
+                            <select id="datasource" class="form-control" required>
+                                <option value="">请选择</option>
+                                <option value="MySQL-Production">MySQL-Production</option>
+                                <option value="Oracle-Finance">Oracle-Finance</option>
+                                <option value="PostgreSQL-DataWarehouse">PostgreSQL-DataWarehouse</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">表注释</label>
+                        <input type="text" id="tableComment" class="form-control" required placeholder="请输入表的中文说明">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">负责人</label>
+                            <input type="text" id="owner" class="form-control" placeholder="请输入负责人姓名">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">记录数</label>
+                            <input type="number" id="rowCount" class="form-control" placeholder="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">表描述</label>
+                        <textarea id="description" class="form-control" rows="3" placeholder="请输入详细描述"></textarea>
+                    </div>
+                    
+                    <div class="form-section">
+                        <h4>字段定义</h4>
+                        <div id="fieldsContainer">
+                            <div class="field-row">
+                                <input type="text" class="form-control" placeholder="字段名" name="fieldName[]">
+                                <input type="text" class="form-control" placeholder="字段注释" name="fieldComment[]">
+                                <select class="form-control" name="dataType[]">
+                                    <option value="">数据类型</option>
+                                    <option value="VARCHAR">VARCHAR</option>
+                                    <option value="INT">INT</option>
+                                    <option value="BIGINT">BIGINT</option>
+                                    <option value="DECIMAL">DECIMAL</option>
+                                    <option value="DATE">DATE</option>
+                                    <option value="DATETIME">DATETIME</option>
+                                    <option value="TEXT">TEXT</option>
+                                </select>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="isPrimaryKey[]">
+                                    <span>主键</span>
+                                </label>
+                                <button type="button" class="btn-icon" onclick="metadataPage.removeField(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="metadataPage.addField()">
+                            <i class="fas fa-plus"></i> 添加字段
+                        </button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="cancelCreateBtn" class="btn btn-secondary">取消</button>
+                <button id="submitCreateBtn" class="btn btn-primary">
+                    <i class="fas fa-check"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/metadata-service.js"></script>
+    <script src="js/metadata-management.js"></script>
+</body>
+</html>

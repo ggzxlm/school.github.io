@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型优化 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/model-optimization.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+        
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+            
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">
+                        <i class="fas fa-wrench"></i>
+                        模型优化
+                    </h1>
+                    <p class="page-description">基于反馈持续优化规则，提升预警准确率</p>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-flag"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">误报标注</div>
+                            <div class="stat-value" id="falsePositivesCount">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">漏报记录</div>
+                            <div class="stat-value" id="falseNegativesCount">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">优化建议</div>
+                            <div class="stat-value" id="optimizationsCount">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">已应用</div>
+                            <div class="stat-value" id="appliedCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标签页导航 -->
+                <div class="tabs-section">
+                    <div class="tabs-nav">
+                        <button class="tab-btn active" data-tab="false-positives" onclick="modelOptimization.switchTab('false-positives')">
+                            <i class="fas fa-flag"></i>
+                            误报标注
+                        </button>
+                        <button class="tab-btn" data-tab="false-negatives" onclick="modelOptimization.switchTab('false-negatives')">
+                            <i class="fas fa-exclamation-circle"></i>
+                            漏报记录
+                        </button>
+                        <button class="tab-btn" data-tab="optimizations" onclick="modelOptimization.switchTab('optimizations')">
+                            <i class="fas fa-lightbulb"></i>
+                            优化建议
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 误报标注面板 -->
+                <div id="false-positives-panel" class="tab-panel active">
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h2 class="table-title">
+                                <i class="fas fa-flag"></i>
+                                误报标注列表
+                            </h2>
+                            <button class="btn btn-sm btn-secondary" onclick="modelOptimization.refreshData()">
+                                <i class="fas fa-sync-alt"></i>
+                                刷新
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>标注ID</th>
+                                        <th>预警ID</th>
+                                        <th>规则名称</th>
+                                        <th>误报原因</th>
+                                        <th>标注人</th>
+                                        <th>标注时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="falsePositivesTableBody">
+                                    <!-- 数据将通过JavaScript动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 漏报记录面板 -->
+                <div id="false-negatives-panel" class="tab-panel">
+                    <div class="table-section">
+                        <div class="table-header">
+                            <h2 class="table-title">
+                                <i class="fas fa-exclamation-circle"></i>
+                                漏报记录列表
+                            </h2>
+                            <button class="btn btn-sm btn-secondary" onclick="modelOptimization.refreshData()">
+                                <i class="fas fa-sync-alt"></i>
+                                刷新
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>记录ID</th>
+                                        <th>标题</th>
+                                        <th>期望规则</th>
+                                        <th>优先级</th>
+                                        <th>状态</th>
+                                        <th>报告人</th>
+                                        <th>报告时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="falseNegativesTableBody">
+                                    <!-- 数据将通过JavaScript动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 优化建议面板 -->
+                <div id="optimizations-panel" class="tab-panel">
+                    <div class="filter-section">
+                        <div class="filter-row">
+                            <div class="filter-left">
+                                <select id="statusFilter" class="filter-select">
+                                    <option value="">全部状态</option>
+                                    <option value="pending">待处理</option>
+                                    <option value="applied">已应用</option>
+                                    <option value="rejected">已拒绝</option>
+                                </select>
+                            </div>
+                            <div class="filter-right">
+                                <button class="btn btn-primary" onclick="modelOptimization.analyzeAllRules()">
+                                    <i class="fas fa-magic"></i>
+                                    批量分析
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="optimizationsList">
+                        <!-- 优化建议卡片将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 优化详情对话框 -->
+    <div id="optimizationDetailDialog" class="modal-overlay">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-lightbulb"></i>
+                    <span id="optimizationDetailTitle">优化方案详情</span>
+                </h2>
+                <button class="modal-close" onclick="modelOptimization.closeOptimizationDetail()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="optimizationDetailContent">
+                    <!-- 详情内容将通过JavaScript生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="modelOptimization.closeOptimizationDetail()">关闭</button>
+                <button class="btn btn-primary" id="applyOptimizationBtn" onclick="modelOptimization.applyOptimization()">
+                    <i class="fas fa-check"></i> 应用优化
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/model-optimization.js"></script>
+</body>
+</html>

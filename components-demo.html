@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交互组件演示 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-page);
+        }
+        
+        .demo-section {
+            background-color: white;
+            border-radius: var(--radius-card);
+            padding: var(--spacing-page);
+            margin-bottom: var(--spacing-page);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .demo-title {
+            font-size: var(--font-size-h2);
+            font-weight: 600;
+            margin-bottom: var(--spacing-card);
+            color: var(--color-gray-900);
+            border-bottom: 2px solid var(--color-primary);
+            padding-bottom: var(--spacing-content);
+        }
+        
+        .demo-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-content);
+        }
+        
+        .demo-description {
+            color: var(--color-gray-600);
+            margin-bottom: var(--spacing-card);
+            line-height: 1.6;
+        }
+        
+        .skeleton-demo {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--spacing-card);
+        }
+        
+        .skeleton-demo-item {
+            border: 1px solid var(--color-gray-200);
+            border-radius: var(--radius-button);
+            padding: var(--spacing-card);
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1 style="font-size: 32px; margin-bottom: var(--spacing-page); color: var(--color-primary);">
+            <i class="fas fa-flask"></i> 交互组件演示
+        </h1>
+        
+        <!-- Toast 消息提示 -->
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-comment-dots"></i> Toast 消息提示组件
+            </h2>
+            <p class="demo-description">
+                Toast 组件用于显示轻量级的消息提示，支持成功、警告、错误、信息四种类型，可自动消失或手动关闭。
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-success" onclick="Toast.success('操作成功！数据已保存。')">
+                    <i class="fas fa-check"></i> 成功消息
+                </button>
+                <button class="btn btn-warning" onclick="Toast.warning('警告：请注意检查输入内容。')">
+                    <i class="fas fa-exclamation-triangle"></i> 警告消息
+                </button>
+                <button class="btn btn-danger" onclick="Toast.error('错误：操作失败，请重试。')">
+                    <i class="fas fa-times-circle"></i> 错误消息
+                </button>
+                <button class="btn btn-primary" onclick="Toast.info('提示：系统将在5分钟后进行维护。')">
+                    <i class="fas fa-info-circle"></i> 信息消息
+                </button>
+                <button class="btn btn-secondary" onclick="Toast.show('这是一条不会自动关闭的消息', 'info', 0)">
+                    <i class="fas fa-bell"></i> 持久消息
+                </button>
+            </div>
+        </div>
+        
+        <!-- 模态对话框 -->
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-window-restore"></i> 模态对话框组件
+            </h2>
+            <p class="demo-description">
+                Modal 组件用于显示模态对话框，支持自定义标题、内容、按钮，以及不同的尺寸。
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-primary" onclick="showBasicModal()">
+                    <i class="fas fa-window-maximize"></i> 基础对话框
+                </button>
+                <button class="btn btn-primary" onclick="showFormModal()">
+                    <i class="fas fa-edit"></i> 表单对话框
+                </button>
+                <button class="btn btn-primary" onclick="showLargeModal()">
+                    <i class="fas fa-expand"></i> 大尺寸对话框
+                </button>
+                <button class="btn btn-primary" onclick="showSmallModal()">
+                    <i class="fas fa-compress"></i> 小尺寸对话框
+                </button>
+            </div>
+        </div>
+        
+        <!-- 确认对话框 -->
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-question-circle"></i> 确认对话框组件
+            </h2>
+            <p class="demo-description">
+                Confirm 组件用于需要用户确认的操作，如删除、提交等，支持不同的警告级别。
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-danger" onclick="showDeleteConfirm()">
+                    <i class="fas fa-trash"></i> 删除确认
+                </button>
+                <button class="btn btn-primary" onclick="showSubmitConfirm()">
+                    <i class="fas fa-paper-plane"></i> 提交确认
+                </button>
+                <button class="btn btn-warning" onclick="showWarningConfirm()">
+                    <i class="fas fa-exclamation-triangle"></i> 警告确认
+                </button>
+                <button class="btn btn-secondary" onclick="showInfoConfirm()">
+                    <i class="fas fa-info-circle"></i> 信息确认
+                </button>
+            </div>
+        </div>
+        
+        <!-- 加载状态 -->
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-spinner"></i> 加载状态组件
+            </h2>
+            <p class="demo-description">
+                Loading 组件用于显示加载状态，支持全局加载遮罩和局部加载动画。
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-primary" onclick="showGlobalLoading()">
+                    <i class="fas fa-sync"></i> 全局加载
+                </button>
+                <button class="btn btn-primary" onclick="showElementLoading()">
+                    <i class="fas fa-circle-notch"></i> 局部加载
+                </button>
+            </div>
+            <div id="loading-demo-area" style="margin-top: var(--spacing-card); padding: var(--spacing-page); background-color: var(--color-gray-50); border-radius: var(--radius-button); min-height: 200px;">
+                <p style="color: var(--color-gray-600);">点击"局部加载"按钮，此区域将显示加载动画</p>
+            </div>
+        </div>
+        
+        <!-- 骨架屏 -->
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-th-large"></i> 骨架屏组件
+            </h2>
+            <p class="demo-description">
+                Skeleton 组件用于在内容加载时显示占位符，提升用户体验。支持文本、卡片、表格、列表等多种类型。
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-primary" onclick="showTextSkeleton()">
+                    <i class="fas fa-align-left"></i> 文本骨架屏
+                </button>
+                <button class="btn btn-primary" onclick="showCardSkeleton()">
+                    <i class="fas fa-id-card"></i> 卡片骨架屏
+                </button>
+                <button class="btn btn-primary" onclick="showTableSkeleton()">
+                    <i class="fas fa-table"></i> 表格骨架屏
+                </button>
+                <button class="btn btn-primary" onclick="showListSkeleton()">
+                    <i class="fas fa-list"></i> 列表骨架屏
+                </button>
+                <button class="btn btn-secondary" onclick="clearSkeletons()">
+                    <i class="fas fa-eraser"></i> 清除骨架屏
+                </button>
+            </div>
+            <div class="skeleton-demo" style="margin-top: var(--spacing-card);">
+                <div class="skeleton-demo-item" id="skeleton-demo-1">
+                    <p style="color: var(--color-gray-600);">骨架屏演示区域 1</p>
+                </div>
+                <div class="skeleton-demo-item" id="skeleton-demo-2">
+                    <p style="color: var(--color-gray-600);">骨架屏演示区域 2</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 综合示例 -->
+        <div class="demo-section">
+            <h2 class="demo-title">
+                <i class="fas fa-rocket"></i> 综合示例
+            </h2>
+            <p class="demo-description">
+                模拟真实场景的组件使用示例。
+            </p>
+            <div class="demo-buttons">
+                <button class="btn btn-primary" onclick="simulateDataLoad()">
+                    <i class="fas fa-download"></i> 模拟数据加载
+                </button>
+                <button class="btn btn-success" onclick="simulateSaveAction()">
+                    <i class="fas fa-save"></i> 模拟保存操作
+                </button>
+                <button class="btn btn-danger" onclick="simulateDeleteAction()">
+                    <i class="fas fa-trash-alt"></i> 模拟删除操作
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        // 基础对话框
+        function showBasicModal() {
+            Modal.show({
+                title: '系统通知',
+                content: '<p>这是一个基础的模态对话框示例。</p><p>您可以在这里显示任何内容。</p>',
+                buttons: [
+                    { text: '知道了', type: 'primary', onClick: () => Modal.hide() }
+                ]
+            });
+        }
+        
+        // 表单对话框
+        function showFormModal() {
+            Modal.show({
+                title: '编辑用户信息',
+                size: 'md',
+                content: `
+                    <div class="form-group">
+                        <label class="form-label required">用户名</label>
+                        <input type="text" class="form-input" placeholder="请输入用户名" value="张三">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label required">邮箱</label>
+                        <input type="email" class="form-input" placeholder="请输入邮箱" value="zhangsan@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">备注</label>
+                        <textarea class="form-textarea" placeholder="请输入备注"></textarea>
+                    </div>
+                `,
+                buttons: [
+                    { text: '取消', type: 'secondary', onClick: () => Modal.hide() },
+                    { text: '保存', type: 'primary', icon: 'save', onClick: () => {
+                        Modal.hide();
+                        Toast.success('保存成功！');
+                    }}
+                ]
+            });
+        }
+        
+        // 大尺寸对话框
+        function showLargeModal() {
+            Modal.show({
+                title: '详细信息',
+                size: 'lg',
+                content: '<p style="padding: 40px; text-align: center; color: var(--color-gray-600);">这是一个大尺寸的对话框，适合显示更多内容。</p>',
+                buttons: [
+                    { text: '关闭', type: 'secondary', onClick: () => Modal.hide() }
+                ]
+            });
+        }
+        
+        // 小尺寸对话框
+        function showSmallModal() {
+            Modal.show({
+                title: '提示',
+                size: 'sm',
+                content: '<p style="text-align: center;">这是一个小尺寸对话框</p>',
+                buttons: [
+                    { text: '确定', type: 'primary', onClick: () => Modal.hide() }
+                ]
+            });
+        }
+        
+        // 删除确认
+        function showDeleteConfirm() {
+            Confirm.delete('确定要删除这条记录吗？删除后将无法恢复。', () => {
+                Toast.success('删除成功！');
+            });
+        }
+        
+        // 提交确认
+        function showSubmitConfirm() {
+            Confirm.submit('确定要提交这份报告吗？', () => {
+                Toast.success('提交成功！');
+            });
+        }
+        
+        // 警告确认
+        function showWarningConfirm() {
+            Confirm.show({
+                title: '警告',
+                message: '此操作可能会影响系统性能，确定要继续吗？',
+                type: 'warning',
+                confirmText: '继续',
+                onConfirm: () => {
+                    Toast.info('操作已执行');
+                }
+            });
+        }
+        
+        // 信息确认
+        function showInfoConfirm() {
+            Confirm.show({
+                title: '信息确认',
+                message: '您有未保存的更改，确定要离开吗？',
+                type: 'info',
+                confirmText: '离开',
+                cancelText: '留下',
+                onConfirm: () => {
+                    Toast.info('已离开页面');
+                }
+            });
+        }
+        
+        // 全局加载
+        function showGlobalLoading() {
+            Loading.show('正在加载数据...');
+            setTimeout(() => {
+                Loading.hide();
+                Toast.success('加载完成！');
+            }, 2000);
+        }
+        
+        // 局部加载
+        function showElementLoading() {
+            const area = document.getElementById('loading-demo-area');
+            Loading.showInElement(area);
+            setTimeout(() => {
+                Loading.hideInElement(area);
+                area.innerHTML = '<p style="color: var(--color-success); text-align: center; padding: 40px;">加载完成！</p>';
+                setTimeout(() => {
+                    area.innerHTML = '<p style="color: var(--color-gray-600);">点击"局部加载"按钮，此区域将显示加载动画</p>';
+                }, 2000);
+            }, 2000);
+        }
+        
+        // 文本骨架屏
+        function showTextSkeleton() {
+            const demo1 = document.getElementById('skeleton-demo-1');
+            Skeleton.showInElement(demo1, 'text', { rows: 5 });
+        }
+        
+        // 卡片骨架屏
+        function showCardSkeleton() {
+            const demo1 = document.getElementById('skeleton-demo-1');
+            Skeleton.showInElement(demo1, 'card');
+        }
+        
+        // 表格骨架屏
+        function showTableSkeleton() {
+            const demo2 = document.getElementById('skeleton-demo-2');
+            Skeleton.showInElement(demo2, 'table', { rows: 5, columns: 4 });
+        }
+        
+        // 列表骨架屏
+        function showListSkeleton() {
+            const demo2 = document.getElementById('skeleton-demo-2');
+            Skeleton.showInElement(demo2, 'list', { rows: 4 });
+        }
+        
+        // 清除骨架屏
+        function clearSkeletons() {
+            const demo1 = document.getElementById('skeleton-demo-1');
+            const demo2 = document.getElementById('skeleton-demo-2');
+            Skeleton.hideInElement(demo1);
+            Skeleton.hideInElement(demo2);
+            demo1.innerHTML = '<p style="color: var(--color-gray-600);">骨架屏演示区域 1</p>';
+            demo2.innerHTML = '<p style="color: var(--color-gray-600);">骨架屏演示区域 2</p>';
+        }
+        
+        // 模拟数据加载
+        function simulateDataLoad() {
+            Loading.show('正在加载数据...');
+            
+            setTimeout(() => {
+                Loading.hide();
+                
+                Modal.show({
+                    title: '数据加载完成',
+                    content: `
+                        <div style="padding: var(--spacing-card);">
+                            <p style="margin-bottom: var(--spacing-content);">成功加载 <strong>1,234</strong> 条记录</p>
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>编号</th>
+                                            <th>名称</th>
+                                            <th>状态</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>001</td>
+                                            <td>线索A</td>
+                                            <td><span class="badge badge-processing">处理中</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>002</td>
+                                            <td>线索B</td>
+                                            <td><span class="badge badge-completed">已完成</span></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `,
+                    size: 'lg',
+                    buttons: [
+                        { text: '关闭', type: 'secondary', onClick: () => Modal.hide() }
+                    ]
+                });
+            }, 2000);
+        }
+        
+        // 模拟保存操作
+        function simulateSaveAction() {
+            Confirm.submit('确定要保存当前的修改吗？', () => {
+                Loading.show('正在保存...');
+                
+                setTimeout(() => {
+                    Loading.hide();
+                    Toast.success('保存成功！数据已更新。');
+                }, 1500);
+            });
+        }
+        
+        // 模拟删除操作
+        function simulateDeleteAction() {
+            Confirm.delete('确定要删除选中的 3 条记录吗？此操作不可恢复。', () => {
+                Loading.show('正在删除...');
+                
+                setTimeout(() => {
+                    Loading.hide();
+                    Toast.success('删除成功！已删除 3 条记录。');
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>

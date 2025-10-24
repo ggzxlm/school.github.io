@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型详情 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/supervision-model-detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面头部 -->
+                <div class="detail-header">
+                    <div class="header-left">
+                        <button class="btn-back" onclick="modelDetailPage.goBack()">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="header-title">
+                            <h1 id="modelName">模型名称</h1>
+                            <span class="model-status" id="modelStatus">稳定</span>
+                        </div>
+                    </div>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="modelDetailPage.editModel()">
+                            <i class="fas fa-edit"></i> 编辑
+                        </button>
+                        <button class="btn btn-primary" onclick="modelDetailPage.configureRules()">
+                            <i class="fas fa-cog"></i> 配置规则
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 场景说明 -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">场景说明</h3>
+                    </div>
+                    <div class="card-body">
+                        <div id="scenarioDescription" class="scenario-description"></div>
+
+                        <div class="scenario-meta">
+                            <div class="meta-item">
+                                <label>主要数据源</label>
+                                <div id="dataSources"></div>
+                            </div>
+                            <div class="meta-item">
+                                <label>指标与SLA</label>
+                                <div id="slaIndicators"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-row mb-3">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <i class="fas fa-chart-bar"></i> 近期结果
+                        </div>
+                        <div class="stat-body">
+                            <div class="result-item result-high">
+                                <i class="fas fa-exclamation-circle"></i>
+                                <span class="result-label">红灯</span>
+                                <span class="result-value" id="redCount">0</span>
+                            </div>
+                            <div class="result-item result-medium">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span class="result-label">黄灯</span>
+                                <span class="result-value" id="yellowCount">0</span>
+                            </div>
+                            <div class="result-item result-low">
+                                <i class="fas fa-check-circle"></i>
+                                <span class="result-label">绿灯</span>
+                                <span class="result-value" id="greenCount">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 规则集 -->
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h3 class="card-title">规则集</h3>
+                        <button class="btn btn-sm btn-secondary" onclick="modelDetailPage.manageRules()">
+                            <i class="fas fa-cog"></i> 前往管理
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>规则</th>
+                                        <th>阈值/条件</th>
+                                        <th>等级</th>
+                                        <th>最近命中</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rulesTableBody">
+                                    <!-- 规则列表将通过JavaScript动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 证据快照 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">证据快照（最近10条）</h3>
+                        <button class="btn btn-sm btn-secondary" onclick="modelDetailPage.viewAllEvidence()">
+                            查看详情
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="evidence-grid" id="evidenceGrid">
+                            <!-- 证据快照将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/rule-engine-service.js"></script>
+    <script src="js/supervision-model-service.js"></script>
+    <script src="js/supervision-model-detail.js"></script>
+</body>
+</html>

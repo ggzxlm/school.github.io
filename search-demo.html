@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索功能演示 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .demo-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-page);
+        }
+
+        .demo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .demo-header h1 {
+            font-size: 32px;
+            color: var(--color-gray-900);
+            margin-bottom: 12px;
+        }
+
+        .demo-header p {
+            font-size: 16px;
+            color: var(--color-gray-600);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: var(--spacing-page);
+            margin-bottom: var(--spacing-page);
+        }
+
+        .demo-card {
+            background: white;
+            padding: var(--spacing-page);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .demo-card-header {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-content);
+            margin-bottom: var(--spacing-card);
+            padding-bottom: var(--spacing-content);
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .demo-card-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            color: white;
+            border-radius: var(--radius-card);
+        }
+
+        .demo-card-title {
+            font-size: var(--font-size-h2);
+            color: var(--color-gray-900);
+            font-weight: 600;
+        }
+
+        .demo-card-content {
+            margin-bottom: var(--spacing-card);
+        }
+
+        .demo-card-content h3 {
+            font-size: var(--font-size-h3);
+            color: var(--color-gray-800);
+            margin-bottom: var(--spacing-element);
+        }
+
+        .demo-card-content p {
+            font-size: var(--font-size-body);
+            color: var(--color-gray-600);
+            line-height: 1.6;
+            margin-bottom: var(--spacing-content);
+        }
+
+        .demo-steps {
+            list-style: none;
+            padding: 0;
+        }
+
+        .demo-steps li {
+            padding: var(--spacing-element) 0;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--spacing-content);
+        }
+
+        .demo-step-number {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--color-primary);
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .demo-features {
+            list-style: none;
+            padding: 0;
+        }
+
+        .demo-features li {
+            padding: var(--spacing-element) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-content);
+        }
+
+        .demo-features li i {
+            color: var(--color-success);
+            font-size: 16px;
+        }
+
+        .demo-button {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--spacing-element);
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-button);
+            font-size: var(--font-size-body);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .demo-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-element);
+            margin-top: var(--spacing-content);
+        }
+
+        .demo-keyword {
+            padding: 6px 12px;
+            background: var(--color-gray-100);
+            color: var(--color-gray-700);
+            border-radius: var(--radius-tag);
+            font-size: var(--font-size-small);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .demo-keyword:hover {
+            background: var(--color-primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .demo-highlight {
+            background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            padding: var(--spacing-card);
+            border-radius: var(--radius-card);
+            border-left: 4px solid var(--color-primary);
+            margin: var(--spacing-card) 0;
+        }
+
+        .demo-highlight h4 {
+            color: var(--color-primary);
+            margin-bottom: var(--spacing-element);
+        }
+
+        .demo-highlight p {
+            color: var(--color-gray-700);
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <aside id="side-navbar"></aside>
+
+            <main class="content-area">
+                <div class="demo-container">
+                    <div class="demo-header">
+                        <h1>🔍 搜索功能演示</h1>
+                        <p>智能、便捷、高效的全局搜索体验</p>
+                    </div>
+
+                    <div class="demo-grid">
+                        <!-- 功能1：搜索历史 -->
+                        <div class="demo-card">
+                            <div class="demo-card-header">
+                                <div class="demo-card-icon">
+                                    <i class="fas fa-history"></i>
+                                </div>
+                                <h2 class="demo-card-title">搜索历史</h2>
+                            </div>
+                            <div class="demo-card-content">
+                                <p>自动保存您的搜索记录，快速访问常用搜索。</p>
+                                <ul class="demo-steps">
+                                    <li>
+                                        <span class="demo-step-number">1</span>
+                                        <span>点击顶部搜索框</span>
+                                    </li>
+                                    <li>
+                                        <span class="demo-step-number">2</span>
+                                        <span>查看最近10条搜索历史</span>
+                                    </li>
+                                    <li>
+                                        <span class="demo-step-number">3</span>
+                                        <span>点击历史记录快速搜索</span>
+                                    </li>
+                                </ul>
+                                <div class="demo-highlight">
+                                    <h4>💡 小提示</h4>
+                                    <p>鼠标悬停可删除单条历史，或点击"清空"删除全部</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 功能2：热门搜索 -->
+                        <div class="demo-card">
+                            <div class="demo-card-header">
+                                <div class="demo-card-icon">
+                                    <i class="fas fa-fire"></i>
+                                </div>
+                                <h2 class="demo-card-title">热门搜索</h2>
+                            </div>
+                            <div class="demo-card-content">
+                                <p>发现系统中最热门的搜索关键词，快速定位热点问题。</p>
+                                <ul class="demo-features">
+                                    <li><i class="fas fa-check-circle"></i> 显示搜索次数统计</li>
+                                    <li><i class="fas fa-check-circle"></i> 前三名特殊标记</li>
+                                    <li><i class="fas fa-check-circle"></i> 一键快速搜索</li>
+                                </ul>
+                                <div class="demo-highlight">
+                                    <h4>🔥 当前热门</h4>
+                                    <div class="demo-keywords">
+                                        <span class="demo-keyword">科研经费异常</span>
+                                        <span class="demo-keyword">招生录取监督</span>
+                                        <span class="demo-keyword">基建采购审计</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 功能3：实时建议 -->
+                        <div class="demo-card">
+                            <div class="demo-card-header">
+                                <div class="demo-card-icon">
+                                    <i class="fas fa-lightbulb"></i>
+                                </div>
+                                <h2 class="demo-card-title">实时建议</h2>
+                            </div>
+                            <div class="demo-card-content">
+                                <p>输入关键词即可获得智能搜索建议，快速找到目标内容。</p>
+                                <ul class="demo-features">
+                                    <li><i class="fas fa-check-circle"></i> 多类型建议（线索、预警、工单等）</li>
+                                    <li><i class="fas fa-check-circle"></i> 关键词高亮显示</li>
+                                    <li><i class="fas fa-check-circle"></i> 显示类型和分类信息</li>
+                                </ul>
+                                <div class="demo-highlight">
+                                    <h4>✨ 试试输入</h4>
+                                    <div class="demo-keywords">
+                                        <span class="demo-keyword">科研</span>
+                                        <span class="demo-keyword">招生</span>
+                                        <span class="demo-keyword">审计</span>
+                                        <span class="demo-keyword">财务</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 功能4：搜索结果 -->
+                        <div class="demo-card">
+                            <div class="demo-card-header">
+                                <div class="demo-card-icon">
+                                    <i class="fas fa-list"></i>
+                                </div>
+                                <h2 class="demo-card-title">搜索结果</h2>
+                            </div>
+                            <div class="demo-card-content">
+                                <p>清晰的结果展示，支持类型筛选和分页浏览。</p>
+                                <ul class="demo-features">
+                                    <li><i class="fas fa-check-circle"></i> 卡片式布局，信息清晰</li>
+                                    <li><i class="fas fa-check-circle"></i> 按类型筛选结果</li>
+                                    <li><i class="fas fa-check-circle"></i> 关键词高亮显示</li>
+                                    <li><i class="fas fa-check-circle"></i> 支持分页浏览</li>
+                                </ul>
+                                <div style="margin-top: var(--spacing-card);">
+                                    <a href="search-results.html?q=科研经费" class="demo-button">
+                                        <i class="fas fa-search"></i>
+                                        查看示例结果
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快速测试 -->
+                    <div class="demo-card" style="margin-bottom: var(--spacing-page);">
+                        <div class="demo-card-header">
+                            <div class="demo-card-icon">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h2 class="demo-card-title">快速测试</h2>
+                        </div>
+                        <div class="demo-card-content">
+                            <h3>推荐测试关键词</h3>
+                            <p>点击下方关键词快速体验搜索功能：</p>
+                            <div class="demo-keywords" id="testKeywords">
+                                <span class="demo-keyword" data-keyword="科研经费">科研经费</span>
+                                <span class="demo-keyword" data-keyword="招生录取">招生录取</span>
+                                <span class="demo-keyword" data-keyword="基建采购">基建采购</span>
+                                <span class="demo-keyword" data-keyword="财务管理">财务管理</span>
+                                <span class="demo-keyword" data-keyword="八项规定">八项规定</span>
+                                <span class="demo-keyword" data-keyword="三重一大">三重一大</span>
+                                <span class="demo-keyword" data-keyword="固定资产">固定资产</span>
+                                <span class="demo-keyword" data-keyword="预算执行">预算执行</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 使用提示 -->
+                    <div class="demo-card">
+                        <div class="demo-card-header">
+                            <div class="demo-card-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <h2 class="demo-card-title">使用提示</h2>
+                        </div>
+                        <div class="demo-card-content">
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-card);">
+                                <div>
+                                    <h3>💡 搜索技巧</h3>
+                                    <ul class="demo-features">
+                                        <li><i class="fas fa-arrow-right"></i> 使用简短关键词</li>
+                                        <li><i class="fas fa-arrow-right"></i> 利用搜索建议</li>
+                                        <li><i class="fas fa-arrow-right"></i> 善用类型筛选</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3>⚡ 快捷操作</h3>
+                                    <ul class="demo-features">
+                                        <li><i class="fas fa-arrow-right"></i> 回车键快速搜索</li>
+                                        <li><i class="fas fa-arrow-right"></i> 点击建议直接跳转</li>
+                                        <li><i class="fas fa-arrow-right"></i> 历史记录一键搜索</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h3>📚 更多资源</h3>
+                                    <ul class="demo-features">
+                                        <li><i class="fas fa-arrow-right"></i> <a href="test-search.html">功能测试页面</a></li>
+                                        <li><i class="fas fa-arrow-right"></i> <a href="SEARCH-USAGE-GUIDE.md">使用指南</a></li>
+                                        <li><i class="fas fa-arrow-right"></i> <a href="SEARCH-FEATURE-IMPLEMENTATION.md">技术文档</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer id="footer"></footer>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        // 绑定测试关键词点击事件
+        document.addEventListener('DOMContentLoaded', () => {
+            const keywords = document.querySelectorAll('#testKeywords .demo-keyword');
+            keywords.forEach(keyword => {
+                keyword.addEventListener('click', () => {
+                    const searchKeyword = keyword.dataset.keyword;
+                    window.location.href = `search-results.html?q=${encodeURIComponent(searchKeyword)}`;
+                });
+            });
+
+            // 绑定所有 demo-keyword 的点击事件
+            document.querySelectorAll('.demo-keyword').forEach(keyword => {
+                keyword.addEventListener('click', () => {
+                    const text = keyword.textContent.trim();
+                    const searchInput = document.querySelector('.navbar-search input');
+                    if (searchInput) {
+                        searchInput.value = text;
+                        searchInput.focus();
+                        // 触发输入事件以显示建议
+                        searchInput.dispatchEvent(new Event('input'));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

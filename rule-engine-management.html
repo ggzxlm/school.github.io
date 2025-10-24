@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>规则引擎管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/rule-engine-management.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-cog"></i>
+                            规则引擎管理
+                        </h1>
+                        <p class="page-subtitle">规则引擎配置、执行监控与统计分析</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="showImportModal()">
+                            <i class="fas fa-file-import"></i>
+                            导入规则
+                        </button>
+                        <button class="btn btn-primary" onclick="showCreateRuleModal()">
+                            <i class="fas fa-plus"></i>
+                            创建规则
+                        </button>
+                    </div>
+                </div>
+
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('overview')">概览</button>
+            <button class="tab-btn" onclick="switchTab('rules')">规则管理</button>
+            <button class="tab-btn" onclick="switchTab('execution')">执行历史</button>
+            <button class="tab-btn" onclick="switchTab('test')">规则测试</button>
+        </div>
+
+        <!-- 概览标签页 -->
+        <div id="overview-tab" class="tab-content active">
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-list-alt"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">规则总数</div>
+                        <div class="stat-value" id="stat-total-rules">0</div>
+                        <div class="stat-detail">已启用 <span id="stat-enabled-rules">0</span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-play-circle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">执行次数</div>
+                        <div class="stat-value" id="stat-total-executions">0</div>
+                        <div class="stat-detail">今日 <span id="stat-today-executions">0</span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">匹配总数</div>
+                        <div class="stat-value" id="stat-total-matches">0</div>
+                        <div class="stat-detail">平均匹配率 <span id="stat-avg-match-rate">0%</span></div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-info">
+                        <div class="stat-label">规则冲突</div>
+                        <div class="stat-value" id="stat-conflicts">0</div>
+                        <div class="stat-detail">需要处理</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 图表 -->
+            <div class="charts-grid">
+                <div class="chart-card">
+                    <h3>规则类型分布</h3>
+                    <div id="ruleTypeChart" class="chart-container"></div>
+                </div>
+                <div class="chart-card">
+                    <h3>执行趋势</h3>
+                    <div id="executionTrendChart" class="chart-container"></div>
+                </div>
+            </div>
+
+            <!-- 规则分类统计 -->
+            <div class="section-card">
+                <h3>规则分类统计</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>分类</th>
+                                <th>规则总数</th>
+                                <th>已启用</th>
+                                <th>已禁用</th>
+                            </tr>
+                        </thead>
+                        <tbody id="categoryStatsBody">
+                            <tr>
+                                <td colspan="4" class="empty-state">暂无数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- 规则冲突检测 -->
+            <div class="section-card" id="conflictsSection" style="display: none;">
+                <h3><i class="fas fa-exclamation-triangle"></i> 规则冲突检测</h3>
+                <div id="conflictsContainer"></div>
+            </div>
+        </div>
+
+        <!-- 规则管理标签页 -->
+        <div id="rules-tab" class="tab-content">
+            <!-- 工具栏 -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <div class="filter-group">
+                        <select id="ruleTypeFilter" onchange="filterRules()">
+                            <option value="">全部类型</option>
+                            <option value="THRESHOLD">阈值规则</option>
+                            <option value="TREND">趋势规则</option>
+                            <option value="CORRELATION">关联规则</option>
+                            <option value="SEQUENCE">时序规则</option>
+                            <option value="GRAPH">图谱规则</option>
+                        </select>
+                        <select id="statusFilter" onchange="filterRules()">
+                            <option value="">全部状态</option>
+                            <option value="enabled">已启用</option>
+                            <option value="disabled">已禁用</option>
+                        </select>
+                        <select id="categoryFilter" onchange="filterRules()">
+                            <option value="">全部分类</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="toolbar-right">
+                    <div class="search-box">
+                        <input type="text" id="ruleSearch" placeholder="搜索规则名称..." oninput="filterRules()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- 批量操作栏 -->
+            <div id="batchActions" class="batch-actions">
+                <div class="batch-info">
+                    已选择 <strong id="selectedCount">0</strong> 条规则
+                </div>
+                <div class="batch-buttons">
+                    <button class="btn btn-success" onclick="batchEnableRules()">批量启用</button>
+                    <button class="btn btn-warning" onclick="batchDisableRules()">批量禁用</button>
+                    <button class="btn btn-info" onclick="batchExportRules()">批量导出</button>
+                    <button class="btn btn-danger" onclick="batchDeleteRules()">批量删除</button>
+                    <button class="btn btn-secondary" onclick="clearSelection()">取消选择</button>
+                </div>
+            </div>
+
+            <!-- 规则列表 -->
+            <div class="section-card">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                                <th>规则名称</th>
+                                <th>规则类型</th>
+                                <th>分类</th>
+                                <th>优先级</th>
+                                <th>预警等级</th>
+                                <th>状态</th>
+                                <th>执行次数</th>
+                                <th>匹配次数</th>
+                                <th>最后执行</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rulesTableBody">
+                            <tr>
+                                <td colspan="11" class="empty-state">暂无规则数据</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 执行历史标签页 -->
+        <div id="execution-tab" class="tab-content">
+            <div class="section-card">
+                <h3>执行历史</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>执行时间</th>
+                                <th>规则名称</th>
+                                <th>规则类型</th>
+                                <th>数据量</th>
+                                <th>匹配数</th>
+                                <th>匹配率</th>
+                                <th>执行时长</th>
+                                <th>状态</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="executionHistoryBody">
+                            <tr>
+                                <td colspan="9" class="empty-state">暂无执行历史</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 规则测试标签页 -->
+        <div id="test-tab" class="tab-content">
+            <div class="section-card">
+                <h3>规则测试</h3>
+                <div class="form-group">
+                    <label>选择规则</label>
+                    <select id="testRuleSelect" onchange="loadRuleForTest()">
+                        <option value="">请选择规则</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>测试数据（JSON格式）</label>
+                    <textarea id="testDataInput" rows="10" placeholder='[{"field1": "value1", "field2": 100}, ...]'></textarea>
+                    <div class="form-help">输入JSON格式的测试数据数组，或留空使用模拟数据</div>
+                </div>
+                <button class="btn btn-primary" onclick="runRuleTest()">
+                    <i class="fas fa-play"></i>
+                    执行测试
+                </button>
+                
+                <div id="testResultContainer"></div>
+            </div>
+
+            <div class="section-card">
+                <h3>测试历史</h3>
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>测试时间</th>
+                                <th>规则名称</th>
+                                <th>测试数据量</th>
+                                <th>匹配数</th>
+                                <th>匹配率</th>
+                                <th>执行时长</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="testHistoryBody">
+                            <tr>
+                                <td colspan="7" class="empty-state">暂无测试历史</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 创建/编辑规则模态框 -->
+    <div id="ruleModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="ruleModalTitle">创建规则</h2>
+                <span class="close" onclick="closeRuleModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="ruleForm">
+                    <input type="hidden" id="ruleId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>规则名称 <span class="required">*</span></label>
+                            <input type="text" id="ruleName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>规则类型 <span class="required">*</span></label>
+                            <select id="ruleType" required onchange="updateConfigEditor()">
+                                <option value="">请选择</option>
+                                <option value="THRESHOLD">阈值规则</option>
+                                <option value="TREND">趋势规则</option>
+                                <option value="CORRELATION">关联规则</option>
+                                <option value="SEQUENCE">时序规则</option>
+                                <option value="GRAPH">图谱规则</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>规则分类</label>
+                            <input type="text" id="ruleCategory" placeholder="如：财务监督、采购监督等">
+                        </div>
+                        <div class="form-group">
+                            <label>预警等级</label>
+                            <select id="alertLevel">
+                                <option value="LOW">低</option>
+                                <option value="MEDIUM" selected>中</option>
+                                <option value="HIGH">高</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>优先级</label>
+                            <input type="number" id="priority" value="0" min="0" max="100">
+                            <div class="form-help">数值越大优先级越高</div>
+                        </div>
+                        <div class="form-group">
+                            <label>规则分组</label>
+                            <input type="text" id="groupId" placeholder="可选，用于规则分组">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>规则描述</label>
+                        <textarea id="ruleDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>规则配置 <span class="required">*</span></label>
+                        <div id="configEditor" class="config-editor">
+                            <p style="color: #999;">请先选择规则类型</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="ruleEnabled" checked>
+                            启用规则
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRuleModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveRule()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则详情模态框 -->
+    <div id="ruleDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>规则详情</h2>
+                <span class="close" onclick="closeRuleDetailModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="ruleDetailBody">
+                <!-- 动态填充 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRuleDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入规则模态框 -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>导入规则</h2>
+                <span class="close" onclick="closeImportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="file-upload" onclick="document.getElementById('importFile').click()">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">点击选择JSON文件或拖拽文件到此处</div>
+                    <input type="file" id="importFile" accept=".json" onchange="handleFileSelect(event)">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>
+                        <input type="checkbox" id="overwriteExisting">
+                        覆盖同名规则
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enableOnImport">
+                        导入后自动启用
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeImportModal()">取消</button>
+                <button class="btn btn-primary" onclick="importRules()">导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/rule-engine-service.js"></script>
+    <script src="js/rule-engine-management.js"></script>
+</body>
+
+</html>

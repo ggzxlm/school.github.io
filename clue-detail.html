@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线索详情 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/clue-detail.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+        
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+            
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 面包屑导航 -->
+                <nav class="breadcrumb-nav">
+                    <a href="index.html" class="breadcrumb-item">
+                        <i class="fas fa-home"></i>
+                        首页
+                    </a>
+                    <span class="breadcrumb-separator">/</span>
+                    <a href="clue-library.html" class="breadcrumb-item">线索库</a>
+                    <span class="breadcrumb-separator">/</span>
+                    <span class="breadcrumb-item active" id="breadcrumb-title">线索详情</span>
+                </nav>
+
+                <!-- 基本信息卡片 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="clue-header">
+                            <div class="clue-header-left">
+                                <div class="risk-badge" id="risk-badge">
+                                    <i class="fas fa-exclamation-triangle"></i>
+                                    <span id="risk-level">高风险</span>
+                                </div>
+                                <div class="clue-title-section">
+                                    <h1 class="clue-title" id="clue-title">科研经费异常报销线索</h1>
+                                    <div class="clue-meta">
+                                        <span class="meta-item">
+                                            <i class="fas fa-barcode"></i>
+                                            <span id="clue-number">XS202510210001</span>
+                                        </span>
+                                        <span class="meta-item">
+                                            <i class="fas fa-calendar"></i>
+                                            <span id="clue-date">2025-10-21 10:30</span>
+                                        </span>
+                                        <span class="meta-item">
+                                            <i class="fas fa-user"></i>
+                                            <span id="clue-creator">系统管理员</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clue-header-right">
+                                <span class="status-badge" id="status-badge">待处理</span>
+                            </div>
+                        </div>
+                        
+                        <div class="clue-info-grid">
+                            <div class="info-item">
+                                <label class="info-label">来源类型</label>
+                                <div class="info-value" id="source-type">规则引擎</div>
+                            </div>
+                            <div class="info-item">
+                                <label class="info-label">责任单位</label>
+                                <div class="info-value" id="responsible-dept">计算机学院</div>
+                            </div>
+                            <div class="info-item">
+                                <label class="info-label">责任人</label>
+                                <div class="info-value" id="responsible-person">张三</div>
+                            </div>
+                            <div class="info-item">
+                                <label class="info-label">处置时限</label>
+                                <div class="info-value" id="deadline">2025-10-28</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标签页区域 -->
+                <div class="card mb-3">
+                    <div class="tabs-container">
+                        <div class="tabs-header">
+                            <button class="tab-button active" data-tab="details" onclick="ClueDetail.switchTab('details')">
+                                <i class="fas fa-info-circle"></i>
+                                详细信息
+                            </button>
+                            <button class="tab-button" data-tab="records" onclick="ClueDetail.switchTab('records')">
+                                <i class="fas fa-history"></i>
+                                处置记录
+                            </button>
+                            <button class="tab-button" data-tab="evidence" onclick="ClueDetail.switchTab('evidence')">
+                                <i class="fas fa-file-alt"></i>
+                                证据材料
+                            </button>
+                            <button class="tab-button" data-tab="analysis" onclick="ClueDetail.switchTab('analysis')">
+                                <i class="fas fa-project-diagram"></i>
+                                关联分析
+                            </button>
+                        </div>
+                        
+                        <div class="tabs-content">
+                            <!-- 详细信息标签页 -->
+                            <div class="tab-pane active" id="tab-details">
+                                <div class="detail-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-align-left"></i>
+                                        线索描述
+                                    </h3>
+                                    <div class="section-content" id="clue-description">
+                                        <p>系统监测到计算机学院张三教授在2025年10月期间存在多笔异常报销记录，具体表现为：</p>
+                                        <ul>
+                                            <li>连续3天内提交5笔报销申请，总金额达50,000元</li>
+                                            <li>发票号码存在连号情况（发票号：12345678-12345682）</li>
+                                            <li>报销时间集中在非工作时段（晚上22:00-23:00）</li>
+                                            <li>部分发票开具单位与科研项目预算科目不符</li>
+                                        </ul>
+                                        <p>该行为触发了科研经费异常报销预警规则，需要进一步核查。</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-users"></i>
+                                        涉及对象
+                                    </h3>
+                                    <div class="section-content">
+                                        <div class="involved-objects" id="involved-objects">
+                                            <div class="object-item">
+                                                <div class="object-icon">
+                                                    <i class="fas fa-user"></i>
+                                                </div>
+                                                <div class="object-info">
+                                                    <div class="object-name">张三</div>
+                                                    <div class="object-detail">计算机学院 / 教授 / 工号：20180001</div>
+                                                </div>
+                                            </div>
+                                            <div class="object-item">
+                                                <div class="object-icon">
+                                                    <i class="fas fa-building"></i>
+                                                </div>
+                                                <div class="object-info">
+                                                    <div class="object-name">计算机学院</div>
+                                                    <div class="object-detail">二级学院 / 负责人：李四</div>
+                                                </div>
+                                            </div>
+                                            <div class="object-item">
+                                                <div class="object-icon">
+                                                    <i class="fas fa-project-diagram"></i>
+                                                </div>
+                                                <div class="object-info">
+                                                    <div class="object-name">人工智能算法研究项目</div>
+                                                    <div class="object-detail">项目编号：KY2024001 / 预算：500,000元</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-dollar-sign"></i>
+                                        涉及金额
+                                    </h3>
+                                    <div class="section-content">
+                                        <div class="amount-info">
+                                            <div class="amount-item">
+                                                <label>异常报销总额</label>
+                                                <div class="amount-value highlight">¥50,000.00</div>
+                                            </div>
+                                            <div class="amount-item">
+                                                <label>项目剩余预算</label>
+                                                <div class="amount-value">¥320,000.00</div>
+                                            </div>
+                                            <div class="amount-item">
+                                                <label>预算执行率</label>
+                                                <div class="amount-value">36%</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="detail-section">
+                                    <h3 class="section-title">
+                                        <i class="fas fa-tags"></i>
+                                        标签分类
+                                    </h3>
+                                    <div class="section-content">
+                                        <div class="tags-list" id="tags-list">
+                                            <span class="tag tag-primary">科研经费</span>
+                                            <span class="tag tag-warning">异常报销</span>
+                                            <span class="tag tag-danger">连号发票</span>
+                                            <span class="tag tag-info">规则引擎</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 处置记录标签页 -->
+                            <div class="tab-pane" id="tab-records">
+                                <div class="timeline" id="timeline">
+                                    <!-- 时间线内容将由 JavaScript 动态生成 -->
+                                </div>
+                            </div>
+                            
+                            <!-- 证据材料标签页 -->
+                            <div class="tab-pane" id="tab-evidence">
+                                <div class="evidence-toolbar">
+                                    <button class="btn btn-primary" onclick="ClueDetail.uploadEvidence()">
+                                        <i class="fas fa-upload"></i>
+                                        上传材料
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="ClueDetail.downloadAll()">
+                                        <i class="fas fa-download"></i>
+                                        批量下载
+                                    </button>
+                                </div>
+                                <div class="evidence-list" id="evidence-list">
+                                    <!-- 证据材料列表将由 JavaScript 动态生成 -->
+                                </div>
+                            </div>
+                            
+                            <!-- 关联分析标签页 -->
+                            <div class="tab-pane" id="tab-analysis">
+                                <div class="analysis-container">
+                                    <div class="analysis-toolbar">
+                                        <div class="toolbar-left">
+                                            <button class="btn btn-sm btn-secondary" onclick="ClueDetail.resetGraph()">
+                                                <i class="fas fa-redo"></i>
+                                                重置视图
+                                            </button>
+                                            <button class="btn btn-sm btn-secondary" onclick="ClueDetail.expandGraph()">
+                                                <i class="fas fa-expand"></i>
+                                                展开关联
+                                            </button>
+                                        </div>
+                                        <div class="toolbar-right">
+                                            <label class="toolbar-label">关联深度：</label>
+                                            <select class="form-select form-select-sm" id="graph-depth">
+                                                <option value="1">1层</option>
+                                                <option value="2" selected>2层</option>
+                                                <option value="3">3层</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="graph-container" id="graph-container">
+                                        <!-- 关系图谱将由 JavaScript 动态生成 -->
+                                        <div class="graph-placeholder">
+                                            <i class="fas fa-project-diagram"></i>
+                                            <p>关系图谱加载中...</p>
+                                        </div>
+                                    </div>
+                                    <div class="analysis-legend">
+                                        <div class="legend-title">图例说明</div>
+                                        <div class="legend-items">
+                                            <div class="legend-item">
+                                                <span class="legend-icon person"></span>
+                                                <span class="legend-label">人员</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-icon company"></span>
+                                                <span class="legend-label">企业</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-icon contract"></span>
+                                                <span class="legend-label">合同</span>
+                                            </div>
+                                            <div class="legend-item">
+                                                <span class="legend-icon project"></span>
+                                                <span class="legend-label">项目</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 底部操作按钮区 -->
+                <div class="action-bar">
+                    <div class="action-bar-left">
+                        <button class="btn btn-secondary" onclick="ClueDetail.goBack()">
+                            <i class="fas fa-arrow-left"></i>
+                            返回列表
+                        </button>
+                    </div>
+                    <div class="action-bar-right">
+                        <button class="btn btn-primary" id="btn-assign" onclick="ClueDetail.assignClue()">
+                            <i class="fas fa-share"></i>
+                            分发
+                        </button>
+                        <button class="btn btn-primary" id="btn-investigate" onclick="ClueDetail.investigateClue()">
+                            <i class="fas fa-search"></i>
+                            核查
+                        </button>
+                        <button class="btn btn-warning" id="btn-rectify" onclick="ClueDetail.rectifyClue()">
+                            <i class="fas fa-wrench"></i>
+                            整改
+                        </button>
+                        <button class="btn btn-secondary" id="btn-archive" onclick="ClueDetail.archiveClue()">
+                            <i class="fas fa-archive"></i>
+                            归档
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+    
+    <!-- 分发弹窗 -->
+    <div class="modal" id="assign-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">分发线索</h3>
+                <button class="modal-close" onclick="ClueDetail.closeModal('assign-modal')">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label required">责任部门</label>
+                    <select class="form-select" id="assign-department">
+                        <option value="">请选择责任部门</option>
+                        <option value="dept1">计算机学院</option>
+                        <option value="dept2">物理学院</option>
+                        <option value="dept3">化学学院</option>
+                        <option value="dept4">财务处</option>
+                        <option value="dept5">资产处</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">责任人</label>
+                    <select class="form-select" id="assign-person">
+                        <option value="">请选择责任人</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label required">处置时限</label>
+                    <input type="date" class="form-input" id="assign-deadline">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">优先级</label>
+                    <select class="form-select" id="assign-priority">
+                        <option value="high">高</option>
+                        <option value="medium" selected>中</option>
+                        <option value="low">低</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">备注说明</label>
+                    <textarea class="form-textarea" id="assign-note" rows="3" placeholder="请输入备注说明..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="ClueDetail.closeModal('assign-modal')">取消</button>
+                <button class="btn btn-primary" onclick="ClueDetail.confirmAssign()">确认分发</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/clue-detail.js"></script>
+</body>
+</html>

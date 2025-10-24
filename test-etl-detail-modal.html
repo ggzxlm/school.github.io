@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试ETL作业详情模态框</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/etl-management.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f3f4f6;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .test-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #111827;
+        }
+        .test-section {
+            margin-bottom: 30px;
+        }
+        .test-section h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        .test-btn {
+            padding: 10px 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .test-btn:hover {
+            background: #1e40af;
+        }
+        .test-info {
+            background: #f0f9ff;
+            border-left: 4px solid #2563eb;
+            padding: 12px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #1e40af;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1 class="test-title">ETL作业详情模态框测试</h1>
+        
+        <div class="test-info">
+            <strong>测试说明：</strong> 点击下面的按钮测试ETL作业详情模态框的显示效果
+        </div>
+
+        <div class="test-section">
+            <h3>测试按钮</h3>
+            <button class="test-btn" onclick="testJobDetail()">
+                <i class="fas fa-eye"></i> 打开作业详情
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3>功能说明</h3>
+            <ul style="line-height: 1.8; color: #6b7280;">
+                <li>详情模态框采用与数据源管理相同的样式</li>
+                <li>显示作业的基本信息、数据源配置、执行统计和执行历史</li>
+                <li>提供执行、设计和编辑操作按钮</li>
+                <li>支持点击遮罩层或关闭按钮关闭模态框</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 作业详情模态框 -->
+    <div id="jobDetailModal" class="modal-overlay">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    作业详情
+                </h2>
+                <button id="closeJobDetailModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">基本信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>作业名称</label>
+                            <div id="detailJobName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>版本</label>
+                            <div id="detailVersion">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>状态</label>
+                            <div id="detailStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>启用状态</label>
+                            <div id="detailEnabled">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>更新时间</label>
+                            <div id="detailUpdateTime">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>描述</label>
+                            <div id="detailDescription">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据源配置 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">数据源配置</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>数据源</label>
+                            <div id="detailDataSource">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>目标表</label>
+                            <div id="detailTargetTable">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>写入模式</label>
+                            <div id="detailWriteMode">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>调度表达式</label>
+                            <div id="detailSchedule">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>查询语句</label>
+                            <div id="detailSourceQuery" style="font-family: monospace; background: #F3F4F6; padding: 8px; border-radius: 4px;">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 执行统计 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">执行统计</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>最后执行时间</label>
+                            <div id="detailLastExecution">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>最后执行状态</label>
+                            <div id="detailLastStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>总执行次数</label>
+                            <div id="detailTotalExecutions">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>成功率</label>
+                            <div id="detailSuccessRate">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 执行历史 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">执行历史</h3>
+                    <div id="executionHistory" class="execution-history-list">
+                        <!-- 执行历史将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="closeJobDetailBtn" class="btn btn-secondary">关闭</button>
+                <button id="executeJobDetailBtn" class="btn btn-success">
+                    <i class="fas fa-play"></i> 执行作业
+                </button>
+                <button id="designJobDetailBtn" class="btn btn-info">
+                    <i class="fas fa-project-diagram"></i> 可视化设计
+                </button>
+                <button id="editJobDetailBtn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模拟数据
+        const mockJob = {
+            id: 'job-001',
+            jobName: '用户数据同步作业',
+            version: 'v1.2.0',
+            status: 'PUBLISHED',
+            enabled: true,
+            createdAt: '2024-10-01 10:00:00',
+            updatedAt: '2024-10-23 15:30:00',
+            description: '从MySQL数据库同步用户数据到数据仓库，每天凌晨2点自动执行',
+            sourceConfig: {
+                dataSourceId: 'ds-001',
+                query: 'SELECT id, name, email, created_at FROM users WHERE updated_at > ?'
+            },
+            targetConfig: {
+                tableName: 'dw_users',
+                writeMode: 'UPSERT'
+            },
+            schedule: '0 2 * * *',
+            lastExecutionTime: '2024-10-24 02:00:00',
+            lastExecutionStatus: 'SUCCESS'
+        };
+
+        const mockExecutions = [
+            {
+                id: 'exec-001',
+                startTime: '2024-10-24 02:00:00',
+                endTime: '2024-10-24 02:05:30',
+                status: 'SUCCESS',
+                recordsProcessed: 15420,
+                recordsSuccess: 15420,
+                recordsFailed: 0
+            },
+            {
+                id: 'exec-002',
+                startTime: '2024-10-23 02:00:00',
+                endTime: '2024-10-23 02:04:15',
+                status: 'SUCCESS',
+                recordsProcessed: 12350,
+                recordsSuccess: 12350,
+                recordsFailed: 0
+            },
+            {
+                id: 'exec-003',
+                startTime: '2024-10-22 02:00:00',
+                endTime: '2024-10-22 02:00:45',
+                status: 'FAILED',
+                recordsProcessed: 0,
+                recordsSuccess: 0,
+                recordsFailed: 0
+            }
+        ];
+
+        // 渲染状态徽章
+        function renderStatusBadge(status) {
+            const badges = {
+                'DRAFT': '<span class="status-badge status-pending">草稿</span>',
+                'PUBLISHED': '<span class="status-badge status-completed">已发布</span>',
+                'ARCHIVED': '<span class="status-badge status-closed">已归档</span>'
+            };
+            return badges[status] || `<span class="status-badge status-pending">${status}</span>`;
+        }
+
+        function renderEnabledBadge(enabled) {
+            return enabled 
+                ? '<span class="status-badge status-completed">已启用</span>'
+                : '<span class="status-badge status-pending">已禁用</span>';
+        }
+
+        function renderExecutionStatusBadge(status) {
+            const badges = {
+                'SUCCESS': '<span class="status-badge status-completed">成功</span>',
+                'FAILED': '<span class="status-badge status-closed">失败</span>',
+                'RUNNING': '<span class="status-badge status-pending">运行中</span>'
+            };
+            return badges[status] || `<span class="status-badge status-pending">${status}</span>`;
+        }
+
+        // 测试函数
+        function testJobDetail() {
+            const job = mockJob;
+
+            // 填充基本信息
+            document.getElementById('detailJobName').textContent = job.jobName;
+            document.getElementById('detailVersion').textContent = job.version;
+            document.getElementById('detailStatus').innerHTML = renderStatusBadge(job.status);
+            document.getElementById('detailEnabled').innerHTML = renderEnabledBadge(job.enabled);
+            document.getElementById('detailCreateTime').textContent = job.createdAt;
+            document.getElementById('detailUpdateTime').textContent = job.updatedAt;
+            document.getElementById('detailDescription').textContent = job.description;
+
+            // 填充数据源配置
+            document.getElementById('detailDataSource').textContent = 'MySQL-Production';
+            document.getElementById('detailTargetTable').textContent = job.targetConfig.tableName;
+            document.getElementById('detailWriteMode').textContent = job.targetConfig.writeMode;
+            document.getElementById('detailSchedule').textContent = job.schedule;
+            document.getElementById('detailSourceQuery').textContent = job.sourceConfig.query;
+
+            // 填充执行统计
+            document.getElementById('detailLastExecution').textContent = job.lastExecutionTime;
+            document.getElementById('detailLastStatus').innerHTML = renderExecutionStatusBadge(job.lastExecutionStatus);
+            document.getElementById('detailTotalExecutions').textContent = '156';
+            document.getElementById('detailSuccessRate').textContent = '98.1%';
+
+            // 填充执行历史
+            const executionHistory = document.getElementById('executionHistory');
+            executionHistory.innerHTML = mockExecutions.map(exec => `
+                <div class="execution-history-item">
+                    <div class="execution-history-header">
+                        <span class="execution-history-time">
+                            <i class="fas fa-clock"></i> ${exec.startTime}
+                        </span>
+                        ${renderExecutionStatusBadge(exec.status)}
+                    </div>
+                    <div class="execution-history-details">
+                        ${exec.status === 'SUCCESS' ? `
+                            <span><i class="fas fa-database"></i> 处理记录: ${exec.recordsProcessed}</span>
+                            <span><i class="fas fa-check"></i> 成功: ${exec.recordsSuccess}</span>
+                            <span><i class="fas fa-times"></i> 失败: ${exec.recordsFailed}</span>
+                        ` : `
+                            <span class="text-red-600"><i class="fas fa-exclamation-circle"></i> 执行失败</span>
+                        `}
+                    </div>
+                </div>
+            `).join('');
+
+            // 显示模态框
+            const modal = document.getElementById('jobDetailModal');
+            modal.style.display = 'flex';
+            setTimeout(() => {
+                modal.classList.add('modal-show');
+            }, 10);
+        }
+
+        // 关闭模态框
+        function closeJobDetailModal() {
+            const modal = document.getElementById('jobDetailModal');
+            modal.classList.remove('modal-show');
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 隐藏模态框
+            const modal = document.getElementById('jobDetailModal');
+            modal.style.display = 'none';
+
+            // 绑定关闭按钮
+            document.getElementById('closeJobDetailModalBtn').addEventListener('click', closeJobDetailModal);
+            document.getElementById('closeJobDetailBtn').addEventListener('click', closeJobDetailModal);
+
+            // 绑定操作按钮
+            document.getElementById('executeJobDetailBtn').addEventListener('click', function() {
+                alert('执行作业功能');
+            });
+
+            document.getElementById('designJobDetailBtn').addEventListener('click', function() {
+                alert('可视化设计功能');
+            });
+
+            document.getElementById('editJobDetailBtn').addEventListener('click', function() {
+                alert('编辑作业功能');
+            });
+
+            // 点击遮罩层关闭
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeJobDetailModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

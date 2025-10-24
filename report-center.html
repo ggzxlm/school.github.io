@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>报表中心 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/report-center.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-pie"></i>
+                        报表中心
+                    </h1>
+                    <p class="page-description">创建、管理和订阅报表，支持多种图表类型和自动分发</p>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">全部报表</div>
+                            <div class="stat-value" id="totalReports">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">收藏报表</div>
+                            <div class="stat-value" id="favoriteReports">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-icon">
+                            <i class="fas fa-share-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">共享报表</div>
+                            <div class="stat-value" id="sharedReports">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">订阅报表</div>
+                            <div class="stat-value" id="subscribedReports">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 报表工具栏 -->
+                <div class="report-toolbar-section">
+                    <div class="toolbar-left">
+                        <!-- 分类标签 -->
+                        <div class="category-tabs">
+                            <button class="category-tab active" data-category="all">
+                                <i class="fas fa-th"></i>
+                                全部报表
+                            </button>
+                            <button class="category-tab" data-category="table">
+                                <i class="fas fa-table"></i>
+                                表格报表
+                            </button>
+                            <button class="category-tab" data-category="chart">
+                                <i class="fas fa-chart-bar"></i>
+                                图表报表
+                            </button>
+                            <button class="category-tab" data-category="dashboard">
+                                <i class="fas fa-tachometer-alt"></i>
+                                仪表板
+                            </button>
+                            <button class="category-tab" data-category="template">
+                                <i class="fas fa-file-invoice"></i>
+                                报表模板
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索和筛选区域 -->
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="搜索报表名称、描述...">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <select id="typeFilter" class="filter-select">
+                                <option value="">全部类型</option>
+                                <option value="TABLE">表格报表</option>
+                                <option value="CHART">图表报表</option>
+                                <option value="DASHBOARD">仪表板</option>
+                            </select>
+
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">全部状态</option>
+                                <option value="published">已发布</option>
+                                <option value="draft">草稿</option>
+                                <option value="archived">已归档</option>
+                            </select>
+
+                            <select id="sortFilter" class="filter-select">
+                                <option value="updateTime">最近更新</option>
+                                <option value="createTime">创建时间</option>
+                                <option value="name">名称</option>
+                                <option value="views">浏览量</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-right">
+                            <button class="btn btn-secondary" onclick="reportCenter.importReport()">
+                                <i class="fas fa-file-import"></i>
+                                导入报表
+                            </button>
+                            <button class="btn btn-primary" onclick="reportCenter.createReport()">
+                                <i class="fas fa-plus"></i>
+                                创建报表
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 报表列表 -->
+                <div class="report-grid" id="reportGrid">
+                    <!-- 报表卡片将通过JavaScript动态生成 -->
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 报表详情对话框 -->
+    <div id="reportDetailDialog" class="modal-overlay">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-file-alt"></i>
+                    <span id="reportDetailTitle">报表详情</span>
+                </h2>
+                <button class="modal-close" onclick="reportCenter.closeReportDetail()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="reportDetailContent">
+                    <!-- 详情内容将通过JavaScript生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="reportCenter.closeReportDetail()">关闭</button>
+                <button class="btn btn-primary" onclick="reportCenter.viewReport()">
+                    <i class="fas fa-eye"></i> 查看报表
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 创建报表对话框 -->
+    <div id="createReportDialog" class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-plus"></i>
+                    创建报表
+                </h2>
+                <button class="modal-close" onclick="reportCenter.closeCreateDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="form-label">报表名称 *</label>
+                        <input type="text" id="reportName" class="form-input" placeholder="请输入报表名称">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">报表类型 *</label>
+                        <select id="reportType" class="form-input">
+                            <option value="">请选择报表类型</option>
+                            <option value="TABLE">表格报表</option>
+                            <option value="CHART">图表报表</option>
+                            <option value="DASHBOARD">仪表板</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">报表描述</label>
+                        <textarea id="reportDescription" class="form-input" rows="3" placeholder="请输入报表描述"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">数据源</label>
+                        <select id="reportDataSource" class="form-input">
+                            <option value="">请选择数据源</option>
+                            <option value="alerts">预警数据</option>
+                            <option value="clues">线索数据</option>
+                            <option value="workorders">工单数据</option>
+                            <option value="rectification">整改数据</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="reportCenter.closeCreateDialog()">取消</button>
+                <button class="btn btn-primary" onclick="reportCenter.saveReport()">
+                    <i class="fas fa-save"></i> 创建
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/report-center.js"></script>
+</body>
+</html>

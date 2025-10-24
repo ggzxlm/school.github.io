@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>模型评估 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/model-evaluation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">
+                        <i class="fas fa-chart-line"></i>
+                        模型评估
+                    </h1>
+                    <p class="page-description">监督模型性能评估与优化建议</p>
+                </div>
+
+                <!-- 评估统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">评估模型</div>
+                            <div class="stat-value" id="totalModels">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-thumbs-up"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">优秀模型</div>
+                            <div class="stat-value" id="excellentModels">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">需优化</div>
+                            <div class="stat-value" id="needOptimization">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">最近评估</div>
+                            <div class="stat-value stat-value-small" id="lastEvaluation">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索和筛选区域 -->
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="搜索模型名称...">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <select id="categoryFilter" class="filter-select">
+                                <option value="">全部分类</option>
+                                <option value="财务监督">财务监督</option>
+                                <option value="科研监督">科研监督</option>
+                                <option value="资产监督">资产监督</option>
+                                <option value="采购监督">采购监督</option>
+                                <option value="招生监督">招生监督</option>
+                                <option value="作风监督">作风监督</option>
+                            </select>
+
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">全部状态</option>
+                                <option value="excellent">优秀</option>
+                                <option value="good">良好</option>
+                                <option value="average">一般</option>
+                                <option value="poor">较差</option>
+                            </select>
+
+                            <select id="timeFilter" class="filter-select">
+                                <option value="">全部时间</option>
+                                <option value="today">今天</option>
+                                <option value="week">本周</option>
+                                <option value="month">本月</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-right">
+                            <button class="btn btn-secondary" onclick="modelEvaluation.exportReport()">
+                                <i class="fas fa-download"></i>
+                                导出报告
+                            </button>
+                            <button class="btn btn-primary" onclick="modelEvaluation.startEvaluation()">
+                                <i class="fas fa-play"></i>
+                                开始评估
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 评估结果表格 -->
+                <div class="table-section">
+                    <div class="table-header">
+                        <h2 class="table-title">
+                            <i class="fas fa-list-alt"></i>
+                            评估结果
+                        </h2>
+                        <button class="btn btn-sm btn-secondary" onclick="modelEvaluation.refreshData()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>模型名称</th>
+                                    <th>分类</th>
+                                    <th>准确率</th>
+                                    <th>召回率</th>
+                                    <th>F1分数</th>
+                                    <th>综合评分</th>
+                                    <th>评估时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="evaluationTableBody">
+                                <!-- 评估结果将通过JavaScript动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 评估详情对话框 -->
+    <div id="evaluationDetailDialog" class="modal-overlay">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-chart-line"></i>
+                    <span id="evaluationDetailTitle">评估详情</span>
+                </h2>
+                <button class="modal-close" onclick="modelEvaluation.closeEvaluationDetail()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="evaluation-detail-content" id="evaluationDetailContent">
+                    <!-- 详情内容将通过JavaScript生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="modelEvaluation.closeEvaluationDetail()">关闭</button>
+                <button class="btn btn-primary" onclick="modelEvaluation.optimizeModel()">
+                    <i class="fas fa-wrench"></i> 优化模型
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/rule-engine-service.js"></script>
+    <script src="js/supervision-model-service.js"></script>
+    <script src="js/model-evaluation.js"></script>
+</body>
+</html>

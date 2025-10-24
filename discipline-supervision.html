@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>纪检监督 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/discipline-supervision.css">
+</head>
+
+<body class="bg-gray-50">
+    <!-- 顶部导航栏 -->
+    <nav id="top-navbar"></nav>
+
+    <div class="main-wrapper">
+        <!-- 侧边导航栏 -->
+        <div id="side-navbar"></div>
+
+        <!-- 主内容区 -->
+        <main class="content-area">
+            <div style="display: flex; gap: 24px;">
+                <!-- 监督领域导航 -->
+                <div class="card" style="width: 256px; padding: 16px;">
+                    <h3 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 16px;">监督领域</h3>
+                    <nav style="display: flex; flex-direction: column; gap: 4px;" id="supervisionNav">
+                        <a href="#first-topic" class="supervision-nav-item active" data-module="first-topic">
+                            <i class="fas fa-book-open"></i>
+                            <span>第一议题</span>
+                        </a>
+                        <a href="#major-decision" class="supervision-nav-item" data-module="major-decision">
+                            <i class="fas fa-gavel"></i>
+                            <span>重大决策</span>
+                        </a>
+                        <a href="#enrollment" class="supervision-nav-item" data-module="enrollment">
+                            <i class="fas fa-user-graduate"></i>
+                            <span>招生录取</span>
+                        </a>
+                        <a href="#research-funds" class="supervision-nav-item" data-module="research-funds">
+                            <i class="fas fa-flask"></i>
+                            <span>科研经费</span>
+                        </a>
+                        <a href="#construction" class="supervision-nav-item" data-module="construction">
+                            <i class="fas fa-building"></i>
+                            <span>基建采购</span>
+                        </a>
+                        <a href="#finance" class="supervision-nav-item" data-module="finance">
+                            <i class="fas fa-coins"></i>
+                            <span>财务管理</span>
+                        </a>
+                        <a href="#eight-rules" class="supervision-nav-item" data-module="eight-rules">
+                            <i class="fas fa-clipboard-check"></i>
+                            <span>八项规定</span>
+                        </a>
+                        <a href="#teacher-ethics" class="supervision-nav-item" data-module="teacher-ethics">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <span>师德师风</span>
+                        </a>
+                        <a href="#three-major" class="supervision-nav-item" data-module="three-major">
+                            <i class="fas fa-balance-scale"></i>
+                            <span>三重一大</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <!-- 监督内容区 -->
+                <div style="flex: 1;">
+                    <!-- 第一议题监督模块 -->
+                    <div id="first-topic-content" class="supervision-content active">
+                        <div class="card" style="margin-bottom: 24px;">
+                            <h2 class="card-title">
+                                <i class="fas fa-book-open"></i>
+                                第一议题监督
+                            </h2>
+                            <p style="color: #6B7280; margin-bottom: 24px;">监督各单位党委会议第一议题制度落实情况</p>
+
+                            <!-- 学习频次统计卡片 -->
+                            <div
+                                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                                <div class="stat-card">
+                                    <div class="stat-card-title">本月学习次数</div>
+                                    <div class="stat-card-value" id="monthlyStudyCount">0</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上月 +12%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">覆盖单位数</div>
+                                    <div class="stat-card-value" id="coveredUnits">0</div>
+                                    <div class="stat-card-trend down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>较上月 -2%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">异常单位数</div>
+                                    <div class="stat-card-value text-red-600" id="abnormalUnits">0</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上月 +3</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">平均学习时长</div>
+                                    <div class="stat-card-value" id="avgDuration">0</div>
+                                    <div class="stat-card-trend down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>较上月 -5分钟</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 异常单位清单 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">异常单位清单</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="abnormalUnitsTable">
+                                <thead>
+                                    <tr>
+                                        <th>单位名称</th>
+                                        <th>本月学习次数</th>
+                                        <th>应学习次数</th>
+                                        <th>缺失次数</th>
+                                        <th>风险等级</th>
+                                        <th>责任人</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 会议纪要分析结果 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">会议纪要分析结果</h3>
+
+                            <div class="filter-bar">
+                                <div class="filter-item">
+                                    <label class="filter-label">时间范围</label>
+                                    <select class="filter-select" id="timeRange">
+                                        <option value="month">本月</option>
+                                        <option value="quarter">本季度</option>
+                                        <option value="year">本年度</option>
+                                    </select>
+                                </div>
+                                <div class="filter-item">
+                                    <label class="filter-label">单位</label>
+                                    <select class="filter-select" id="unitFilter">
+                                        <option value="">全部单位</option>
+                                        <option value="unit1">计算机学院</option>
+                                        <option value="unit2">经济管理学院</option>
+                                        <option value="unit3">外国语学院</option>
+                                    </select>
+                                </div>
+                                <div class="filter-item">
+                                    <label class="filter-label">风险等级</label>
+                                    <select class="filter-select" id="riskFilter">
+                                        <option value="">全部等级</option>
+                                        <option value="high">高风险</option>
+                                        <option value="medium">中风险</option>
+                                        <option value="low">低风险</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <table class="supervision-table" id="minutesAnalysisTable">
+                                <thead>
+                                    <tr>
+                                        <th>会议时间</th>
+                                        <th>单位名称</th>
+                                        <th>会议主题</th>
+                                        <th>第一议题内容</th>
+                                        <th>学习时长</th>
+                                        <th>分析结果</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 重大决策监督模块 -->
+                    <div id="major-decision-content" class="supervision-content">
+                        <div class="card" style="margin-bottom: 24px;">
+                            <h2 class="card-title">
+                                <i class="fas fa-gavel"></i>
+                                重大决策监督
+                            </h2>
+                            <p style="color: #6B7280; margin-bottom: 24px;">监督重大决策事项的决策程序和执行情况</p>
+
+                            <!-- 决策统计卡片 -->
+                            <div
+                                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                                <div class="stat-card">
+                                    <div class="stat-card-title">本月决策事项</div>
+                                    <div class="stat-card-value">23</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上月 +15%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">程序合规率</div>
+                                    <div class="stat-card-value">95.7%</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上月 +2.3%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">待审批事项</div>
+                                    <div class="stat-card-value">5</div>
+                                    <div class="stat-card-trend">
+                                        <i class="fas fa-minus"></i>
+                                        <span>与上月持平</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">异常预警</div>
+                                    <div class="stat-card-value warning">2</div>
+                                    <div class="stat-card-trend down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>较上月 -50%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 重大决策事项列表 -->
+                        <div class="card" style="margin-bottom: 24px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3 style="font-size: 18px; font-weight: 600; color: #111827;">重大决策事项</h3>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download" style="margin-right: 8px;"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table">
+                                <thead>
+                                    <tr>
+                                        <th>决策事项</th>
+                                        <th>决策单位</th>
+                                        <th>决策类型</th>
+                                        <th>决策时间</th>
+                                        <th>参与人数</th>
+                                        <th>程序状态</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="8" style="text-align: center; padding: 40px; color: #9CA3AF;">
+                                            加载中...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 决策程序合规性分析 -->
+                        <div class="card">
+                            <h3 style="font-size: 18px; font-weight: 600; color: #111827; margin-bottom: 16px;">
+                                决策程序合规性分析</h3>
+                            <div id="decisionComplianceChart" style="height: 300px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 招生录取监督模块 -->
+                    <div id="enrollment-content" class="supervision-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">招生录取监督</h2>
+                            <p class="text-gray-600 mb-6">监督招生录取过程的公平公正性</p>
+                        </div>
+
+                        <!-- 低分高录检测列表 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">低分高录检测</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="lowScoreTable">
+                                <thead>
+                                    <tr>
+                                        <th>考生姓名</th>
+                                        <th>考生号</th>
+                                        <th>录取专业</th>
+                                        <th>高考分数</th>
+                                        <th>专业最低分</th>
+                                        <th>分差</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 操作日志异常监控 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">操作日志异常监控</h3>
+
+                            <table class="supervision-table" id="operationLogTable">
+                                <thead>
+                                    <tr>
+                                        <th>操作时间</th>
+                                        <th>操作人</th>
+                                        <th>操作类型</th>
+                                        <th>操作对象</th>
+                                        <th>异常原因</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 教职工亲属关联比对 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">教职工亲属关联比对</h3>
+
+                            <table class="supervision-table" id="relativeTable">
+                                <thead>
+                                    <tr>
+                                        <th>考生姓名</th>
+                                        <th>考生号</th>
+                                        <th>录取专业</th>
+                                        <th>关联教职工</th>
+                                        <th>关系</th>
+                                        <th>教职工部门</th>
+                                        <th>是否申报</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 科研经费监督模块 -->
+                    <div id="research-funds-content" class="supervision-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">科研经费监督</h2>
+                            <p class="text-gray-600 mb-6">监督科研经费使用的合规性</p>
+                        </div>
+
+                        <!-- 连号发票识别列表 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">连号发票识别</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="serialInvoiceTable">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>项目负责人</th>
+                                        <th>发票号段</th>
+                                        <th>发票数量</th>
+                                        <th>总金额</th>
+                                        <th>报销时间</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 预算执行偏离度分析 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">预算执行偏离度分析</h3>
+
+                            <div class="mb-4">
+                                <canvas id="budgetDeviationChart" height="10"></canvas>
+                            </div>
+
+                            <table class="supervision-table" id="budgetDeviationTable">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>项目负责人</th>
+                                        <th>预算总额</th>
+                                        <th>已执行金额</th>
+                                        <th>执行率</th>
+                                        <th>偏离度</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 设备重复采购预警 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">设备重复采购预警</h3>
+
+                            <table class="supervision-table" id="duplicateEquipmentTable">
+                                <thead>
+                                    <tr>
+                                        <th>设备名称</th>
+                                        <th>规格型号</th>
+                                        <th>采购项目</th>
+                                        <th>项目负责人</th>
+                                        <th>采购金额</th>
+                                        <th>已有数量</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 基建采购监督模块 -->
+                    <div id="construction-content" class="supervision-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">基建采购监督</h2>
+                            <p class="text-gray-600 mb-6">监督基建采购项目的合规性</p>
+                        </div>
+
+                        <!-- 项目监督检查点列表 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">项目监督检查点</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="checkpointTable">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>项目金额</th>
+                                        <th>检查点</th>
+                                        <th>检查内容</th>
+                                        <th>检查结果</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 投标人关联分析图谱 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">投标人关联分析</h3>
+
+                            <div class="graph-container mb-4">
+                                <div class="text-center text-gray-500 py-12">
+                                    <i class="fas fa-project-diagram text-6xl mb-4"></i>
+                                    <p>关系图谱可视化区域</p>
+                                    <p class="text-sm mt-2">展示投标人、企业、人员之间的关联关系</p>
+                                </div>
+                            </div>
+
+                            <table class="supervision-table" id="bidderRelationTable">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>投标企业A</th>
+                                        <th>投标企业B</th>
+                                        <th>关联类型</th>
+                                        <th>关联详情</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 排他性条款识别 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">排他性条款识别</h3>
+
+                            <table class="supervision-table" id="exclusiveClauseTable">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>招标文件</th>
+                                        <th>识别条款</th>
+                                        <th>条款类型</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 财务管理监督模块 -->
+                    <div id="finance-content" class="supervision-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">财务管理监督</h2>
+                            <p class="text-gray-600 mb-6">监督财务管理和专项资金使用</p>
+                        </div>
+
+                        <!-- 三公经费预算红线监控 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">三公经费预算红线监控</h3>
+
+                            <div class="grid grid-cols-3 gap-4 mb-6">
+                                <div class="stat-card">
+                                    <div class="stat-card-title">因公出国（境）费</div>
+                                    <div class="flex items-end gap-2 mb-2">
+                                        <div class="stat-card-value text-2xl">¥85.6万</div>
+                                        <div class="text-sm text-gray-500 mb-2">/ ¥100万</div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-yellow-500 h-2 rounded-full" style="width: 85.6%"></div>
+                                    </div>
+                                    <div class="text-xs text-yellow-600 mt-2">预算使用率 85.6%</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">公务接待费</div>
+                                    <div class="flex items-end gap-2 mb-2">
+                                        <div class="stat-card-value text-2xl">¥72.3万</div>
+                                        <div class="text-sm text-gray-500 mb-2">/ ¥80万</div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-green-500 h-2 rounded-full" style="width: 90.4%"></div>
+                                    </div>
+                                    <div class="text-xs text-green-600 mt-2">预算使用率 90.4%</div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">公务用车费</div>
+                                    <div class="flex items-end gap-2 mb-2">
+                                        <div class="stat-card-value text-2xl text-red-600">¥118.5万</div>
+                                        <div class="text-sm text-gray-500 mb-2">/ ¥120万</div>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="bg-red-500 h-2 rounded-full" style="width: 98.8%"></div>
+                                    </div>
+                                    <div class="text-xs text-red-600 mt-2">预算使用率 98.8% ⚠️ 接近红线</div>
+                                </div>
+                            </div>
+
+                            <table class="supervision-table" id="threePublicFundsTable">
+                                <thead>
+                                    <tr>
+                                        <th>单位名称</th>
+                                        <th>费用类型</th>
+                                        <th>预算金额</th>
+                                        <th>已使用金额</th>
+                                        <th>使用率</th>
+                                        <th>预警状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 小金库线索筛查 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">小金库线索筛查</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="slushFundTable">
+                                <thead>
+                                    <tr>
+                                        <th>单位名称</th>
+                                        <th>线索类型</th>
+                                        <th>线索描述</th>
+                                        <th>涉及金额</th>
+                                        <th>发现时间</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 专项资金挪用检测 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">专项资金挪用检测</h3>
+
+                            <table class="supervision-table" id="fundMisuseTable">
+                                <thead>
+                                    <tr>
+                                        <th>项目名称</th>
+                                        <th>专项资金类型</th>
+                                        <th>资金总额</th>
+                                        <th>异常支出</th>
+                                        <th>异常说明</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 八项规定监督模块 -->
+                    <div id="eight-rules-content" class="supervision-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">八项规定监督</h2>
+                            <p class="text-gray-600 mb-6">监督中央八项规定精神落实情况</p>
+                        </div>
+
+                        <!-- 隐蔽吃喝识别列表 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">隐蔽吃喝识别</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="hiddenDiningTable">
+                                <thead>
+                                    <tr>
+                                        <th>报销单位</th>
+                                        <th>报销人</th>
+                                        <th>报销项目</th>
+                                        <th>实际用途</th>
+                                        <th>金额</th>
+                                        <th>报销时间</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 公车轨迹异常地图 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">公车轨迹异常监控</h3>
+
+                            <div class="map-container mb-4">
+                                <div class="text-center text-gray-500 py-12">
+                                    <i class="fas fa-map-marked-alt text-6xl mb-4"></i>
+                                    <p>公车轨迹地图可视化区域</p>
+                                    <p class="text-sm mt-2">展示公车行驶轨迹和异常停留点</p>
+                                </div>
+                            </div>
+
+                            <table class="supervision-table" id="vehicleTrackTable">
+                                <thead>
+                                    <tr>
+                                        <th>车牌号</th>
+                                        <th>使用部门</th>
+                                        <th>异常时间</th>
+                                        <th>异常地点</th>
+                                        <th>异常类型</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 礼品票据筛查 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">礼品票据筛查</h3>
+
+                            <table class="supervision-table" id="giftReceiptTable">
+                                <thead>
+                                    <tr>
+                                        <th>报销单位</th>
+                                        <th>报销人</th>
+                                        <th>票据内容</th>
+                                        <th>金额</th>
+                                        <th>商家名称</th>
+                                        <th>识别原因</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 师德师风监督模块 -->
+                    <div id="teacher-ethics-content" class="supervision-content">
+                        <div class="card" style="margin-bottom: 24px;">
+                            <h2 class="card-title">
+                                <i class="fas fa-chalkboard-teacher"></i>
+                                师德师风监督
+                            </h2>
+                            <p style="color: #6B7280; margin-bottom: 24px;">监督教师职业道德和学术规范</p>
+
+                            <!-- 师德师风统计卡片 -->
+                            <div
+                                style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+                                <div class="stat-card">
+                                    <div class="stat-card-title">在职教师总数</div>
+                                    <div class="stat-card-value">1,856</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上年 +3.2%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">师德培训覆盖率</div>
+                                    <div class="stat-card-value">98.5%</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上年 +1.8%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">学生评教满意度</div>
+                                    <div class="stat-card-value">96.3%</div>
+                                    <div class="stat-card-trend up">
+                                        <i class="fas fa-arrow-up"></i>
+                                        <span>较上学期 +0.5%</span>
+                                    </div>
+                                </div>
+                                <div class="stat-card">
+                                    <div class="stat-card-title">师德预警</div>
+                                    <div class="stat-card-value warning">3</div>
+                                    <div class="stat-card-trend down">
+                                        <i class="fas fa-arrow-down"></i>
+                                        <span>较上月 -40%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 师德师风预警列表 -->
+                        <div class="card" style="margin-bottom: 24px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3 style="font-size: 18px; font-weight: 600; color: #111827;">师德师风预警</h3>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download" style="margin-right: 8px;"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="teacherEthicsTable">
+                                <thead>
+                                    <tr>
+                                        <th>教师姓名</th>
+                                        <th>所属学院</th>
+                                        <th>预警类型</th>
+                                        <th>综合评分</th>
+                                        <th>举报次数</th>
+                                        <th>风险等级</th>
+                                        <th>预警日期</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 学术不端检测 -->
+                        <div class="card" style="margin-bottom: 24px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3 style="font-size: 18px; font-weight: 600; color: #111827;">学术不端检测</h3>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download" style="margin-right: 8px;"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="academicMisconductTable">
+                                <thead>
+                                    <tr>
+                                        <th>教师姓名</th>
+                                        <th>所属学院</th>
+                                        <th>论文题目</th>
+                                        <th>不端类型</th>
+                                        <th>相似度</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 违规补课监控 -->
+                        <div class="card" style="margin-bottom: 24px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                <h3 style="font-size: 18px; font-weight: 600; color: #111827;">违规补课监控</h3>
+                                <button class="btn btn-primary">
+                                    <i class="fas fa-download" style="margin-right: 8px;"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="illegalTutoringTable">
+                                <thead>
+                                    <tr>
+                                        <th>教师姓名</th>
+                                        <th>所属学院</th>
+                                        <th>培训机构</th>
+                                        <th>补课科目</th>
+                                        <th>学生人数</th>
+                                        <th>违规收入</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 三重一大监督模块 -->
+                    <div id="three-major-content" class="supervision-content">
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h2 class="text-xl font-semibold text-gray-900 mb-4">三重一大监督</h2>
+                            <p class="text-gray-600 mb-6">监督三重一大决策制度执行情况</p>
+                        </div>
+
+                        <!-- 重大事项识别列表 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-900">重大事项识别</h3>
+                                <button class="action-btn action-btn-primary">
+                                    <i class="fas fa-download mr-2"></i>导出
+                                </button>
+                            </div>
+
+                            <table class="supervision-table" id="majorIssueTable">
+                                <thead>
+                                    <tr>
+                                        <th>事项名称</th>
+                                        <th>事项类型</th>
+                                        <th>涉及金额</th>
+                                        <th>责任单位</th>
+                                        <th>识别时间</th>
+                                        <th>决策状态</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 决策过程完整性检查 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">决策过程完整性检查</h3>
+
+                            <table class="supervision-table" id="decisionProcessTable">
+                                <thead>
+                                    <tr>
+                                        <th>事项名称</th>
+                                        <th>调研论证</th>
+                                        <th>专家评审</th>
+                                        <th>风险评估</th>
+                                        <th>集体决策</th>
+                                        <th>完整性</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 会议纪要匹配校验 -->
+                        <div class="bg-white rounded-lg shadow-sm p-6">
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">会议纪要匹配校验</h3>
+
+                            <table class="supervision-table" id="minutesMatchTable">
+                                <thead>
+                                    <tr>
+                                        <th>事项名称</th>
+                                        <th>应出现会议</th>
+                                        <th>实际会议</th>
+                                        <th>匹配状态</th>
+                                        <th>会议时间</th>
+                                        <th>风险等级</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 数据将通过 JavaScript 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer id="footer"></footer>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/discipline-supervision.js"></script>
+</body>
+
+</html>

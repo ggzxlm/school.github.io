@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETL作业管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/etl-management.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">ETL作业管理</h1>
+                    <p class="page-description">管理数据抽取、转换、加载作业，支持可视化设计和版本管理</p>
+                </div>
+
+                <!-- 作业状态统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-project-diagram"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">全部作业</div>
+                            <div class="stat-value" id="totalJobs">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">已发布</div>
+                            <div class="stat-value" id="publishedJobs">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">草稿</div>
+                            <div class="stat-value" id="draftJobs">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">已归档</div>
+                            <div class="stat-value" id="archivedJobs">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索、筛选和新建作业区域 -->
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="搜索作业名称、描述...">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">全部状态</option>
+                                <option value="DRAFT">草稿</option>
+                                <option value="PUBLISHED">已发布</option>
+                                <option value="ARCHIVED">已归档</option>
+                            </select>
+
+                            <select id="enabledFilter" class="filter-select">
+                                <option value="">启用状态</option>
+                                <option value="true">已启用</option>
+                                <option value="false">已禁用</option>
+                            </select>
+
+                            <button id="resetBtn" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> 重置
+                            </button>
+                        </div>
+
+                        <!-- 新建作业按钮 -->
+                        <button id="createJobBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 创建作业
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 作业列表表格 -->
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="name">
+                                    作业名称 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>版本</th>
+                                <th>状态</th>
+                                <th>启用状态</th>
+                                <th class="sortable" data-sort="lastRun">
+                                    最后执行时间 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>执行状态</th>
+                                <th class="sortable" data-sort="createTime">
+                                    创建时间 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="jobTableBody">
+                            <!-- 作业列表将通过 JavaScript 动态生成 -->
+                        </tbody>
+                    </table>
+
+                    <!-- 分页器 -->
+                    <div class="pagination-info">
+                        <div>
+                            显示 <span id="pageStart">0</span> 到 <span id="pageEnd">0</span> 条，共 <span id="totalCount">0</span> 条
+                        </div>
+                        <div class="pagination-controls">
+                            <button id="prevPage">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div id="pageNumbers" class="page-numbers">
+                                <!-- 页码按钮将通过 JavaScript 动态生成 -->
+                            </div>
+                            <button id="nextPage">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 创建/编辑作业模态框 -->
+    <div id="jobModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">
+                    <i class="fas fa-plus-circle"></i>创建ETL作业
+                </h2>
+                <button class="modal-close-btn" id="closeJobModalBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="jobForm">
+                    <input type="hidden" id="jobId">
+                    
+                    <div class="form-group">
+                        <label>作业名称 <span class="required">*</span></label>
+                        <input type="text" id="jobName" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>作业描述</label>
+                        <textarea id="jobDescription" class="form-control" rows="3"></textarea>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>数据源配置</h4>
+                        <div class="form-group">
+                            <label>数据源 <span class="required">*</span></label>
+                            <select id="dataSourceId" class="form-control" required>
+                                <option value="">请选择数据源</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>查询语句/API路径</label>
+                            <textarea id="sourceQuery" class="form-control" rows="3" placeholder="SELECT * FROM table_name"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>目标配置</h4>
+                        <div class="form-group">
+                            <label>目标表名 <span class="required">*</span></label>
+                            <input type="text" id="targetTable" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>写入模式</label>
+                            <select id="writeMode" class="form-control">
+                                <option value="INSERT">插入 (INSERT)</option>
+                                <option value="UPDATE">更新 (UPDATE)</option>
+                                <option value="UPSERT">插入或更新 (UPSERT)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>调度配置</h4>
+                        <div class="form-group">
+                            <label>调度表达式 (Cron)</label>
+                            <input type="text" id="schedule" class="form-control" placeholder="0 0 * * * (每天0点执行)">
+                            <small class="form-text">留空表示手动执行</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="enabled" checked>
+                                <span>启用作业</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelJobBtn">取消</button>
+                <button class="btn btn-primary" id="saveJobBtn">
+                    <i class="fas fa-check"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 作业详情模态框 -->
+    <div id="jobDetailModal" class="modal-overlay">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    作业详情
+                </h2>
+                <button id="closeJobDetailModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">基本信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>作业名称</label>
+                            <div id="detailJobName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>版本</label>
+                            <div id="detailVersion">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>状态</label>
+                            <div id="detailStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>启用状态</label>
+                            <div id="detailEnabled">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>更新时间</label>
+                            <div id="detailUpdateTime">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>描述</label>
+                            <div id="detailDescription">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据源配置 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">数据源配置</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>数据源</label>
+                            <div id="detailDataSource">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>目标表</label>
+                            <div id="detailTargetTable">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>写入模式</label>
+                            <div id="detailWriteMode">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>调度表达式</label>
+                            <div id="detailSchedule">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>查询语句</label>
+                            <div id="detailSourceQuery" style="font-family: monospace; background: #F3F4F6; padding: 8px; border-radius: 4px;">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 执行统计 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">执行统计</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>最后执行时间</label>
+                            <div id="detailLastExecution">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>最后执行状态</label>
+                            <div id="detailLastStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>总执行次数</label>
+                            <div id="detailTotalExecutions">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>成功率</label>
+                            <div id="detailSuccessRate">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 执行历史 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">执行历史</h3>
+                    <div id="executionHistory" class="execution-history-list">
+                        <!-- 执行历史将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="closeJobDetailBtn" class="btn btn-secondary">关闭</button>
+                <button id="executeJobDetailBtn" class="btn btn-success">
+                    <i class="fas fa-play"></i> 执行作业
+                </button>
+                <button id="designJobDetailBtn" class="btn btn-info">
+                    <i class="fas fa-project-diagram"></i> 可视化设计
+                </button>
+                <button id="editJobDetailBtn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ETL设计器模态框 -->
+    <div id="designerModal" class="modal-overlay" style="display: none;">
+        <div class="modal-dialog modal-fullscreen">
+            <div class="modal-header">
+                <h3>ETL可视化设计器</h3>
+                <button class="modal-close" onclick="closeDesignerModal()">×</button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <div id="etlDesigner" class="etl-designer">
+                    <!-- 设计器内容将由 JavaScript 动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDesignerModal()">关闭</button>
+                <button class="btn btn-primary" onclick="saveDesign()">保存设计</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/datasource-service.js"></script>
+    <script src="js/etl-transform-engine.js"></script>
+    <script src="js/etl-service.js"></script>
+    <script src="js/etl-management.js"></script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索结果 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/search-results.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <aside id="side-navbar"></aside>
+
+            <main class="content-area">
+                <div class="search-results-container">
+                    <!-- 搜索头部 -->
+                    <div class="search-header">
+                        <div class="search-info">
+                            <h2 class="search-keyword">搜索: <span id="searchKeyword"></span></h2>
+                            <p class="search-count">找到 <span id="resultCount">0</span> 条相关结果</p>
+                        </div>
+                        
+                        <!-- 搜索过滤器 -->
+                        <div class="search-filters">
+                            <button class="filter-btn active" data-type="all">
+                                <i class="fas fa-th"></i> 全部
+                            </button>
+                            <button class="filter-btn" data-type="procurement">
+                                <i class="fas fa-shopping-cart"></i> 采购项目
+                            </button>
+                            <button class="filter-btn" data-type="clue">
+                                <i class="fas fa-lightbulb"></i> 线索
+                            </button>
+                            <button class="filter-btn" data-type="alert">
+                                <i class="fas fa-exclamation-triangle"></i> 预警
+                            </button>
+                            <button class="filter-btn" data-type="workorder">
+                                <i class="fas fa-clipboard-list"></i> 工单
+                            </button>
+                            <button class="filter-btn" data-type="model">
+                                <i class="fas fa-cube"></i> 模型
+                            </button>
+                            <button class="filter-btn" data-type="report">
+                                <i class="fas fa-file-alt"></i> 报表
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 搜索结果列表 -->
+                    <div class="search-results-list" id="searchResultsList">
+                        <!-- 结果将通过 JavaScript 动态加载 -->
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </main>
+        </div>
+
+        <footer id="footer"></footer>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/search-results.js"></script>
+</body>
+
+</html>

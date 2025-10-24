@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>搜索功能测试 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: var(--spacing-page);
+        }
+
+        .test-section {
+            background: white;
+            padding: var(--spacing-page);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--spacing-page);
+        }
+
+        .test-section h2 {
+            font-size: var(--font-size-h2);
+            color: var(--color-gray-900);
+            margin-bottom: var(--spacing-card);
+            padding-bottom: var(--spacing-content);
+            border-bottom: 2px solid var(--color-primary);
+        }
+
+        .test-item {
+            padding: var(--spacing-content);
+            margin-bottom: var(--spacing-content);
+            background: var(--color-gray-50);
+            border-radius: var(--radius-button);
+        }
+
+        .test-item h3 {
+            font-size: var(--font-size-h3);
+            color: var(--color-gray-800);
+            margin-bottom: var(--spacing-element);
+        }
+
+        .test-item p {
+            font-size: var(--font-size-body);
+            color: var(--color-gray-600);
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: var(--spacing-element) 0;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-content);
+        }
+
+        .feature-list li i {
+            color: var(--color-success);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <aside id="side-navbar"></aside>
+
+            <main class="content-area">
+                <div class="test-container">
+                    <div class="test-section">
+                        <h2><i class="fas fa-search"></i> 搜索功能测试</h2>
+                        
+                        <div class="test-item">
+                            <h3>功能说明</h3>
+                            <p>顶部导航栏的搜索功能已经完成实现，包含以下特性：</p>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-check-circle"></i> 实时搜索建议</li>
+                                <li><i class="fas fa-check-circle"></i> 搜索历史记录</li>
+                                <li><i class="fas fa-check-circle"></i> 热门搜索推荐</li>
+                                <li><i class="fas fa-check-circle"></i> 关键词高亮显示</li>
+                                <li><i class="fas fa-check-circle"></i> 搜索结果页面</li>
+                                <li><i class="fas fa-check-circle"></i> 结果分类筛选</li>
+                                <li><i class="fas fa-check-circle"></i> 分页显示</li>
+                            </ul>
+                        </div>
+
+                        <div class="test-item">
+                            <h3>测试步骤</h3>
+                            <p><strong>1. 点击搜索框</strong></p>
+                            <p>点击顶部导航栏的搜索框，会显示搜索历史和热门搜索。</p>
+                            <br>
+                            <p><strong>2. 输入关键词</strong></p>
+                            <p>输入关键词（如"科研"、"招生"、"审计"等），会实时显示搜索建议。</p>
+                            <br>
+                            <p><strong>3. 选择建议或按回车</strong></p>
+                            <p>可以点击搜索建议项，或直接按回车键进行搜索。</p>
+                            <br>
+                            <p><strong>4. 查看搜索结果</strong></p>
+                            <p>在搜索结果页面可以查看所有匹配的结果，支持按类型筛选。</p>
+                        </div>
+
+                        <div class="test-item">
+                            <h3>推荐测试关键词</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-search"></i> 科研经费</li>
+                                <li><i class="fas fa-search"></i> 招生录取</li>
+                                <li><i class="fas fa-search"></i> 基建采购</li>
+                                <li><i class="fas fa-search"></i> 财务管理</li>
+                                <li><i class="fas fa-search"></i> 八项规定</li>
+                                <li><i class="fas fa-search"></i> 固定资产</li>
+                            </ul>
+                        </div>
+
+                        <div class="test-item">
+                            <h3>功能特点</h3>
+                            <p><strong>智能建议：</strong>根据输入内容实时显示相关的线索、预警、工单、模型和报表。</p>
+                            <br>
+                            <p><strong>历史记录：</strong>自动保存最近10次搜索记录，支持快速重新搜索和删除。</p>
+                            <br>
+                            <p><strong>热门搜索：</strong>展示系统中最热门的搜索关键词，前三名特殊标记。</p>
+                            <br>
+                            <p><strong>结果筛选：</strong>搜索结果支持按类型（全部、线索、预警、工单、模型、报表）筛选。</p>
+                            <br>
+                            <p><strong>关键词高亮：</strong>搜索结果中的关键词会高亮显示，便于快速定位。</p>
+                        </div>
+                    </div>
+
+                    <div class="test-section">
+                        <h2><i class="fas fa-code"></i> 技术实现</h2>
+                        
+                        <div class="test-item">
+                            <h3>文件清单</h3>
+                            <ul class="feature-list">
+                                <li><i class="fas fa-file-code"></i> js/components.js - 搜索组件实现</li>
+                                <li><i class="fas fa-file-code"></i> js/search-results.js - 搜索结果页面逻辑</li>
+                                <li><i class="fas fa-file"></i> search-results.html - 搜索结果页面</li>
+                                <li><i class="fas fa-file-code"></i> css/common.css - 搜索下拉面板样式</li>
+                                <li><i class="fas fa-file-code"></i> css/search-results.css - 搜索结果页面样式</li>
+                            </ul>
+                        </div>
+
+                        <div class="test-item">
+                            <h3>核心功能</h3>
+                            <p><strong>TopNavbar.showSearchPanel()：</strong>显示搜索历史和热门搜索面板</p>
+                            <br>
+                            <p><strong>TopNavbar.showSearchSuggestions()：</strong>显示实时搜索建议</p>
+                            <br>
+                            <p><strong>TopNavbar.performSearch()：</strong>执行搜索并跳转到结果页面</p>
+                            <br>
+                            <p><strong>TopNavbar.saveSearchHistory()：</strong>保存搜索历史到本地存储</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <footer id="footer"></footer>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>规则配置 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/rule-config.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-cog"></i>
+                            规则配置管理
+                        </h1>
+                        <p class="page-subtitle">规则引擎配置、测试与管理</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="showImportModal()">
+                            <i class="fas fa-file-import"></i>
+                            导入规则
+                        </button>
+                        <button class="btn btn-primary" onclick="showCreateRuleModal()">
+                            <i class="fas fa-plus"></i>
+                            创建规则
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 搜索栏和筛选器 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="ruleSearch" placeholder="搜索规则名称..." 
+                                    class="search-input" oninput="filterRules()">
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">规则类型</label>
+                                    <select class="form-select" id="ruleTypeFilter" onchange="filterRules()">
+                                        <option value="">全部类型</option>
+                                        <option value="THRESHOLD">阈值规则</option>
+                                        <option value="TREND">趋势规则</option>
+                                        <option value="CORRELATION">关联规则</option>
+                                        <option value="SEQUENCE">时序规则</option>
+                                        <option value="GRAPH">图谱规则</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">规则状态</label>
+                                    <select class="form-select" id="statusFilter" onchange="filterRules()">
+                                        <option value="">全部状态</option>
+                                        <option value="enabled">已启用</option>
+                                        <option value="disabled">已禁用</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">规则分类</label>
+                                    <select class="form-select" id="categoryFilter" onchange="filterRules()">
+                                        <option value="">全部分类</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">预警等级</label>
+                                    <select class="form-select" id="alertLevelFilter" onchange="filterRules()">
+                                        <option value="">全部等级</option>
+                                        <option value="HIGH">高</option>
+                                        <option value="MEDIUM">中</option>
+                                        <option value="LOW">低</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-actions">
+                                    <button class="btn btn-primary" onclick="filterRules()">
+                                        <i class="fas fa-filter"></i>
+                                        应用
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="loadRules()">
+                                        <i class="fas fa-sync-alt"></i>
+                                        刷新
+                                    </button>
+                                    <button class="btn btn-warning" onclick="resetData()" title="重置为预置数据（开发测试用）">
+                                        <i class="fas fa-redo"></i>
+                                        重置数据
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 规则列表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-list"></i>
+                            规则列表
+                        </h2>
+                        <div class="card-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="loadRules()">
+                                <i class="fas fa-sync-alt"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table" id="rules-table">
+                                <thead>
+                                    <tr>
+                                        <th width="40">
+                                            <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
+                                        </th>
+                                        <th>规则名称</th>
+                                        <th>规则类型</th>
+                                        <th>分类</th>
+                                        <th>优先级</th>
+                                        <th>预警等级</th>
+                                        <th>状态</th>
+                                        <th>执行次数</th>
+                                        <th>匹配次数</th>
+                                        <th>最后执行</th>
+                                        <th width="280">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="rulesTableBody">
+                                    <tr>
+                                        <td colspan="11" class="empty-state">暂无规则数据</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <div class="batch-actions">
+                                <button class="btn btn-sm btn-success" onclick="batchEnableRules()">
+                                    <i class="fas fa-check"></i>
+                                    批量启用
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="batchDisableRules()">
+                                    <i class="fas fa-ban"></i>
+                                    批量禁用
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="batchExportRules()">
+                                    <i class="fas fa-download"></i>
+                                    批量导出
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="batchDeleteRules()">
+                                    <i class="fas fa-trash"></i>
+                                    批量删除
+                                </button>
+                            </div>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 创建/编辑规则模态框 -->
+    <div id="ruleModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2 id="ruleModalTitle">创建规则</h2>
+                <span class="close" onclick="closeRuleModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="ruleForm">
+                    <input type="hidden" id="ruleId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>规则名称 <span class="required">*</span></label>
+                            <input type="text" id="ruleName" required placeholder="请输入规则名称">
+                        </div>
+                        <div class="form-group">
+                            <label>规则类型 <span class="required">*</span></label>
+                            <select id="ruleType" required onchange="updateConfigEditor()">
+                                <option value="">请选择</option>
+                                <option value="THRESHOLD">阈值规则</option>
+                                <option value="TREND">趋势规则</option>
+                                <option value="CORRELATION">关联规则</option>
+                                <option value="SEQUENCE">时序规则</option>
+                                <option value="GRAPH">图谱规则</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>规则分类</label>
+                            <input type="text" id="ruleCategory" placeholder="如：财务监督、采购监督等">
+                        </div>
+                        <div class="form-group">
+                            <label>预警等级</label>
+                            <select id="alertLevel">
+                                <option value="LOW">低</option>
+                                <option value="MEDIUM" selected>中</option>
+                                <option value="HIGH">高</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>优先级</label>
+                            <input type="number" id="priority" value="0" min="0" max="100">
+                            <div class="form-help">数值越大优先级越高</div>
+                        </div>
+                        <div class="form-group">
+                            <label>规则分组</label>
+                            <input type="text" id="groupId" placeholder="可选，用于规则分组">
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>规则描述</label>
+                        <textarea id="ruleDescription" rows="3" placeholder="请输入规则描述"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>规则配置 <span class="required">*</span></label>
+                        <div id="configEditor" class="config-editor">
+                            <p style="color: #999;">请先选择规则类型</p>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="ruleEnabled" checked>
+                            启用规则
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRuleModal()">取消</button>
+                <button class="btn btn-primary" onclick="saveRule()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则详情模态框 -->
+    <div id="ruleDetailModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>规则详情</h2>
+                <span class="close" onclick="closeRuleDetailModal()">&times;</span>
+            </div>
+            <div class="modal-body" id="ruleDetailBody">
+                <!-- 动态填充 -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRuleDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 规则测试模态框 -->
+    <div id="testModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>规则测试</h2>
+                <span class="close" onclick="closeTestModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>测试数据（JSON格式）</label>
+                    <textarea id="testDataInput" rows="10" placeholder='[{"field1": "value1", "field2": 100}, ...]'></textarea>
+                    <div class="form-help">输入JSON格式的测试数据数组，或留空使用模拟数据</div>
+                </div>
+                <button class="btn btn-primary" onclick="runRuleTest()">
+                    <span class="icon">▶️</span>
+                    执行测试
+                </button>
+                <div id="testResultContainer"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeTestModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 执行历史模态框 -->
+    <div id="historyModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>执行历史</h2>
+                <span class="close" onclick="closeHistoryModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="table-wrapper">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>执行时间</th>
+                                <th>数据量</th>
+                                <th>匹配数</th>
+                                <th>匹配率</th>
+                                <th>执行时长</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTableBody">
+                            <tr>
+                                <td colspan="6" class="empty-state">暂无执行历史</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeHistoryModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 导入规则模态框 -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>导入规则</h2>
+                <span class="close" onclick="closeImportModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="file-upload" onclick="document.getElementById('importFile').click()">
+                    <div class="file-upload-icon">📁</div>
+                    <div class="file-upload-text">点击选择JSON文件或拖拽文件到此处</div>
+                    <input type="file" id="importFile" accept=".json" onchange="handleFileSelect(event)">
+                </div>
+                <div class="form-group" style="margin-top: 15px;">
+                    <label>
+                        <input type="checkbox" id="overwriteExisting">
+                        覆盖同名规则
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enableOnImport">
+                        导入后自动启用
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeImportModal()">取消</button>
+                <button class="btn btn-primary" onclick="importRules()">导入</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/rule-engine-service.js"></script>
+    <script src="js/rule-config.js"></script>
+</body>
+
+</html>

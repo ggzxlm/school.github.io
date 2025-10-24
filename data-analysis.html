@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分析 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/data-analysis.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <div id="top-navbar"></div>
+
+    <div class="main-wrapper">
+        <!-- 侧边导航栏 -->
+        <div id="side-navbar"></div>
+
+        <!-- 主内容区 -->
+        <main class="content-area" style="padding: 0;">
+            <div class="analysis-wrapper">
+                <!-- 分析工具栏 -->
+                <div class="analysis-toolbar">
+                    <div class="toolbar-header">
+                        <i class="fas fa-tools"></i>
+                        <span>分析工具</span>
+                    </div>
+                    
+                    <div class="toolbar-menu">
+                        <button class="toolbar-item active" data-analysis-type="indicator">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>指标分析</span>
+                        </button>
+                        <button class="toolbar-item" data-analysis-type="trend">
+                            <i class="fas fa-chart-line"></i>
+                            <span>趋势分析</span>
+                        </button>
+                        <button class="toolbar-item" data-analysis-type="correlation">
+                            <i class="fas fa-project-diagram"></i>
+                            <span>关联分析</span>
+                        </button>
+                        <button class="toolbar-item" data-analysis-type="graph">
+                            <i class="fas fa-sitemap"></i>
+                            <span>图谱分析</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 分析区域 -->
+                <div class="analysis-area">
+                    <!-- 指标分析模块 -->
+                    <div id="indicator-analysis" class="analysis-module active">
+                        <div class="module-header">
+                            <h2 class="text-xl font-semibold text-gray-900">
+                                <i class="fas fa-chart-bar text-blue-600"></i>
+                                指标分析
+                            </h2>
+                            <div class="flex items-center space-x-2">
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    导出数据
+                                </button>
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-save"></i>
+                                    保存分析
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 指标选择器 -->
+                        <div class="indicator-selector">
+                            <div class="selector-section">
+                                <label class="selector-label">选择维度</label>
+                                <div class="dimension-tags">
+                                    <button class="dimension-tag active" data-dimension="department">按部门</button>
+                                    <button class="dimension-tag" data-dimension="time">按时间</button>
+                                    <button class="dimension-tag" data-dimension="type">按类型</button>
+                                    <button class="dimension-tag" data-dimension="level">按等级</button>
+                                </div>
+                            </div>
+
+                            <div class="selector-section">
+                                <label class="selector-label">选择指标</label>
+                                <div class="indicator-checkboxes">
+                                    <label class="indicator-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>预警数量</span>
+                                    </label>
+                                    <label class="indicator-checkbox">
+                                        <input type="checkbox" checked>
+                                        <span>线索数量</span>
+                                    </label>
+                                    <label class="indicator-checkbox">
+                                        <input type="checkbox">
+                                        <span>整改完成率</span>
+                                    </label>
+                                    <label class="indicator-checkbox">
+                                        <input type="checkbox">
+                                        <span>平均处置时长</span>
+                                    </label>
+                                    <label class="indicator-checkbox">
+                                        <input type="checkbox">
+                                        <span>超期率</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="selector-section">
+                                <label class="selector-label">时间范围</label>
+                                <div class="flex items-center space-x-4">
+                                    <input type="date" class="form-input" value="2025-01-01">
+                                    <span class="text-gray-500">至</span>
+                                    <input type="date" class="form-input" value="2025-10-22">
+                                    <button class="btn-primary">
+                                        <i class="fas fa-search"></i>
+                                        查询
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 图表展示区 -->
+                        <div class="chart-display">
+                            <div class="chart-header">
+                                <h3 class="text-lg font-semibold text-gray-900">数据可视化</h3>
+                                <div class="chart-type-selector">
+                                    <button class="chart-type-btn active" data-chart-type="bar">
+                                        <i class="fas fa-chart-bar"></i>
+                                        柱状图
+                                    </button>
+                                    <button class="chart-type-btn" data-chart-type="line">
+                                        <i class="fas fa-chart-line"></i>
+                                        折线图
+                                    </button>
+                                    <button class="chart-type-btn" data-chart-type="pie">
+                                        <i class="fas fa-chart-pie"></i>
+                                        饼图
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="indicator-chart" class="chart-container"></div>
+                        </div>
+
+                        <!-- 数据表格 -->
+                        <div class="data-table-section">
+                            <div class="section-header">
+                                <h3 class="text-lg font-semibold text-gray-900">明细数据</h3>
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-file-excel"></i>
+                                    导出Excel
+                                </button>
+                            </div>
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>部门</th>
+                                            <th>预警数量</th>
+                                            <th>线索数量</th>
+                                            <th>整改完成率</th>
+                                            <th>平均处置时长(天)</th>
+                                            <th>超期率</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="indicator-table-body">
+                                        <!-- 数据将通过 JavaScript 动态填充 -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 趋势分析模块 -->
+                    <div id="trend-analysis" class="analysis-module">
+                        <div class="module-header">
+                            <h2 class="text-xl font-semibold text-gray-900">
+                                <i class="fas fa-chart-line text-blue-600"></i>
+                                趋势分析
+                            </h2>
+                            <div class="flex items-center space-x-2">
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    导出报告
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 趋势分析控制面板 -->
+                        <div class="indicator-selector">
+                            <div class="selector-section">
+                                <label class="selector-label">分析指标</label>
+                                <div class="dimension-tags">
+                                    <button class="dimension-tag active" data-trend-metric="alerts">预警趋势</button>
+                                    <button class="dimension-tag" data-trend-metric="clues">线索趋势</button>
+                                    <button class="dimension-tag" data-trend-metric="rectification">整改趋势</button>
+                                    <button class="dimension-tag" data-trend-metric="workorder">工单趋势</button>
+                                </div>
+                            </div>
+
+                            <div class="selector-section">
+                                <label class="selector-label">时间粒度</label>
+                                <div class="dimension-tags">
+                                    <button class="dimension-tag" data-trend-granularity="day">按日</button>
+                                    <button class="dimension-tag" data-trend-granularity="week">按周</button>
+                                    <button class="dimension-tag active" data-trend-granularity="month">按月</button>
+                                    <button class="dimension-tag" data-trend-granularity="quarter">按季度</button>
+                                </div>
+                            </div>
+
+                            <div class="selector-section">
+                                <label class="selector-label">时间范围</label>
+                                <div class="flex items-center space-x-4">
+                                    <select class="form-input" id="trend-time-range">
+                                        <option value="3">近3个月</option>
+                                        <option value="6" selected>近6个月</option>
+                                        <option value="12">近12个月</option>
+                                        <option value="24">近24个月</option>
+                                    </select>
+                                    <button class="btn-primary" onclick="updateTrendChart()">
+                                        <i class="fas fa-sync"></i>
+                                        刷新
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 趋势图表 -->
+                        <div class="chart-display">
+                            <div class="chart-header">
+                                <h3 class="text-lg font-semibold text-gray-900">趋势图表</h3>
+                                <div class="flex items-center space-x-2">
+                                    <label class="flex items-center space-x-2 text-sm">
+                                        <input type="checkbox" id="show-forecast" checked>
+                                        <span>显示预测</span>
+                                    </label>
+                                    <label class="flex items-center space-x-2 text-sm">
+                                        <input type="checkbox" id="show-average" checked>
+                                        <span>显示平均线</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div id="trend-chart" class="chart-container"></div>
+                        </div>
+
+                        <!-- 趋势分析结论 -->
+                        <div class="data-table-section">
+                            <div class="section-header">
+                                <h3 class="text-lg font-semibold text-gray-900">趋势分析结论</h3>
+                            </div>
+                            <div class="p-6 bg-blue-50 rounded-lg">
+                                <div class="grid grid-cols-2 gap-6">
+                                    <div class="analysis-insight">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <i class="fas fa-chart-line text-blue-600"></i>
+                                            <span class="font-semibold">整体趋势</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700" id="trend-overall">预警数量呈现波动上升趋势，近3个月平均增长率为12.5%</p>
+                                    </div>
+                                    <div class="analysis-insight">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <i class="fas fa-exclamation-triangle text-yellow-600"></i>
+                                            <span class="font-semibold">异常波动</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700" id="trend-anomaly">8月份出现峰值，较上月增长45%，需重点关注</p>
+                                    </div>
+                                    <div class="analysis-insight">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <i class="fas fa-crystal-ball text-purple-600"></i>
+                                            <span class="font-semibold">预测分析</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700" id="trend-forecast">基于历史数据预测，下月预警数量约为58-62件</p>
+                                    </div>
+                                    <div class="analysis-insight">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <i class="fas fa-lightbulb text-green-600"></i>
+                                            <span class="font-semibold">建议措施</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700" id="trend-suggestion">建议加强重点部门监督，优化预警规则配置</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 关联分析模块 -->
+                    <div id="correlation-analysis" class="analysis-module">
+                        <div class="module-header">
+                            <h2 class="text-xl font-semibold text-gray-900">
+                                <i class="fas fa-project-diagram text-blue-600"></i>
+                                关联分析
+                            </h2>
+                            <div class="flex items-center space-x-2">
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-expand"></i>
+                                    全屏
+                                </button>
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    导出图谱
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 关联分析控制面板 -->
+                        <div class="correlation-controls">
+                            <div class="control-group">
+                                <label class="control-label">实体类型</label>
+                                <div class="entity-filters">
+                                    <label class="entity-filter">
+                                        <input type="checkbox" checked>
+                                        <span class="entity-icon person"><i class="fas fa-user"></i></span>
+                                        <span>人员</span>
+                                    </label>
+                                    <label class="entity-filter">
+                                        <input type="checkbox" checked>
+                                        <span class="entity-icon company"><i class="fas fa-building"></i></span>
+                                        <span>企业</span>
+                                    </label>
+                                    <label class="entity-filter">
+                                        <input type="checkbox" checked>
+                                        <span class="entity-icon contract"><i class="fas fa-file-contract"></i></span>
+                                        <span>合同</span>
+                                    </label>
+                                    <label class="entity-filter">
+                                        <input type="checkbox" checked>
+                                        <span class="entity-icon bid"><i class="fas fa-gavel"></i></span>
+                                        <span>投标</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">搜索实体</label>
+                                <div class="flex items-center space-x-2">
+                                    <input type="text" class="form-input flex-1" placeholder="输入人员、企业或合同名称...">
+                                    <button class="btn-primary">
+                                        <i class="fas fa-search"></i>
+                                        搜索
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 关系图谱容器 -->
+                        <div class="graph-container">
+                            <div id="relation-graph" class="relation-graph"></div>
+                            
+                            <!-- 图谱工具栏 -->
+                            <div class="graph-toolbar">
+                                <button class="graph-tool-btn" title="放大">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="缩小">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="适应画布">
+                                    <i class="fas fa-compress"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="重新布局">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 实体详情面板 -->
+                        <div id="entity-detail-panel" class="entity-detail-panel hidden">
+                            <div class="panel-header">
+                                <h3 class="text-lg font-semibold">实体详情</h3>
+                                <button class="close-btn" onclick="closeEntityDetail()">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="panel-content" id="entity-detail-content">
+                                <!-- 详情内容将通过 JavaScript 动态填充 -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 图谱分析模块 -->
+                    <div id="graph-analysis" class="analysis-module">
+                        <div class="module-header">
+                            <h2 class="text-xl font-semibold text-gray-900">
+                                <i class="fas fa-sitemap text-blue-600"></i>
+                                知识图谱分析
+                            </h2>
+                            <div class="flex items-center space-x-2">
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-expand"></i>
+                                    全屏展示
+                                </button>
+                                <button class="btn-secondary btn-sm">
+                                    <i class="fas fa-download"></i>
+                                    导出图谱
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- 图谱分析控制面板 -->
+                        <div class="correlation-controls">
+                            <div class="control-group">
+                                <label class="control-label">图谱类型</label>
+                                <div class="dimension-tags">
+                                    <button class="dimension-tag active" data-graph-type="risk">风险传导图谱</button>
+                                    <button class="dimension-tag" data-graph-type="department">部门关系图谱</button>
+                                    <button class="dimension-tag" data-graph-type="process">流程监控图谱</button>
+                                    <button class="dimension-tag" data-graph-type="event">事件关联图谱</button>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">显示层级</label>
+                                <div class="flex items-center space-x-4">
+                                    <input type="range" min="1" max="5" value="3" class="flex-1" id="graph-depth-slider">
+                                    <span class="text-sm font-semibold" id="graph-depth-value">3层</span>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label">中心节点</label>
+                                <div class="flex items-center space-x-2">
+                                    <select class="form-input flex-1" id="center-node-select">
+                                        <option value="alert-001">高风险预警 #2025-001</option>
+                                        <option value="dept-cs">计算机学院</option>
+                                        <option value="process-procurement">采购流程</option>
+                                        <option value="event-corruption">廉政风险事件</option>
+                                    </select>
+                                    <button class="btn-primary" onclick="updateKnowledgeGraph()">
+                                        <i class="fas fa-project-diagram"></i>
+                                        生成图谱
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 知识图谱容器 -->
+                        <div class="graph-container">
+                            <div id="knowledge-graph" class="relation-graph"></div>
+                            
+                            <!-- 图谱工具栏 -->
+                            <div class="graph-toolbar">
+                                <button class="graph-tool-btn" title="放大" onclick="zoomIn()">
+                                    <i class="fas fa-search-plus"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="缩小" onclick="zoomOut()">
+                                    <i class="fas fa-search-minus"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="适应画布" onclick="fitView()">
+                                    <i class="fas fa-compress"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="重新布局" onclick="relayout()">
+                                    <i class="fas fa-sync"></i>
+                                </button>
+                                <button class="graph-tool-btn" title="显示标签" onclick="toggleLabels()">
+                                    <i class="fas fa-tag"></i>
+                                </button>
+                            </div>
+
+                            <!-- 图例 -->
+                            <div class="graph-legend">
+                                <div class="legend-title">图例</div>
+                                <div class="legend-items">
+                                    <div class="legend-item">
+                                        <span class="legend-dot" style="background: #ef4444;"></span>
+                                        <span>高风险</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-dot" style="background: #f59e0b;"></span>
+                                        <span>中风险</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-dot" style="background: #3b82f6;"></span>
+                                        <span>低风险</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <span class="legend-dot" style="background: #10b981;"></span>
+                                        <span>正常</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 图谱统计信息 -->
+                        <div class="data-table-section">
+                            <div class="section-header">
+                                <h3 class="text-lg font-semibold text-gray-900">图谱统计</h3>
+                            </div>
+                            <div class="grid grid-cols-4 gap-4">
+                                <div class="stat-box">
+                                    <div class="stat-label">节点总数</div>
+                                    <div class="stat-value text-blue-600" id="graph-node-count">45</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">关系总数</div>
+                                    <div class="stat-value text-green-600" id="graph-edge-count">78</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">风险路径</div>
+                                    <div class="stat-value text-red-600" id="graph-risk-path">12</div>
+                                </div>
+                                <div class="stat-box">
+                                    <div class="stat-label">关键节点</div>
+                                    <div class="stat-value text-purple-600" id="graph-key-node">8</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 页脚 -->
+    <footer id="footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-analysis.js"></script>
+</body>
+</html>

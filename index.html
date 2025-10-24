@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <!-- 字符编码和视口设置 -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- 页面标题 -->
+    <title>高校纪检审计监管一体化平台</title>
+
+    <!-- 网站图标 -->
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+
+    <!-- 页面描述和关键词 -->
+    <meta name="description" content="高校纪检审计监管一体化平台，提供纪检监督、审计监督、线索管理、风险预警等功能">
+    <meta name="keywords" content="高校,纪检,审计,监管,一体化平台">
+
+    <!-- 样式表 -->
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <!-- 应用主容器 -->
+    <div class="app-container">
+        <!-- ========================================
+             顶部导航栏
+             包含系统Logo、全局搜索、消息通知、用户信息
+        ========================================= -->
+        <header id="top-navbar"></header>
+
+        <!-- 主体包装器 -->
+        <div class="main-wrapper">
+            <!-- ========================================
+                 侧边导航栏
+                 包含系统主要功能模块的导航菜单
+            ========================================= -->
+            <aside id="side-navbar"></aside>
+
+            <!-- ========================================
+                 主内容区
+                 显示当前页面的主要内容
+            ========================================= -->
+            <main class="content-area">
+                <div class="page-header">
+                    <h1 class="page-title">欢迎使用高校纪检审计监管一体化平台</h1>
+                    <p class="page-description">请从侧边栏选择功能模块开始使用</p>
+                </div>
+
+                <div class="welcome-content">
+                    <div class="row" style="margin-top: 32px;">
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="text-align: center; padding: 32px 20px;">
+                                    <i class="fas fa-home"
+                                        style="font-size: 48px; color: var(--color-primary); margin-bottom: 16px;"></i>
+                                    <h3 style="margin-bottom: 8px;">个人工作台</h3>
+                                    <p style="color: var(--color-gray-500); margin-bottom: 16px;">查看待办事项、预警信息和最近动态</p>
+                                    <a href="dashboard.html" class="btn btn-primary">进入工作台</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="text-align: center; padding: 32px 20px;">
+                                    <i class="fas fa-chart-line"
+                                        style="font-size: 48px; color: var(--color-success); margin-bottom: 16px;"></i>
+                                    <h3 style="margin-bottom: 8px;">监督指挥大屏</h3>
+                                    <p style="color: var(--color-gray-500); margin-bottom: 16px;">实时监控监督态势和数据分析</p>
+                                    <a href="command-center.html" class="btn btn-success">查看大屏</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="text-align: center; padding: 32px 20px;">
+                                    <i class="fas fa-lightbulb"
+                                        style="font-size: 48px; color: var(--color-warning); margin-bottom: 16px;"></i>
+                                    <h3 style="margin-bottom: 8px;">线索管理</h3>
+                                    <p style="color: var(--color-gray-500); margin-bottom: 16px;">管理线索库、预警和工单</p>
+                                    <a href="clue-library.html" class="btn btn-warning">进入线索库</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row" style="margin-top: 24px;">
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="text-align: center; padding: 32px 20px;">
+                                    <i class="fas fa-gavel"
+                                        style="font-size: 48px; color: var(--color-danger); margin-bottom: 16px;"></i>
+                                    <h3 style="margin-bottom: 8px;">纪检监督</h3>
+                                    <p style="color: var(--color-gray-500); margin-bottom: 16px;">第一议题、招生录取、科研经费等</p>
+                                    <a href="discipline-supervision.html" class="btn btn-danger">进入纪检监督</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="text-align: center; padding: 32px 20px;">
+                                    <i class="fas fa-file-invoice"
+                                        style="font-size: 48px; color: var(--color-info); margin-bottom: 16px;"></i>
+                                    <h3 style="margin-bottom: 8px;">审计监督</h3>
+                                    <p style="color: var(--color-gray-500); margin-bottom: 16px;">预算执行、科研经费、采购管理等</p>
+                                    <a href="audit-supervision.html" class="btn btn-info">进入审计监督</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="card">
+                                <div class="card-body" style="text-align: center; padding: 32px 20px;">
+                                    <i class="fas fa-chart-pie"
+                                        style="font-size: 48px; color: var(--color-primary); margin-bottom: 16px;"></i>
+                                    <h3 style="margin-bottom: 8px;">数据分析</h3>
+                                    <p style="color: var(--color-gray-500); margin-bottom: 16px;">指标分析、趋势分析、关联分析</p>
+                                    <a href="data-analysis.html" class="btn btn-primary">进入数据分析</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: 24px;">
+                        <div class="card-header">
+                            <h3 class="card-title">系统说明</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h4 style="margin-bottom: 12px; color: var(--color-primary);">
+                                        <i class="fas fa-info-circle"></i> 系统简介
+                                    </h4>
+                                    <p style="line-height: 1.8; color: var(--color-gray-600);">
+                                        高校纪检审计监管一体化平台是一个面向高等院校的综合性监督管理系统，
+                                        通过数据驱动和智能化手段，实现纪检监督、审计监督、线索管理、
+                                        风险预警等功能的一体化管理。
+                                    </p>
+                                </div>
+                                <div class="col-6">
+                                    <h4 style="margin-bottom: 12px; color: var(--color-primary);">
+                                        <i class="fas fa-star"></i> 核心功能
+                                    </h4>
+                                    <ul style="line-height: 2; color: var(--color-gray-600);">
+                                        <li>统一工作门户：个人工作台、监督指挥大屏</li>
+                                        <li>线索管理：线索库、预警处置、工单管理、整改跟踪</li>
+                                        <li>纪检监督：第一议题、招生录取、科研经费等9个领域</li>
+                                        <li>审计监督：预算执行、采购管理、固定资产等10个领域</li>
+                                        <li>数据分析：指标分析、趋势分析、关联分析、图谱分析</li>
+                                        <li>报表中心：报表查看、订阅、下载、分享</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- ========================================
+             页脚
+             显示版权信息和技术支持
+        ========================================= -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- JavaScript脚本 -->
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        // 确保组件初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('页面加载完成，初始化组件...');
+
+            // 检查组件是否存在
+            if (typeof TopNavbar !== 'undefined') {
+                console.log('TopNavbar 组件已加载');
+            }
+            if (typeof SideNavbar !== 'undefined') {
+                console.log('SideNavbar 组件已加载');
+            }
+            if (typeof Footer !== 'undefined') {
+                console.log('Footer 组件已加载');
+            }
+        });
+    </script>
+</body>
+
+</html>

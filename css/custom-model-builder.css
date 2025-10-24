@@ -1,0 +1,353 @@
+/* 自定义建模工具样式 */
+
+/* 页面头部 */
+.page-header-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--color-gray-200);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.btn-back {
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-gray-300);
+    background: white;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-back:hover {
+    background: var(--color-gray-50);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.page-title i {
+    color: var(--color-primary);
+}
+
+.page-description {
+    font-size: 14px;
+    color: var(--color-gray-600);
+    margin: 4px 0 0 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 12px;
+}
+
+/* 步骤指示器 */
+.steps-indicator {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    position: relative;
+}
+
+.steps-indicator::before {
+    content: '';
+    position: absolute;
+    top: 20px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--color-gray-200);
+    z-index: 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.step-number {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid var(--color-gray-300);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    color: var(--color-gray-400);
+    transition: all 0.3s;
+}
+
+.step-label {
+    font-size: 13px;
+    color: var(--color-gray-600);
+    font-weight: 500;
+}
+
+.step.active .step-number {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+    box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+}
+
+.step.active .step-label {
+    color: var(--color-primary);
+    font-weight: 600;
+}
+
+.step.completed .step-number {
+    background: var(--color-success);
+    border-color: var(--color-success);
+    color: white;
+}
+
+.step.completed .step-number::after {
+    content: '✓';
+}
+
+/* 步骤内容 */
+.step-content {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 规则网格 */
+.rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+}
+
+.rule-card {
+    background: white;
+    border: 2px solid var(--color-gray-200);
+    border-radius: 8px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rule-card:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+}
+
+.rule-card.selected {
+    border-color: var(--color-primary);
+    background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+}
+
+.rule-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.rule-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    flex: 1;
+}
+
+.rule-card-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.rule-card-description {
+    font-size: 13px;
+    color: var(--color-gray-600);
+    line-height: 1.6;
+    margin-bottom: 12px;
+}
+
+.rule-card-meta {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rule-type-badge {
+    padding: 4px 10px;
+    background: var(--color-gray-100);
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--color-gray-700);
+}
+
+.rule-level-badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+}
+
+.rule-level-badge.high {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.rule-level-badge.medium {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.rule-level-badge.low {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+/* 规则配置 */
+.rule-config-item {
+    background: var(--color-gray-50);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+
+.rule-config-header {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rule-config-header i {
+    color: var(--color-primary);
+}
+
+/* 模型预览 */
+.model-preview {
+    background: var(--color-gray-50);
+    border-radius: 8px;
+    padding: 24px;
+}
+
+.preview-section {
+    margin-bottom: 24px;
+}
+
+.preview-section:last-child {
+    margin-bottom: 0;
+}
+
+.preview-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-gray-900);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.preview-section-title i {
+    color: var(--color-primary);
+}
+
+.preview-content {
+    background: white;
+    border-radius: 6px;
+    padding: 16px;
+}
+
+.preview-item {
+    display: flex;
+    margin-bottom: 12px;
+}
+
+.preview-item:last-child {
+    margin-bottom: 0;
+}
+
+.preview-label {
+    min-width: 100px;
+    font-weight: 500;
+    color: var(--color-gray-600);
+}
+
+.preview-value {
+    flex: 1;
+    color: var(--color-gray-900);
+}
+
+/* 规则计数 */
+.rules-count {
+    font-size: 13px;
+    color: var(--color-gray-600);
+}
+
+.rules-count strong {
+    color: var(--color-primary);
+    font-size: 18px;
+    margin: 0 4px;
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .page-header-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .header-actions .btn {
+        flex: 1;
+    }
+
+    .steps-indicator {
+        flex-wrap: wrap;
+    }
+
+    .rules-grid {
+        grid-template-columns: 1fr;
+    }
+}

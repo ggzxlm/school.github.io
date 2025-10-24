@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>线索库 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/clue-library.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-lightbulb"></i>
+                            线索库
+                        </h1>
+                        <p class="page-subtitle">线索汇聚、分类管理、闭环处置</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="ClueLibrary.exportClues()">
+                            <i class="fas fa-download"></i>
+                            导出
+                        </button>
+                        <button class="btn btn-primary" onclick="ClueLibrary.createClue()">
+                            <i class="fas fa-plus"></i>
+                            新建线索
+                        </button>
+                    </div>
+                </div>
+                <!-- 统计卡片区 -->
+                <div class="stats-grid mb-3" id="stats-cards"></div>
+
+                <!-- 搜索栏和筛选器 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="search-input" placeholder="搜索线索标题、编号、涉及对象..."
+                                    class="search-input">
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <div class="filter-row" id="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">时间范围</label>
+                                    <select class="form-select" id="filter-time">
+                                        <option value="">全部</option>
+                                        <option value="today">今天</option>
+                                        <option value="week">本周</option>
+                                        <option value="month">本月</option>
+                                        <option value="quarter">本季度</option>
+                                        <option value="year">本年度</option>
+                                        <option value="custom">自定义</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">来源类型</label>
+                                    <select class="form-select" id="filter-source">
+                                        <option value="">全部</option>
+                                        <option value="rule">规则引擎</option>
+                                        <option value="report">举报投诉</option>
+                                        <option value="inspection">巡查发现</option>
+                                        <option value="audit">审计发现</option>
+                                        <option value="manual">手动录入</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">风险等级</label>
+                                    <select class="form-select" id="filter-risk">
+                                        <option value="">全部</option>
+                                        <option value="high">高风险</option>
+                                        <option value="medium">中风险</option>
+                                        <option value="low">低风险</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">处理状态</label>
+                                    <select class="form-select" id="filter-status">
+                                        <option value="">全部</option>
+                                        <option value="pending">待处理</option>
+                                        <option value="assigned">已分发</option>
+                                        <option value="investigating">核查中</option>
+                                        <option value="rectifying">整改中</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="archived">已归档</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-item">
+                                    <label class="filter-label">责任单位</label>
+                                    <select class="form-select" id="filter-department">
+                                        <option value="">全部</option>
+                                        <option value="dept1">计算机学院</option>
+                                        <option value="dept2">物理学院</option>
+                                        <option value="dept3">化学学院</option>
+                                        <option value="dept4">行政办公室</option>
+                                        <option value="dept5">财务处</option>
+                                        <option value="dept6">资产处</option>
+                                    </select>
+                                </div>
+
+                                <div class="filter-actions">
+                                    <button class="btn btn-primary" onclick="ClueLibrary.applyFilters()">
+                                        <i class="fas fa-filter"></i>
+                                        应用
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="ClueLibrary.resetFilters()">
+                                        <i class="fas fa-redo"></i>
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <!-- 线索列表 -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-list"></i>
+                            线索列表
+                        </h2>
+                        <div class="card-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="ClueLibrary.refreshList()">
+                                <i class="fas fa-sync-alt"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="table" id="clue-table">
+                                <thead>
+                                    <tr>
+                                        <th width="40">
+                                            <input type="checkbox" id="select-all">
+                                        </th>
+                                        <th width="120">编号</th>
+                                        <th>标题</th>
+                                        <th width="120">来源</th>
+                                        <th width="100">风险等级</th>
+                                        <th width="120">责任单位</th>
+                                        <th width="100">状态</th>
+                                        <th width="150">创建时间</th>
+                                        <th width="200">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="clue-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <div class="batch-actions">
+                                <button class="btn btn-sm btn-primary" onclick="ClueLibrary.batchAssign()">
+                                    <i class="fas fa-share"></i>
+                                    批量分发
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="ClueLibrary.batchMerge()">
+                                    <i class="fas fa-object-group"></i>
+                                    批量合并
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="ClueLibrary.batchExport()">
+                                    <i class="fas fa-download"></i>
+                                    批量导出
+                                </button>
+                            </div>
+                            <div class="pagination" id="pagination"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 新建线索模态框 -->
+    <div id="createClueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>
+                    新建线索
+                </h3>
+                <button class="modal-close" onclick="ClueLibrary.closeCreateModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="createClueForm">
+                    <div class="form-group">
+                        <label class="form-label required">线索标题</label>
+                        <input type="text" class="form-control" id="clueTitle" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">来源类型</label>
+                            <select class="form-control" id="clueSource" required>
+                                <option value="">请选择</option>
+                                <option value="规则引擎">规则引擎</option>
+                                <option value="举报投诉">举报投诉</option>
+                                <option value="巡查发现">巡查发现</option>
+                                <option value="审计发现">审计发现</option>
+                                <option value="手动录入">手动录入</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">风险等级</label>
+                            <select class="form-control" id="clueRisk" required>
+                                <option value="">请选择</option>
+                                <option value="high">高风险</option>
+                                <option value="medium">中风险</option>
+                                <option value="low">低风险</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">涉及部门</label>
+                            <input type="text" class="form-control" id="clueDepartment" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">涉及人员</label>
+                            <input type="text" class="form-control" id="cluePerson">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">线索描述</label>
+                        <textarea class="form-control" id="clueDescription" rows="4" required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">附件上传</label>
+                        <input type="file" class="form-control" id="clueAttachment" multiple>
+                        <small class="form-text">支持上传图片、PDF、Word等文件，单个文件不超过10MB</small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="ClueLibrary.closeCreateModal()">取消</button>
+                <button class="btn btn-primary" onclick="ClueLibrary.submitCreateClue()">
+                    <i class="fas fa-check"></i> 提交
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分发线索模态框 -->
+    <div id="assignClueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-share-alt"></i>
+                    分发线索
+                </h3>
+                <button class="modal-close" onclick="ClueLibrary.closeAssignModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="assignClueForm">
+                    <div class="form-group">
+                        <label class="form-label">线索信息</label>
+                        <div class="info-box" id="assignClueInfo"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">分发部门</label>
+                        <select class="form-control" id="assignDepartment" required>
+                            <option value="">请选择</option>
+                            <option value="纪检监察室">纪检监察室</option>
+                            <option value="审计处">审计处</option>
+                            <option value="监察专员办公室">监察专员办公室</option>
+                            <option value="巡察办">巡察办</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">处理人</label>
+                        <select class="form-control" id="assignHandler" required>
+                            <option value="">请选择</option>
+                            <option value="张三">张三</option>
+                            <option value="李四">李四</option>
+                            <option value="王五">王五</option>
+                            <option value="赵六">赵六</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">处理期限</label>
+                        <input type="date" class="form-control" id="assignDeadline" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">备注说明</label>
+                        <textarea class="form-control" id="assignRemark" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="ClueLibrary.closeAssignModal()">取消</button>
+                <button class="btn btn-primary" onclick="ClueLibrary.submitAssignClue()">
+                    <i class="fas fa-check"></i> 确认分发
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑线索模态框 -->
+    <div id="editClueModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-edit"></i>
+                    编辑线索
+                </h3>
+                <button class="modal-close" onclick="ClueLibrary.closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editClueForm">
+                    <input type="hidden" id="editClueId">
+
+                    <div class="form-group">
+                        <label class="form-label required">线索标题</label>
+                        <input type="text" class="form-control" id="editClueTitle" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">来源类型</label>
+                            <select class="form-control" id="editClueSource" required>
+                                <option value="规则引擎">规则引擎</option>
+                                <option value="举报投诉">举报投诉</option>
+                                <option value="巡查发现">巡查发现</option>
+                                <option value="审计发现">审计发现</option>
+                                <option value="手动录入">手动录入</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label required">风险等级</label>
+                            <select class="form-control" id="editClueRisk" required>
+                                <option value="high">高风险</option>
+                                <option value="medium">中风险</option>
+                                <option value="low">低风险</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">涉及部门</label>
+                            <input type="text" class="form-control" id="editClueDepartment" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">涉及人员</label>
+                            <input type="text" class="form-control" id="editCluePerson">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label required">线索描述</label>
+                        <textarea class="form-control" id="editClueDescription" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="ClueLibrary.closeEditModal()">取消</button>
+                <button class="btn btn-primary" onclick="ClueLibrary.submitEditClue()">
+                    <i class="fas fa-check"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/clue-library.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>清除ETL数据</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .button {
+            padding: 15px 30px;
+            font-size: 16px;
+            margin: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+        .btn-danger {
+            background-color: #ef4444;
+        }
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        .btn-success {
+            background-color: #10b981;
+        }
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        .info-box {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+            background-color: #f0f9ff;
+            border-left: 4px solid: #3b82f6;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .error {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 ETL数据管理工具</h1>
+    
+    <div class="info-box">
+        <h3>说明</h3>
+        <p>如果ETL管理页面没有显示演示数据，请按照以下步骤操作：</p>
+        <ol>
+            <li>点击"清除ETL数据"按钮</li>
+            <li>等待确认消息</li>
+            <li>点击"打开ETL管理页面"</li>
+            <li>页面会自动加载演示数据</li>
+        </ol>
+    </div>
+
+    <div style="text-align: center;">
+        <button class="button btn-danger" onclick="clearData()">
+            🗑️ 清除ETL数据
+        </button>
+        <button class="button btn-success" onclick="openETLPage()">
+            📋 打开ETL管理页面
+        </button>
+    </div>
+
+    <div id="result"></div>
+
+    <div class="info-box" style="margin-top: 30px;">
+        <h3>当前数据状态</h3>
+        <div id="status">加载中...</div>
+    </div>
+
+    <script>
+        function clearData() {
+            if (!confirm('确定要清除所有ETL数据吗？这将删除所有作业、执行历史和版本信息。')) {
+                return;
+            }
+
+            try {
+                localStorage.removeItem('etl_jobs');
+                localStorage.removeItem('etl_executions');
+                localStorage.removeItem('etl_versions');
+                
+                showResult('success', '✓ ETL数据已清除！现在可以打开ETL管理页面，系统会自动创建演示数据。');
+                updateStatus();
+            } catch (error) {
+                showResult('error', '✗ 清除失败: ' + error.message);
+            }
+        }
+
+        function openETLPage() {
+            window.open('etl-management.html', '_blank');
+        }
+
+        function showResult(type, message) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + type;
+            resultDiv.innerHTML = message;
+        }
+
+        function updateStatus() {
+            const statusDiv = document.getElementById('status');
+            
+            const jobsData = localStorage.getItem('etl_jobs');
+            const executionsData = localStorage.getItem('etl_executions');
+            const versionsData = localStorage.getItem('etl_versions');
+            
+            let html = '<table style="width: 100%; border-collapse: collapse;">';
+            html += '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>etl_jobs</strong></td><td style="padding: 8px;">';
+            
+            if (jobsData) {
+                try {
+                    const jobs = JSON.parse(jobsData);
+                    html += `${jobs.length} 个作业`;
+                } catch (e) {
+                    html += '数据损坏';
+                }
+            } else {
+                html += '<span style="color: #999;">未初始化</span>';
+            }
+            
+            html += '</td></tr>';
+            html += '<tr style="border-bottom: 1px solid #ddd;"><td style="padding: 8px;"><strong>etl_executions</strong></td><td style="padding: 8px;">';
+            
+            if (executionsData) {
+                try {
+                    const executions = JSON.parse(executionsData);
+                    html += `${executions.length} 条执行记录`;
+                } catch (e) {
+                    html += '数据损坏';
+                }
+            } else {
+                html += '<span style="color: #999;">未初始化</span>';
+            }
+            
+            html += '</td></tr>';
+            html += '<tr><td style="padding: 8px;"><strong>etl_versions</strong></td><td style="padding: 8px;">';
+            
+            if (versionsData) {
+                try {
+                    const versions = JSON.parse(versionsData);
+                    html += `${versions.length} 个版本`;
+                } catch (e) {
+                    html += '数据损坏';
+                }
+            } else {
+                html += '<span style="color: #999;">未初始化</span>';
+            }
+            
+            html += '</td></tr></table>';
+            
+            statusDiv.innerHTML = html;
+        }
+
+        // 页面加载时更新状态
+        window.addEventListener('DOMContentLoaded', updateStatus);
+        
+        // 每2秒更新一次状态
+        setInterval(updateStatus, 2000);
+    </script>
+</body>
+</html>

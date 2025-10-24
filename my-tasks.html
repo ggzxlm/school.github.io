@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的待办 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/my-tasks.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <div id="top-navbar"></div>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <div id="side-navbar"></div>
+
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i class="fas fa-tasks"></i>
+                        <span>我的待办</span>
+                    </div>
+                    <div class="page-breadcrumb">
+                        <a href="dashboard.html">首页</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>我的待办</span>
+                    </div>
+                </div>
+
+                <div class="page-content">
+                    <!-- 统计卡片 -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #EF4444;">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">8</div>
+                                <div class="stat-label">紧急待办</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #F59E0B;">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">15</div>
+                                <div class="stat-label">今日待办</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #06B6D4;">
+                                <i class="fas fa-list-check"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">32</div>
+                                <div class="stat-label">全部待办</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon" style="background: #10B981;">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-info">
+                                <div class="stat-value">128</div>
+                                <div class="stat-label">已完成</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 筛选和操作栏 -->
+                    <div class="toolbar">
+                        <div class="toolbar-left">
+                            <div class="filter-tabs">
+                                <button class="filter-tab active" data-filter="all">全部 (32)</button>
+                                <button class="filter-tab" data-filter="urgent">紧急 (8)</button>
+                                <button class="filter-tab" data-filter="today">今日 (15)</button>
+                                <button class="filter-tab" data-filter="overdue">逾期 (3)</button>
+                            </div>
+                        </div>
+                        <div class="toolbar-right">
+                            <button class="btn btn-default">
+                                <i class="fas fa-filter"></i>
+                                筛选
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 待办列表 -->
+                    <div class="tasks-container" id="tasksContainer">
+                        <!-- 任务项将通过JS动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div id="footer"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/my-tasks.js"></script>
+</body>
+</html>

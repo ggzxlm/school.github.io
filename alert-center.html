@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>预警处置中心 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/alert-center.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+        
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+            
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            预警处置中心
+                        </h1>
+                        <p class="page-subtitle">智能预警、快速响应、闭环处置</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="AlertCenter.openFalseNegativeModal()">
+                            <i class="fas fa-exclamation-circle"></i>
+                            记录漏报
+                        </button>
+                        <button class="btn btn-secondary" onclick="AlertCenter.openRuleOptimization()">
+                            <i class="fas fa-chart-line"></i>
+                            规则优化
+                        </button>
+                        <button class="btn btn-secondary" onclick="AlertCenter.exportAlerts()">
+                            <i class="fas fa-download"></i>
+                            导出
+                        </button>
+                        <button class="btn btn-primary" onclick="AlertCenter.refreshAlerts()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片区 -->
+                <div class="stats-grid mb-3" id="stats-cards"></div>
+
+                <!-- 筛选器和快速操作区域 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="filter-section">
+                            <!-- 筛选器 -->
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">风险等级</label>
+                                    <select class="form-select" id="filter-risk">
+                                        <option value="">全部</option>
+                                        <option value="high">高风险</option>
+                                        <option value="medium">中风险</option>
+                                        <option value="low">低风险</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">预警类型</label>
+                                    <select class="form-select" id="filter-type">
+                                        <option value="">全部</option>
+                                        <option value="budget">预算执行</option>
+                                        <option value="research">科研经费</option>
+                                        <option value="asset">固定资产</option>
+                                        <option value="procurement">采购管理</option>
+                                        <option value="enrollment">招生录取</option>
+                                        <option value="construction">基建工程</option>
+                                        <option value="finance">财务管理</option>
+                                        <option value="discipline">八项规定</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">处理状态</label>
+                                    <select class="form-select" id="filter-status">
+                                        <option value="">全部</option>
+                                        <option value="pending">待处理</option>
+                                        <option value="assigned">已分发</option>
+                                        <option value="processing">处理中</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="ignored">已忽略</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">责任单位</label>
+                                    <select class="form-select" id="filter-department">
+                                        <option value="">全部</option>
+                                        <option value="dept1">计算机学院</option>
+                                        <option value="dept2">物理学院</option>
+                                        <option value="dept3">化学学院</option>
+                                        <option value="dept4">财务处</option>
+                                        <option value="dept5">资产处</option>
+                                        <option value="dept6">采购中心</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">时间范围</label>
+                                    <select class="form-select" id="filter-time">
+                                        <option value="">全部</option>
+                                        <option value="today">今天</option>
+                                        <option value="week">本周</option>
+                                        <option value="month">本月</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-actions">
+                                    <button class="btn btn-primary" onclick="AlertCenter.applyFilters()">
+                                        <i class="fas fa-filter"></i>
+                                        应用
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="AlertCenter.resetFilters()">
+                                        <i class="fas fa-redo"></i>
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- 快速操作 -->
+                            <div class="quick-actions">
+                                <button class="btn btn-sm btn-primary" onclick="AlertCenter.batchAssign()">
+                                    <i class="fas fa-share"></i>
+                                    批量分发
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="AlertCenter.batchIgnore()">
+                                    <i class="fas fa-eye-slash"></i>
+                                    批量忽略
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="AlertCenter.batchExport()">
+                                    <i class="fas fa-download"></i>
+                                    批量导出
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 预警列表 -->
+                <div class="alert-list-container" id="alert-list"></div>
+
+                <!-- 分页 -->
+                <div class="pagination-container">
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </main>
+        </div>
+        
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+    
+    <!-- 分发弹窗 -->
+    <div id="assign-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-share"></i>
+                    分发预警
+                </h3>
+                <button class="modal-close" onclick="AlertCenter.closeAssignModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="assign-form">
+                    <div class="form-group">
+                        <label class="form-label required">责任部门</label>
+                        <select class="form-select" id="assign-department" required>
+                            <option value="">请选择责任部门</option>
+                            <option value="dept1">计算机学院</option>
+                            <option value="dept2">物理学院</option>
+                            <option value="dept3">化学学院</option>
+                            <option value="dept4">财务处</option>
+                            <option value="dept5">资产处</option>
+                            <option value="dept6">采购中心</option>
+                            <option value="dept7">基建处</option>
+                            <option value="dept8">人事处</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">责任人</label>
+                        <select class="form-select" id="assign-person" required>
+                            <option value="">请先选择责任部门</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">处置时限</label>
+                        <div class="deadline-options">
+                            <label class="radio-label">
+                                <input type="radio" name="deadline" value="3" checked>
+                                <span>3天内</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deadline" value="7">
+                                <span>7天内</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deadline" value="15">
+                                <span>15天内</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deadline" value="30">
+                                <span>30天内</span>
+                            </label>
+                            <label class="radio-label">
+                                <input type="radio" name="deadline" value="custom">
+                                <span>自定义</span>
+                            </label>
+                        </div>
+                        <input type="date" class="form-input mt-2" id="custom-deadline" style="display: none;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">优先级</label>
+                        <select class="form-select" id="assign-priority" required>
+                            <option value="high">高</option>
+                            <option value="medium" selected>中</option>
+                            <option value="low">低</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">处置要求</label>
+                        <textarea class="form-textarea" id="assign-requirements" rows="4" placeholder="请输入处置要求和注意事项..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="AlertCenter.closeAssignModal()">取消</button>
+                <button class="btn btn-primary" onclick="AlertCenter.submitAssign()">确认分发</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 预警详情模态框 -->
+    <div id="alertDetailModal" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    预警详情
+                </h3>
+                <button class="modal-close" onclick="AlertCenter.closeDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="alertDetailContent">
+                    <!-- 基本信息 -->
+                    <div class="detail-section">
+                        <h4 class="detail-section-title">基本信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>预警编号</label>
+                                <div id="detail-code"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>预警类型</label>
+                                <div id="detail-type"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>风险等级</label>
+                                <div id="detail-risk"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>预警状态</label>
+                                <div id="detail-status"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>触发时间</label>
+                                <div id="detail-time"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>处理人</label>
+                                <div id="detail-handler"></div>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>预警标题</label>
+                                <div id="detail-title"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 预警内容 -->
+                    <div class="detail-section">
+                        <h4 class="detail-section-title">预警内容</h4>
+                        <div class="detail-text" id="detail-description"></div>
+                    </div>
+
+                    <!-- 涉及对象 -->
+                    <div class="detail-section">
+                        <h4 class="detail-section-title">涉及对象</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>涉及部门</label>
+                                <div id="detail-department"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>涉及人员</label>
+                                <div id="detail-person"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>涉及金额</label>
+                                <div id="detail-amount"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>涉及项目</label>
+                                <div id="detail-project"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 规则信息 -->
+                    <div class="detail-section">
+                        <h4 class="detail-section-title">规则信息</h4>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <label>触发规则</label>
+                                <div id="detail-rule"></div>
+                            </div>
+                            <div class="detail-item">
+                                <label>规则阈值</label>
+                                <div id="detail-threshold"></div>
+                            </div>
+                            <div class="detail-item full-width">
+                                <label>规则说明</label>
+                                <div id="detail-rule-desc"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 处理记录 -->
+                    <div class="detail-section">
+                        <h4 class="detail-section-title">处理记录</h4>
+                        <div class="timeline" id="detail-timeline">
+                            <!-- 动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="AlertCenter.closeDetailModal()">关闭</button>
+                <button class="btn btn-danger" onclick="AlertCenter.markAsFalsePositive(AlertCenter.currentAlertId); AlertCenter.closeDetailModal();">
+                    <i class="fas fa-flag"></i> 标注误报
+                </button>
+                <button class="btn btn-success" onclick="AlertCenter.createClueFromAlert(AlertCenter.currentAlertId)">
+                    <i class="fas fa-lightbulb"></i> 生成线索
+                </button>
+                <button class="btn btn-warning" onclick="AlertCenter.assignFromDetail()">
+                    <i class="fas fa-share-alt"></i> 分发处置
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 误报标注弹窗 -->
+    <div id="false-positive-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-flag"></i>
+                    标注误报
+                </h3>
+                <button class="modal-close" onclick="AlertCenter.closeFalsePositiveModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="fp-form">
+                    <div class="form-group">
+                        <label class="form-label required">误报原因</label>
+                        <select class="form-select" id="fp-reason" required>
+                            <option value="">请选择误报原因</option>
+                            <option value="正常业务场景">正常业务场景</option>
+                            <option value="规则阈值过低">规则阈值过低</option>
+                            <option value="规则条件不准确">规则条件不准确</option>
+                            <option value="数据质量问题">数据质量问题</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">误报分类</label>
+                        <select class="form-select" id="fp-category" required>
+                            <option value="">请选择误报分类</option>
+                            <option value="连号发票">连号发票</option>
+                            <option value="预算超支">预算超支</option>
+                            <option value="关联关系">关联关系</option>
+                            <option value="异常行为">异常行为</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">详细说明</label>
+                        <textarea class="form-textarea" id="fp-description" rows="4" placeholder="请详细说明为什么这是误报，以及正确的业务场景..." required></textarea>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        您的标注将作为训练样本，帮助系统优化规则，减少未来的误报。
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="AlertCenter.closeFalsePositiveModal()">取消</button>
+                <button class="btn btn-primary" onclick="AlertCenter.submitFalsePositive()">提交标注</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 漏报记录弹窗 -->
+    <div id="false-negative-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i class="fas fa-exclamation-circle"></i>
+                    记录漏报
+                </h3>
+                <button class="modal-close" onclick="AlertCenter.closeFalseNegativeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="fn-form">
+                    <div class="form-group">
+                        <label class="form-label required">漏报标题</label>
+                        <input type="text" class="form-input" id="fn-title" placeholder="简要描述漏报场景" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">详细描述</label>
+                        <textarea class="form-textarea" id="fn-description" rows="4" placeholder="详细描述应该被检测但未被检测的场景..." required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">期望规则</label>
+                        <input type="text" class="form-input" id="fn-expected-rule" placeholder="您认为应该有什么规则来检测此场景">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">缺失原因</label>
+                        <select class="form-select" id="fn-missing-reason">
+                            <option value="">请选择</option>
+                            <option value="未配置相关规则">未配置相关规则</option>
+                            <option value="规则阈值过高">规则阈值过高</option>
+                            <option value="规则条件不全面">规则条件不全面</option>
+                            <option value="数据源缺失">数据源缺失</option>
+                            <option value="其他">其他</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">优先级</label>
+                        <select class="form-select" id="fn-priority">
+                            <option value="high">高</option>
+                            <option value="medium" selected>中</option>
+                            <option value="low">低</option>
+                        </select>
+                    </div>
+                    
+                    <div class="alert alert-warning">
+                        <i class="fas fa-lightbulb"></i>
+                        系统将自动分析规则缺失原因，并生成规则补充建议。
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="AlertCenter.closeFalseNegativeModal()">取消</button>
+                <button class="btn btn-primary" onclick="AlertCenter.submitFalseNegative()">提交记录</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/model-optimization-service.js"></script>
+    <script src="js/alert-center.js"></script>
+</body>
+</html>

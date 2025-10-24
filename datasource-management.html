@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据源管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🗄️</text></svg>">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/datasource-management.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">数据源管理</h1>
+                    <p class="page-description">管理各类数据源连接，监控数据源状态</p>
+                </div>
+
+                <!-- 数据源状态统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">全部数据源</div>
+                            <div class="stat-value" id="totalDatasources">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">运行中</div>
+                            <div class="stat-value" id="activeDatasources">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">异常</div>
+                            <div class="stat-value" id="errorDatasources">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">未激活</div>
+                            <div class="stat-value" id="inactiveDatasources">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索、筛选和新建数据源区域 -->
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="搜索数据源名称、类型...">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <select id="typeFilter" class="filter-select">
+                                <option value="">全部类型</option>
+                                <option value="MySQL">MySQL</option>
+                                <option value="Oracle">Oracle</option>
+                                <option value="SQL Server">SQL Server</option>
+                                <option value="PostgreSQL">PostgreSQL</option>
+                                <option value="API">API接口</option>
+                                <option value="文件">文件</option>
+                            </select>
+
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">全部状态</option>
+                                <option value="运行中">运行中</option>
+                                <option value="异常">异常</option>
+                                <option value="未激活">未激活</option>
+                            </select>
+
+                            <button id="resetBtn" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> 重置
+                            </button>
+                        </div>
+
+                        <!-- 新建数据源按钮 -->
+                        <button id="createDatasourceBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 新建数据源
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 数据源列表表格 -->
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="name">
+                                    数据源名称 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>类型</th>
+                                <th>连接信息</th>
+                                <th>状态</th>
+                                <th class="sortable" data-sort="lastSync">
+                                    最后同步时间 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>数据量</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="datasourceTableBody">
+                            <!-- 数据源列表将通过 JavaScript 动态生成 -->
+                        </tbody>
+                    </table>
+
+                    <!-- 分页器 -->
+                    <div class="pagination-info">
+                        <div>
+                            显示 <span id="pageStart">0</span> 到 <span id="pageEnd">0</span> 条，共 <span id="totalCount">0</span> 条
+                        </div>
+                        <div class="pagination-controls">
+                            <button id="prevPage">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div id="pageNumbers" class="page-numbers">
+                                <!-- 页码按钮将通过 JavaScript 动态生成 -->
+                            </div>
+                            <button id="nextPage">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 数据源详情模态框 -->
+    <div id="datasourceDetailModal" class="modal-overlay">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-database"></i>
+                    数据源详情
+                </h2>
+                <button id="closeDetailModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">基本信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>数据源名称</label>
+                            <div id="detailName">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>类型</label>
+                            <div id="detailType">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>状态</label>
+                            <div id="detailStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>连接信息</label>
+                            <div id="detailConnection">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>描述</label>
+                            <div id="detailDescription">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 同步统计 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">同步统计</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>最后同步时间</label>
+                            <div id="detailLastSync">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>同步频率</label>
+                            <div id="detailSyncFreq">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>数据量</label>
+                            <div id="detailDataCount">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>同步成功率</label>
+                            <div id="detailSuccessRate">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 同步历史 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">同步历史</h3>
+                    <div id="syncHistory" class="sync-history-list">
+                        <!-- 同步历史将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="closeDetailBtn" class="btn btn-secondary">关闭</button>
+                <button id="testConnectionBtn" class="btn btn-info">
+                    <i class="fas fa-plug"></i> 测试连接
+                </button>
+                <button id="syncNowBtn" class="btn btn-success">
+                    <i class="fas fa-sync"></i> 立即同步
+                </button>
+                <button id="editDatasourceBtn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建/编辑数据源模态框 -->
+    <div id="createDatasourceModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>新建数据源
+                </h2>
+                <button id="closeCreateModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="createDatasourceForm">
+                    <input type="hidden" id="datasourceId">
+                    
+                    <div class="form-group">
+                        <label class="form-label required">数据源名称</label>
+                        <input type="text" id="datasourceName" required class="form-control" placeholder="请输入数据源名称">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">数据源类型</label>
+                            <select id="datasourceType" required class="form-control">
+                                <option value="">请选择</option>
+                                <option value="MySQL">MySQL</option>
+                                <option value="Oracle">Oracle</option>
+                                <option value="SQL Server">SQL Server</option>
+                                <option value="PostgreSQL">PostgreSQL</option>
+                                <option value="API">API接口</option>
+                                <option value="文件">文件</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">同步频率</label>
+                            <select id="syncFrequency" required class="form-control">
+                                <option value="">请选择</option>
+                                <option value="实时">实时</option>
+                                <option value="每小时">每小时</option>
+                                <option value="每天">每天</option>
+                                <option value="每周">每周</option>
+                                <option value="手动">手动</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- 数据库配置 -->
+                    <div id="databaseConfig" style="display: none;">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required">主机地址</label>
+                                <input type="text" id="dbHost" class="form-control" placeholder="localhost">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">端口</label>
+                                <input type="number" id="dbPort" class="form-control" placeholder="3306">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">数据库名</label>
+                            <input type="text" id="dbName" class="form-control" placeholder="database_name">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label required">用户名</label>
+                                <input type="text" id="dbUsername" class="form-control" placeholder="username">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label required">密码</label>
+                                <input type="password" id="dbPassword" class="form-control" placeholder="password">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- API配置 -->
+                    <div id="apiConfig" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label required">API地址</label>
+                            <input type="url" id="apiUrl" class="form-control" placeholder="https://api.example.com">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">API密钥</label>
+                                <input type="text" id="apiKey" class="form-control" placeholder="请输入API密钥">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">请求方法</label>
+                                <select id="apiMethod" class="form-control">
+                                    <option value="GET">GET</option>
+                                    <option value="POST">POST</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 文件配置 -->
+                    <div id="fileConfig" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label required">文件路径</label>
+                            <input type="text" id="filePath" class="form-control" placeholder="/path/to/file or ftp://server/path">
+                            <small class="form-text">支持本地路径、FTP、SFTP等</small>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">文件格式</label>
+                                <select id="fileFormat" class="form-control">
+                                    <option value="CSV">CSV</option>
+                                    <option value="Excel">Excel</option>
+                                    <option value="JSON">JSON</option>
+                                    <option value="XML">XML</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">编码格式</label>
+                                <select id="fileEncoding" class="form-control">
+                                    <option value="UTF-8">UTF-8</option>
+                                    <option value="GBK">GBK</option>
+                                    <option value="GB2312">GB2312</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">描述</label>
+                        <textarea id="datasourceDescription" rows="3" class="form-control" placeholder="请输入数据源描述"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="cancelCreateBtn" class="btn btn-secondary">取消</button>
+                <button id="testConnBtn" class="btn btn-info">
+                    <i class="fas fa-plug"></i> 测试连接
+                </button>
+                <button id="submitCreateBtn" class="btn btn-primary">
+                    <i class="fas fa-check"></i> 保存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js?v=2"></script>
+    <script src="js/components.js?v=2"></script>
+    <script src="js/datasource-management.js?v=2"></script>
+</body>
+</html>

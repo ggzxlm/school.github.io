@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据安全管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/data-governance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-shield-alt"></i>
+                            数据安全管理
+                        </h1>
+                        <p class="page-subtitle">管理数据访问权限、脱敏规则、审计日志等安全策略</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="securityPage.viewAuditLog()">
+                            <i class="fas fa-history"></i>
+                            审计日志
+                        </button>
+                        <button class="btn btn-primary" onclick="securityPage.showCreateModal()">
+                            <i class="fas fa-plus"></i>
+                            新增策略
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid mb-3">
+                    <div class="stat-card">
+                        <div class="stat-label">安全策略</div>
+                        <div class="stat-value" id="policyCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">脱敏规则</div>
+                        <div class="stat-value" id="maskingCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">访问控制</div>
+                        <div class="stat-value" id="accessCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">今日访问</div>
+                        <div class="stat-value" id="todayAccessCount">0</div>
+                    </div>
+                </div>
+
+                <!-- 标签页 -->
+                <div class="tabs mb-3">
+                    <button class="tab-btn active" data-tab="policies" onclick="securityPage.switchTab('policies')">
+                        安全策略
+                    </button>
+                    <button class="tab-btn" data-tab="masking" onclick="securityPage.switchTab('masking')">
+                        脱敏规则
+                    </button>
+                    <button class="tab-btn" data-tab="access" onclick="securityPage.switchTab('access')">
+                        访问控制
+                    </button>
+                    <button class="tab-btn" data-tab="audit" onclick="securityPage.switchTab('audit')">
+                        审计日志
+                    </button>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="搜索策略名称、规则..." 
+                                       class="search-input" onkeyup="securityPage.handleSearch()">
+                            </div>
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">状态</label>
+                                    <select class="form-select" id="filter-status" onchange="securityPage.loadData()">
+                                        <option value="">全部</option>
+                                        <option value="enabled">启用</option>
+                                        <option value="disabled">禁用</option>
+                                    </select>
+                                </div>
+                                <div class="filter-actions">
+                                    <button class="btn btn-secondary" onclick="securityPage.exportData()">
+                                        <i class="fas fa-download"></i>
+                                        导出
+                                    </button>
+                                    <button class="btn btn-primary" onclick="securityPage.refreshData()">
+                                        <i class="fas fa-sync-alt"></i>
+                                        刷新
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据列表 -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead id="tableHeader">
+                                <!-- 表头将动态生成 -->
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- 数据行将动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 空状态 -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="32" r="30" stroke="#E5E7EB" stroke-width="2"/>
+                            <path d="M32 20V32L40 40" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <p>暂无数据</p>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="pagination" id="pagination">
+                        <div class="pagination-info">
+                            共 <span id="totalCount">0</span> 条数据
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="btn btn-sm" onclick="securityPage.prevPage()" id="prevBtn">上一页</button>
+                            <span class="page-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</span>
+                            <button class="btn btn-sm" onclick="securityPage.nextPage()" id="nextBtn">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-security-service.js"></script>
+    <script src="js/data-security-management.js"></script>
+</body>
+</html>

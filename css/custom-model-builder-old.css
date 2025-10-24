@@ -1,0 +1,335 @@
+/* 自定义建模工具样式 */
+
+.top-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.builder-workspace {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 20px;
+    height: calc(100vh - 180px);
+}
+
+.builder-section {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.section-header {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.section-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.section-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* 场景编辑器 */
+.scenarios-editor {
+    margin-bottom: 12px;
+}
+
+.scenario-item-editor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f8f9fa;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.scenario-item-editor input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+}
+
+.scenario-item-editor input:focus {
+    outline: none;
+}
+
+.scenario-item-editor .btn-remove {
+    padding: 4px 8px;
+    background: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.scenario-item-editor .btn-remove:hover {
+    background: #d32f2f;
+}
+
+/* 规则编辑器 */
+.rules-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.rule-card-editor {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 16px;
+    border: 2px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.rule-card-editor:hover {
+    border-color: #667eea;
+}
+
+.rule-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.rule-card-title {
+    flex: 1;
+}
+
+.rule-card-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.rule-card-type {
+    display: inline-block;
+    padding: 3px 10px;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #666;
+}
+
+.rule-card-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.rule-card-actions button {
+    padding: 4px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+.btn-edit-rule {
+    background: #2196f3;
+    color: white;
+}
+
+.btn-edit-rule:hover {
+    background: #1976d2;
+}
+
+.btn-delete-rule {
+    background: #f44336;
+    color: white;
+}
+
+.btn-delete-rule:hover {
+    background: #d32f2f;
+}
+
+.rule-card-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.rule-card-config {
+    background: white;
+    padding: 12px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #666;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 12px;
+}
+
+.rule-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+    border-top: 1px solid #e0e0e0;
+}
+
+.rule-alert-badge {
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.rule-alert-badge.high {
+    background: #ffebee;
+    color: #c62828;
+}
+
+.rule-alert-badge.medium {
+    background: #fff3e0;
+    color: #ef6c00;
+}
+
+.rule-alert-badge.low {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.rule-status {
+    font-size: 13px;
+    color: #666;
+}
+
+.empty-rules {
+    text-align: center;
+    padding: 60px 20px;
+    color: #999;
+}
+
+.empty-rules .icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+/* 规则配置表单 */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.rule-config-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.rule-config-section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+.config-field-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.config-help-text {
+    font-size: 12px;
+    color: #999;
+    margin-top: 4px;
+    line-height: 1.4;
+}
+
+/* 模型选择列表 */
+.model-select-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.model-select-item {
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.model-select-item:hover {
+    border-color: #667eea;
+    background: #f8f9fa;
+}
+
+.model-select-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.model-select-item-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.model-select-item-type {
+    padding: 3px 10px;
+    background: #e3f2fd;
+    color: #1976d2;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.model-select-item-category {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 4px;
+}
+
+.model-select-item-description {
+    font-size: 13px;
+    color: #999;
+}
+
+/* 响应式 */
+@media (max-width: 1200px) {
+    .builder-workspace {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    
+    .builder-section {
+        height: auto;
+        max-height: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .config-field-group {
+        grid-template-columns: 1fr;
+    }
+}

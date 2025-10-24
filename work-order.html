@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工单管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📋</text></svg>">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/work-order.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">工单管理</h1>
+                    <p class="page-description">协同核查任务管理与跟踪</p>
+                </div>
+
+                <!-- 工单状态统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">全部工单</div>
+                            <div class="stat-value" id="totalOrders">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">进行中</div>
+                            <div class="stat-value" id="inProgressOrders">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">已完成</div>
+                            <div class="stat-value" id="completedOrders">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">超期工单</div>
+                            <div class="stat-value" id="overdueOrders">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索、筛选和新建工单区域 -->
+                <div class="filter-section">
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="搜索工单号、标题...">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <!-- 筛选器 -->
+                            <select id="typeFilter" class="filter-select">
+                                <option value="">全部类型</option>
+                                <option value="纪检核查">纪检核查</option>
+                                <option value="审计核查">审计核查</option>
+                                <option value="联合核查">联合核查</option>
+                                <option value="专项核查">专项核查</option>
+                            </select>
+
+                            <select id="priorityFilter" class="filter-select">
+                                <option value="">全部优先级</option>
+                                <option value="高">高</option>
+                                <option value="中">中</option>
+                                <option value="低">低</option>
+                            </select>
+
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">全部状态</option>
+                                <option value="待分配">待分配</option>
+                                <option value="进行中">进行中</option>
+                                <option value="待审核">待审核</option>
+                                <option value="已完成">已完成</option>
+                                <option value="已关闭">已关闭</option>
+                            </select>
+
+                            <button id="resetBtn" class="btn btn-secondary">
+                                <i class="fas fa-redo"></i> 重置
+                            </button>
+                        </div>
+
+                        <!-- 新建工单按钮 -->
+                        <button id="createOrderBtn" class="btn btn-primary">
+                            <i class="fas fa-plus"></i> 新建工单
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 工单列表表格 -->
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="sortable" data-sort="orderNo">
+                                    工单号 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>标题</th>
+                                <th>类型</th>
+                                <th class="sortable" data-sort="priority">
+                                    优先级 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>负责人</th>
+                                <th>状态</th>
+                                <th class="sortable" data-sort="createTime">
+                                    创建时间 <i class="fas fa-sort"></i>
+                                </th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orderTableBody">
+                            <!-- 工单列表将通过 JavaScript 动态生成 -->
+                        </tbody>
+                    </table>
+
+                    <!-- 分页器 -->
+                    <div class="pagination-info">
+                        <div>
+                            显示 <span id="pageStart">0</span> 到 <span id="pageEnd">0</span> 条，共 <span id="totalCount">0</span> 条
+                        </div>
+                        <div class="pagination-controls">
+                            <button id="prevPage">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <div id="pageNumbers" class="page-numbers">
+                                <!-- 页码按钮将通过 JavaScript 动态生成 -->
+                            </div>
+                            <button id="nextPage">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 工单详情模态框 -->
+    <div id="orderDetailModal" class="modal-overlay">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-clipboard-list"></i>
+                    工单详情
+                </h2>
+                <button id="closeModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">基本信息</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>工单号</label>
+                            <div id="detailOrderNo">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>状态</label>
+                            <div id="detailStatus">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>标题</label>
+                            <div id="detailTitle">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>类型</label>
+                            <div id="detailType">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>优先级</label>
+                            <div id="detailPriority">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建人</label>
+                            <div id="detailCreator">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>描述</label>
+                            <div id="detailDescription">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 核查组成员 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">核查组成员</h3>
+                    <div id="teamMembers" class="team-members-list">
+                        <!-- 成员列表将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 任务分解 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">任务分解</h3>
+                    <div id="taskList" class="task-list">
+                        <!-- 任务列表将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 讨论记录 -->
+                <div class="detail-section">
+                    <h3 class="detail-section-title">讨论记录</h3>
+                    <div id="discussionList" class="discussion-list">
+                        <!-- 讨论记录将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="closeDetailModalBtn" class="btn btn-secondary">关闭</button>
+                <button id="editOrderBtn" class="btn btn-primary">
+                    <i class="fas fa-edit"></i> 编辑
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新建工单模态框 -->
+    <div id="createOrderModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-plus-circle"></i>新建工单
+                </h2>
+                <button id="closeCreateModalBtn" class="modal-close-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="createOrderForm">
+                    <div class="form-group">
+                        <label class="form-label required">工单标题</label>
+                        <input type="text" id="createOrderTitle" required class="form-control">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">工单类型</label>
+                            <select id="createOrderType" required class="form-control">
+                                <option value="">请选择</option>
+                                <option value="纪检核查">纪检核查</option>
+                                <option value="审计核查">审计核查</option>
+                                <option value="联合核查">联合核查</option>
+                                <option value="专项核查">专项核查</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">优先级</label>
+                            <select id="createOrderPriority" required class="form-control">
+                                <option value="">请选择</option>
+                                <option value="高">高</option>
+                                <option value="中">中</option>
+                                <option value="低">低</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">负责人</label>
+                            <select id="createOrderAssignee" required class="form-control">
+                                <option value="">请选择</option>
+                                <option value="张三">张三</option>
+                                <option value="李四">李四</option>
+                                <option value="王五">王五</option>
+                                <option value="赵六">赵六</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label required">截止日期</label>
+                            <input type="date" id="createOrderDeadline" required class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label required">工单描述</label>
+                        <textarea id="createOrderDescription" required rows="4" class="form-control"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">附件上传</label>
+                        <input type="file" id="createOrderAttachment" multiple class="form-control">
+                        <small class="form-text">支持上传图片、PDF、Word等文件</small>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button id="cancelCreateBtn" class="btn btn-secondary">取消</button>
+                <button id="submitCreateBtn" class="btn btn-primary">
+                    <i class="fas fa-check"></i> 创建工单
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js?v=2"></script>
+    <script src="js/components.js?v=2"></script>
+    <script src="js/data-service.js?v=2"></script>
+    <script src="js/data-loader.js?v=2"></script>
+    <script src="js/work-order.js?v=2"></script>
+</body>
+</html>

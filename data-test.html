@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据服务测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #1E40AF;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #333;
+            border-bottom: 2px solid #1E40AF;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #1E40AF;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1E3A8A;
+        }
+        .result {
+            background: #f9fafb;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 4px;
+            border-left: 4px solid #1E40AF;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #10B981;
+        }
+        .error {
+            color: #EF4444;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>数据服务测试页面</h1>
+    <p>测试模拟数据加载和数据服务功能</p>
+
+    <div class="test-section">
+        <h2>1. 基础数据加载测试</h2>
+        <button onclick="testLoadData()">加载数据</button>
+        <div id="load-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>2. 用户数据测试</h2>
+        <button onclick="testGetUsers()">获取所有用户</button>
+        <button onclick="testGetUsersByDept()">按部门筛选</button>
+        <div id="users-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>3. 线索数据测试</h2>
+        <button onclick="testGetClues()">获取所有线索</button>
+        <button onclick="testGetCluesFiltered()">筛选高风险线索</button>
+        <button onclick="testGetCluesPaginated()">分页查询</button>
+        <div id="clues-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>4. 预警数据测试</h2>
+        <button onclick="testGetAlerts()">获取所有预警</button>
+        <button onclick="testGetAlertsUnprocessed()">未处理预警</button>
+        <div id="alerts-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>5. 工作台数据测试</h2>
+        <button onclick="testGetDashboardStats()">获取统计数据</button>
+        <button onclick="testGetTodos()">获取待办事项</button>
+        <button onclick="testGetActivities()">获取最近动态</button>
+        <div id="dashboard-result" class="result" style="display:none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>6. 指挥中心数据测试</h2>
+        <button onclick="testGetCommandCenter()">获取指挥中心数据</button>
+        <div id="command-result" class="result" style="display:none;"></div>
+    </div>
+
+    <script src="js/data-service.js"></script>
+    <script>
+        function showResult(elementId, content, isError = false) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.innerHTML = `<span class="${isError ? 'error' : 'success'}">${isError ? '❌ 错误' : '✅ 成功'}</span><pre>${content}</pre>`;
+        }
+
+        async function testLoadData() {
+            try {
+                const data = await window.dataService.loadData();
+                const summary = {
+                    users: data.users?.length || 0,
+                    clues: data.clues?.length || 0,
+                    alerts: data.alerts?.length || 0,
+                    workOrders: data.workOrders?.length || 0,
+                    rectifications: data.rectifications?.length || 0,
+                    departments: data.departments?.length || 0,
+                    roles: data.roles?.length || 0
+                };
+                showResult('load-result', JSON.stringify(summary, null, 2));
+            } catch (error) {
+                showResult('load-result', error.message, true);
+            }
+        }
+
+        async function testGetUsers() {
+            try {
+                const users = await window.dataService.getUsers();
+                showResult('users-result', `找到 ${users.length} 个用户\n\n` + JSON.stringify(users, null, 2));
+            } catch (error) {
+                showResult('users-result', error.message, true);
+            }
+        }
+
+        async function testGetUsersByDept() {
+            try {
+                const users = await window.dataService.getUsers({ department: '纪检监察室' });
+                showResult('users-result', `纪检监察室有 ${users.length} 个用户\n\n` + JSON.stringify(users, null, 2));
+            } catch (error) {
+                showResult('users-result', error.message, true);
+            }
+        }
+
+        async function testGetClues() {
+            try {
+                const result = await window.dataService.getClues();
+                showResult('clues-result', `找到 ${result.total} 条线索\n\n` + JSON.stringify(result.data, null, 2));
+            } catch (error) {
+                showResult('clues-result', error.message, true);
+            }
+        }
+
+        async function testGetCluesFiltered() {
+            try {
+                const result = await window.dataService.getClues({ riskLevel: 'high' });
+                showResult('clues-result', `找到 ${result.total} 条高风险线索\n\n` + JSON.stringify(result.data, null, 2));
+            } catch (error) {
+                showResult('clues-result', error.message, true);
+            }
+        }
+
+        async function testGetCluesPaginated() {
+            try {
+                const result = await window.dataService.getClues({}, {}, { page: 1, pageSize: 2 });
+                showResult('clues-result', `第1页，每页2条，共 ${result.total} 条\n\n` + JSON.stringify(result.data, null, 2));
+            } catch (error) {
+                showResult('clues-result', error.message, true);
+            }
+        }
+
+        async function testGetAlerts() {
+            try {
+                const result = await window.dataService.getAlerts();
+                showResult('alerts-result', `找到 ${result.total} 条预警\n\n` + JSON.stringify(result.data, null, 2));
+            } catch (error) {
+                showResult('alerts-result', error.message, true);
+            }
+        }
+
+        async function testGetAlertsUnprocessed() {
+            try {
+                const result = await window.dataService.getAlerts({ status: 'unprocessed' });
+                showResult('alerts-result', `找到 ${result.total} 条未处理预警\n\n` + JSON.stringify(result.data, null, 2));
+            } catch (error) {
+                showResult('alerts-result', error.message, true);
+            }
+        }
+
+        async function testGetDashboardStats() {
+            try {
+                const stats = await window.dataService.getDashboardStats();
+                showResult('dashboard-result', JSON.stringify(stats, null, 2));
+            } catch (error) {
+                showResult('dashboard-result', error.message, true);
+            }
+        }
+
+        async function testGetTodos() {
+            try {
+                const todos = await window.dataService.getTodos();
+                showResult('dashboard-result', `找到 ${todos.length} 个待办事项\n\n` + JSON.stringify(todos, null, 2));
+            } catch (error) {
+                showResult('dashboard-result', error.message, true);
+            }
+        }
+
+        async function testGetActivities() {
+            try {
+                const activities = await window.dataService.getRecentActivities(5);
+                showResult('dashboard-result', `最近 ${activities.length} 条动态\n\n` + JSON.stringify(activities, null, 2));
+            } catch (error) {
+                showResult('dashboard-result', error.message, true);
+            }
+        }
+
+        async function testGetCommandCenter() {
+            try {
+                const data = await window.dataService.getCommandCenterStats();
+                showResult('command-result', JSON.stringify(data, null, 2));
+            } catch (error) {
+                showResult('command-result', error.message, true);
+            }
+        }
+    </script>
+</body>
+</html>

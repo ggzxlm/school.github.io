@@ -1,0 +1,556 @@
+/* 采购项目详情页面样式 */
+
+.project-detail-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* 项目头部 */
+.project-header {
+    background: white;
+    padding: var(--spacing-page);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-page);
+}
+
+.project-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-card);
+}
+
+.project-title-left {
+    flex: 1;
+}
+
+.project-title {
+    font-size: 24px;
+    color: var(--color-gray-900);
+    margin-bottom: var(--spacing-element);
+    font-weight: 600;
+}
+
+.project-code {
+    font-size: var(--font-size-body);
+    color: var(--color-gray-500);
+}
+
+.project-status-badge {
+    padding: 8px 16px;
+    border-radius: var(--radius-tag);
+    font-size: var(--font-size-body);
+    font-weight: 500;
+}
+
+.project-status-badge.ongoing {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--color-primary);
+}
+
+.project-status-badge.completed {
+    background: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+}
+
+.project-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-card);
+}
+
+.project-info-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.project-info-label {
+    font-size: var(--font-size-small);
+    color: var(--color-gray-500);
+}
+
+.project-info-value {
+    font-size: var(--font-size-h3);
+    color: var(--color-gray-900);
+    font-weight: 500;
+}
+
+/* 风险统计 */
+.risk-statistics {
+    background: white;
+    padding: var(--spacing-page);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+    margin-bottom: var(--spacing-page);
+}
+
+.risk-stats-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-card);
+    padding-bottom: var(--spacing-content);
+    border-bottom: 2px solid var(--color-gray-200);
+}
+
+.risk-stats-title {
+    font-size: var(--font-size-h2);
+    color: var(--color-gray-900);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-element);
+}
+
+.risk-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-card);
+}
+
+.risk-stat-card {
+    padding: var(--spacing-card);
+    border-radius: var(--radius-card);
+    border: 2px solid;
+    transition: all 0.3s;
+}
+
+.risk-stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.risk-stat-card.total {
+    border-color: var(--color-primary);
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(30, 64, 175, 0.05) 100%);
+}
+
+.risk-stat-card.high {
+    border-color: var(--color-danger);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(220, 38, 38, 0.05) 100%);
+}
+
+.risk-stat-card.medium {
+    border-color: var(--color-warning);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.05) 0%, rgba(245, 158, 11, 0.05) 100%);
+}
+
+.risk-stat-card.low {
+    border-color: var(--color-success);
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.05) 100%);
+}
+
+.risk-stat-card.score {
+    border-color: var(--color-info);
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(8, 145, 178, 0.05) 100%);
+}
+
+.risk-stat-label {
+    font-size: var(--font-size-small);
+    color: var(--color-gray-600);
+    margin-bottom: 4px;
+}
+
+.risk-stat-value {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.risk-stat-card.total .risk-stat-value {
+    color: var(--color-primary);
+}
+
+.risk-stat-card.high .risk-stat-value {
+    color: var(--color-danger);
+}
+
+.risk-stat-card.medium .risk-stat-value {
+    color: var(--color-warning);
+}
+
+.risk-stat-card.low .risk-stat-value {
+    color: var(--color-success);
+}
+
+.risk-stat-card.score .risk-stat-value {
+    color: var(--color-info);
+}
+
+.risk-stat-desc {
+    font-size: var(--font-size-small);
+    color: var(--color-gray-500);
+}
+
+/* 流程时间轴 */
+.process-timeline {
+    background: white;
+    padding: var(--spacing-page);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.timeline-header {
+    margin-bottom: var(--spacing-page);
+    padding-bottom: var(--spacing-content);
+    border-bottom: 2px solid var(--color-gray-200);
+}
+
+.timeline-title {
+    font-size: var(--font-size-h2);
+    color: var(--color-gray-900);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-element);
+}
+
+.timeline-list {
+    position: relative;
+    padding-left: 40px;
+}
+
+.timeline-list::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--color-gray-200);
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 32px;
+}
+
+.timeline-item:last-child {
+    margin-bottom: 0;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -32px;
+    top: 4px;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 1;
+}
+
+.timeline-item.completed .timeline-dot {
+    background: var(--color-success);
+    color: white;
+}
+
+.timeline-item.ongoing .timeline-dot {
+    background: var(--color-primary);
+    color: white;
+    animation: pulse 2s infinite;
+}
+
+.timeline-item.pending .timeline-dot {
+    background: var(--color-gray-300);
+    color: var(--color-gray-600);
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(59, 130, 246, 0);
+    }
+}
+
+.timeline-content {
+    background: var(--color-gray-50);
+    padding: var(--spacing-card);
+    border-radius: var(--radius-card);
+    border-left: 4px solid var(--color-gray-300);
+}
+
+.timeline-item.completed .timeline-content {
+    border-left-color: var(--color-success);
+}
+
+.timeline-item.ongoing .timeline-content {
+    border-left-color: var(--color-primary);
+}
+
+.timeline-header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-content);
+}
+
+.timeline-phase-name {
+    font-size: var(--font-size-h3);
+    color: var(--color-gray-900);
+    font-weight: 600;
+}
+
+.timeline-phase-status {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-element);
+    font-size: var(--font-size-small);
+}
+
+.timeline-phase-time {
+    color: var(--color-gray-500);
+}
+
+.timeline-alert-badge {
+    padding: 4px 8px;
+    border-radius: var(--radius-tag);
+    font-size: var(--font-size-small);
+    font-weight: 500;
+}
+
+.timeline-alert-badge.high {
+    background: var(--color-danger);
+    color: white;
+}
+
+.timeline-alert-badge.medium {
+    background: var(--color-warning);
+    color: white;
+}
+
+.timeline-alert-badge.low {
+    background: var(--color-success);
+    color: white;
+}
+
+.timeline-alert-badge.none {
+    background: var(--color-gray-200);
+    color: var(--color-gray-600);
+}
+
+/* 预警列表 */
+.alert-list {
+    margin-top: var(--spacing-content);
+}
+
+.alert-item {
+    background: white;
+    padding: var(--spacing-card);
+    border-radius: var(--radius-button);
+    margin-bottom: var(--spacing-content);
+    border-left: 4px solid;
+    transition: all 0.2s;
+}
+
+.alert-item:last-child {
+    margin-bottom: 0;
+}
+
+.alert-item:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateX(4px);
+}
+
+.alert-item.high {
+    border-left-color: var(--color-danger);
+    background: linear-gradient(90deg, rgba(239, 68, 68, 0.05) 0%, white 100%);
+}
+
+.alert-item.medium {
+    border-left-color: var(--color-warning);
+    background: linear-gradient(90deg, rgba(251, 191, 36, 0.05) 0%, white 100%);
+}
+
+.alert-item.low {
+    border-left-color: var(--color-success);
+    background: linear-gradient(90deg, rgba(16, 185, 129, 0.05) 0%, white 100%);
+}
+
+.alert-header {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--spacing-content);
+    margin-bottom: var(--spacing-element);
+}
+
+.alert-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.alert-item.high .alert-icon {
+    background: var(--color-danger);
+    color: white;
+}
+
+.alert-item.medium .alert-icon {
+    background: var(--color-warning);
+    color: white;
+}
+
+.alert-item.low .alert-icon {
+    background: var(--color-success);
+    color: white;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-title {
+    font-size: var(--font-size-body);
+    color: var(--color-gray-900);
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.alert-type {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--color-gray-100);
+    color: var(--color-gray-600);
+    border-radius: var(--radius-tag);
+    font-size: var(--font-size-small);
+    margin-bottom: var(--spacing-element);
+}
+
+.alert-description {
+    font-size: var(--font-size-body);
+    color: var(--color-gray-700);
+    line-height: 1.6;
+    margin-bottom: var(--spacing-element);
+}
+
+.alert-suggestion {
+    padding: var(--spacing-element) var(--spacing-content);
+    background: rgba(59, 130, 246, 0.05);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-button);
+    font-size: var(--font-size-small);
+    color: var(--color-gray-700);
+    line-height: 1.6;
+}
+
+.alert-suggestion strong {
+    color: var(--color-primary);
+}
+
+.alert-risk-score {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-element);
+    margin-top: var(--spacing-element);
+}
+
+.alert-risk-score-label {
+    font-size: var(--font-size-small);
+    color: var(--color-gray-500);
+}
+
+.alert-risk-score-bar {
+    flex: 1;
+    height: 8px;
+    background: var(--color-gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.alert-risk-score-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.3s;
+}
+
+.alert-item.high .alert-risk-score-fill {
+    background: var(--color-danger);
+}
+
+.alert-item.medium .alert-risk-score-fill {
+    background: var(--color-warning);
+}
+
+.alert-item.low .alert-risk-score-fill {
+    background: var(--color-success);
+}
+
+.alert-risk-score-value {
+    font-size: var(--font-size-small);
+    font-weight: 600;
+    color: var(--color-gray-700);
+    min-width: 40px;
+    text-align: right;
+}
+
+/* 阶段数据 */
+.phase-data {
+    margin-top: var(--spacing-card);
+    padding: var(--spacing-card);
+    background: white;
+    border-radius: var(--radius-button);
+    border: 1px solid var(--color-gray-200);
+}
+
+.phase-data-title {
+    font-size: var(--font-size-body);
+    color: var(--color-gray-900);
+    font-weight: 600;
+    margin-bottom: var(--spacing-content);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-element);
+}
+
+.phase-data-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-content);
+}
+
+.phase-data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.phase-data-label {
+    font-size: var(--font-size-small);
+    color: var(--color-gray-500);
+}
+
+.phase-data-value {
+    font-size: var(--font-size-body);
+    color: var(--color-gray-900);
+    font-weight: 500;
+}
+
+/* 空状态 */
+.no-alerts {
+    text-align: center;
+    padding: var(--spacing-page);
+    color: var(--color-gray-500);
+}
+
+.no-alerts i {
+    font-size: 48px;
+    color: var(--color-gray-300);
+    margin-bottom: var(--spacing-content);
+}
+
+.no-alerts p {
+    font-size: var(--font-size-body);
+}

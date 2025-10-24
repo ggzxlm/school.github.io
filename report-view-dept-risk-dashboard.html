@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>部门风险评估仪表板</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/report-view.css">
+</head>
+<body>
+    <div class="app-container">
+        <header id="top-navbar"></header>
+        <div class="main-wrapper">
+            <aside id="side-navbar"></aside>
+            <main class="content-area">
+                <div class="report-header">
+                    <div class="report-header-left">
+                        <button class="btn-back" onclick="history.back()"><i class="fas fa-arrow-left"></i> 返回</button>
+                        <div class="report-title-section">
+                            <h1 class="report-title"><i class="fas fa-tachometer-alt"></i> 部门风险评估仪表板</h1>
+                            <p class="report-subtitle">实时数据 | RPT002</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="report-content">
+                    <div class="report-section">
+                        <h2 class="section-title"><i class="fas fa-chart-pie"></i> 风险概览</h2>
+                        <div class="stats-grid">
+                            <div class="stat-box stat-box-danger">
+                                <div class="stat-icon"><i class="fas fa-fire"></i></div>
+                                <div class="stat-content">
+                                    <div class="stat-label">高风险部门</div>
+                                    <div class="stat-value">8</div>
+                                </div>
+                            </div>
+                            <div class="stat-box stat-box-warning">
+                                <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                                <div class="stat-content">
+                                    <div class="stat-label">中风险部门</div>
+                                    <div class="stat-value">15</div>
+                                </div>
+                            </div>
+                            <div class="stat-box stat-box-info">
+                                <div class="stat-icon"><i class="fas fa-info-circle"></i></div>
+                                <div class="stat-content">
+                                    <div class="stat-label">低风险部门</div>
+                                    <div class="stat-value">22</div>
+                                </div>
+                            </div>
+                            <div class="stat-box stat-box-success">
+                                <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="stat-content">
+                                    <div class="stat-label">正常部门</div>
+                                    <div class="stat-value">35</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="report-section">
+                        <h2 class="section-title"><i class="fas fa-chart-bar"></i> 部门风险排名</h2>
+                        <div class="chart-container"><div id="riskChart" class="chart"></div></div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        <footer id="footer"></footer>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script>
+        const chart = echarts.init(document.getElementById('riskChart'));
+        chart.setOption({
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'value' },
+            yAxis: { type: 'category', data: ['计算机学院', '经管学院', '后勤处', '财务处', '科研处'].reverse() },
+            series: [{ type: 'bar', data: [85, 78, 72, 68, 65].reverse(), itemStyle: { color: '#ef4444' } }]
+        });
+    </script>
+</body>
+</html>

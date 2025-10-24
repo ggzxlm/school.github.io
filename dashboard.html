@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人工作台 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 欢迎信息 -->
+                <div class="welcome-section">
+                    <div class="welcome-text">
+                        <h1 class="welcome-title">
+                            <i class="fas fa-sun"></i>
+                            早上好，张三！
+                        </h1>
+                        <p class="welcome-subtitle">今天是 <span id="current-date"></span>，祝您工作顺利</p>
+                    </div>
+                    <div class="quick-actions">
+                        <button class="btn btn-primary" onclick="Dashboard.quickAction('new-clue')">
+                            <i class="fas fa-plus"></i>
+                            新建线索
+                        </button>
+                        <button class="btn btn-secondary" onclick="Dashboard.quickAction('new-order')">
+                            <i class="fas fa-file-alt"></i>
+                            创建工单
+                        </button>
+                        <button class="btn btn-secondary" onclick="window.location.href='command-center.html'">
+                            <i class="fas fa-desktop"></i>
+                            监督指挥大屏
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片区 -->
+                <div class="stats-grid" id="stats-cards"></div>
+
+                <!-- 我的待办 -->
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-tasks"></i>
+                            我的待办
+                        </h2>
+                        <div class="card-actions">
+                            <button class="btn btn-sm btn-secondary" onclick="Dashboard.refreshTodos()">
+                                <i class="fas fa-sync-alt"></i>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="todo-filters">
+                            <button class="filter-btn active" data-filter="all">全部 (<span
+                                    id="count-all">0</span>)</button>
+                            <button class="filter-btn" data-filter="urgent">紧急 (<span
+                                    id="count-urgent">0</span>)</button>
+                            <button class="filter-btn" data-filter="today">今日到期 (<span
+                                    id="count-today">0</span>)</button>
+                            <button class="filter-btn" data-filter="overdue">已超期 (<span
+                                    id="count-overdue">0</span>)</button>
+                        </div>
+                        <div class="table-container">
+                            <table class="table" id="todo-table">
+                                <thead>
+                                    <tr>
+                                        <th width="40"><input type="checkbox" id="select-all"></th>
+                                        <th width="60">序号</th>
+                                        <th>标题</th>
+                                        <th width="120">类型</th>
+                                        <th width="150">时限</th>
+                                        <th width="100">优先级</th>
+                                        <th width="180">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="todo-tbody"></tbody>
+                            </table>
+                        </div>
+                        <div class="table-footer">
+                            <div class="batch-actions">
+                                <button class="btn btn-sm btn-primary" onclick="Dashboard.batchProcess()">
+                                    <i class="fas fa-check"></i>
+                                    批量处理
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="Dashboard.batchAssign()">
+                                    <i class="fas fa-user"></i>
+                                    批量分配
+                                </button>
+                            </div>
+                            <div class="pagination" id="todo-pagination"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 我的预警和最近动态 -->
+                <div class="grid grid-cols-2 gap-3 mt-3">
+                    <!-- 我的预警 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                我的预警
+                            </h2>
+                            <a href="alert-center.html" class="text-primary" style="font-size: 14px;">
+                                查看全部 <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert-list" id="alert-list"></div>
+                        </div>
+                    </div>
+
+                    <!-- 最近动态 -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-history"></i>
+                                最近动态
+                            </h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline" id="timeline"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/mock-data.js"></script>
+    <script src="js/data-service.js"></script>
+    <script src="js/data-loader.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

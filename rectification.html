@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整改管理 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css?v=4">
+    <link rel="stylesheet" href="css/rectification.css?v=4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+        
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+            
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-tasks"></i>
+                            整改管理
+                        </h1>
+                        <p class="page-subtitle">跟踪整改进度，确保问题整改到位</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="exportData()">
+                            <i class="fas fa-download"></i>
+                            导出
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 整改进度看板 -->
+                <div class="stats-row mb-3">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-clipboard-list"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">整改总数</div>
+                            <div class="stat-value" id="totalCount">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-spinner"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">进行中</div>
+                            <div class="stat-value" id="inProgressCount">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">已完成</div>
+                            <div class="stat-value" id="completedCount">0</div>
+                            <div class="stat-extra">
+                                完成率: <span id="completionRate">0%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-danger">
+                        <div class="stat-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">超期</div>
+                            <div class="stat-value" id="overdueCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input 
+                                    type="text" 
+                                    id="searchInput" 
+                                    placeholder="搜索任务编号、标题、责任人..."
+                                    class="search-input"
+                                >
+                            </div>
+                            
+                            <!-- 筛选器 -->
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">状态</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">全部状态</option>
+                                        <option value="pending">待整改</option>
+                                        <option value="in_progress">整改中</option>
+                                        <option value="review">待复查</option>
+                                        <option value="completed">已完成</option>
+                                        <option value="overdue">超期</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">责任单位</label>
+                                    <select class="form-select" id="unitFilter">
+                                        <option value="">全部单位</option>
+                                        <option value="财务处">财务处</option>
+                                        <option value="科研处">科研处</option>
+                                        <option value="资产处">资产处</option>
+                                        <option value="人事处">人事处</option>
+                                        <option value="教务处">教务处</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-actions">
+                                    <button class="btn btn-secondary btn-sm" onclick="resetFilters()">
+                                        <i class="fas fa-redo"></i>
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 整改任务列表 -->
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 120px;">任务编号</th>
+                                        <th>整改任务</th>
+                                        <th style="width: 120px;">责任单位</th>
+                                        <th style="width: 100px;">责任人</th>
+                                        <th style="width: 120px;">整改时限</th>
+                                        <th style="width: 150px;">整改进度</th>
+                                        <th style="width: 100px;">状态</th>
+                                        <th style="width: 200px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="taskTableBody">
+                                    <!-- 数据将通过 JavaScript 动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 分页 -->
+                        <div class="table-footer">
+                            <div class="pagination-info">
+                                显示 <span id="pageStart">0</span> 到 <span id="pageEnd">0</span> 条，共 <span id="totalItems">0</span> 条
+                            </div>
+                            <div class="pagination">
+                                <button class="btn btn-sm" id="prevPage" onclick="prevPage()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div class="pagination-pages" id="paginationPages">
+                                    <!-- 页码将通过 JavaScript 动态生成 -->
+                                </div>
+                                <button class="btn btn-sm" id="nextPage" onclick="nextPage()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 整改详情模态框 -->
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title">整改详情</h3>
+                <button class="modal-close-btn" onclick="closeDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h4 class="detail-section-title">基本信息</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>任务编号</label>
+                            <div id="detailTaskNo">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>状态</label>
+                            <div id="detailStatus">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>责任单位</label>
+                            <div id="detailUnit">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>责任人</label>
+                            <div id="detailPerson">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>整改时限</label>
+                            <div id="detailDeadline">-</div>
+                        </div>
+                        <div class="detail-item full-width">
+                            <label>整改进度</label>
+                            <div class="progress-container">
+                                <div class="progress-bar-wrapper">
+                                    <div class="progress-bar" id="detailProgress" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text" id="detailProgressText">0%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 标签页 -->
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('plan')">整改计划</div>
+                    <div class="tab" onclick="switchTab('indicators')">量化指标</div>
+                    <div class="tab" onclick="switchTab('timeline')">时间轴</div>
+                    <div class="tab" onclick="switchTab('evidence')">佐证材料</div>
+                </div>
+
+                <!-- 标签页内容 -->
+                <div class="tab-content">
+                    <div id="tab-plan" class="tab-pane active">
+                        <div class="detail-section">
+                            <h4 class="detail-section-title">问题描述</h4>
+                            <div id="detailProblem" class="detail-text">-</div>
+                        </div>
+                        <div class="detail-section">
+                            <h4 class="detail-section-title">整改措施</h4>
+                            <div id="detailMeasures" class="detail-text">-</div>
+                        </div>
+                    </div>
+
+                    <div id="tab-indicators" class="tab-pane">
+                        <div id="indicatorsList" class="indicators-grid">
+                            <!-- 量化指标将通过 JavaScript 动态生成 -->
+                        </div>
+                    </div>
+
+                    <div id="tab-timeline" class="tab-pane">
+                        <div id="timelineList" class="timeline">
+                            <!-- 时间轴将通过 JavaScript 动态生成 -->
+                        </div>
+                    </div>
+
+                    <div id="tab-evidence" class="tab-pane">
+                        <div id="evidenceList" class="evidence-grid">
+                            <!-- 佐证材料将通过 JavaScript 动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeDetailModal()">关闭</button>
+                <button class="btn btn-success" onclick="reviewTask()">
+                    <i class="fas fa-check"></i>
+                    通过复查
+                </button>
+                <button class="btn btn-primary" onclick="closeTask()">
+                    <i class="fas fa-check-double"></i>
+                    销号归档
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 上传佐证模态框 -->
+    <div id="uploadModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">上传佐证材料</h3>
+                <button class="modal-close-btn" onclick="closeUploadModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>材料说明</label>
+                    <textarea id="evidenceDescription" class="form-control" rows="3" placeholder="请输入材料说明..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>上传文件</label>
+                    <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>点击或拖拽文件到此处上传</p>
+                        <p class="text-muted">支持 PDF、Word、Excel、图片等格式</p>
+                    </div>
+                    <input type="file" id="fileInput" style="display: none;" multiple>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeUploadModal()">取消</button>
+                <button class="btn btn-primary" onclick="submitEvidence()">
+                    <i class="fas fa-upload"></i>
+                    提交
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js?v=3"></script>
+    <script src="js/components.js?v=3"></script>
+    <script src="js/data-service.js?v=3"></script>
+    <script src="js/data-loader.js?v=3"></script>
+    <script src="js/rectification.js?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智能关联分析 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/relation-analysis.css">
+    <script src="https://gw.alipayobjects.com/os/lib/antv/g6/4.8.12/dist/g6.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- 顶部导航 -->
+        <header class="header">
+            <div class="header-left">
+                <h1>智能关联分析</h1>
+            </div>
+            <div class="header-right">
+                <button class="btn btn-secondary" onclick="window.location.href='index.html'">返回首页</button>
+            </div>
+        </header>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 左侧控制面板 -->
+            <aside class="control-panel">
+                <div class="panel-section">
+                    <h3>图谱构建</h3>
+                    <div class="form-group">
+                        <label>选择实体</label>
+                        <select id="entitySelect" multiple>
+                            <option value="P001">张三(采购经理)</option>
+                            <option value="P002">李四(财务总监)</option>
+                            <option value="P003">王五</option>
+                            <option value="C001">某某科技有限公司</option>
+                            <option value="C002">某某建筑工程公司</option>
+                            <option value="CT001">办公设备采购合同</option>
+                            <option value="CT002">实验室建设合同</option>
+                            <option value="B001">办公设备采购项目</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>关联深度</label>
+                        <select id="depthSelect">
+                            <option value="1">1层</option>
+                            <option value="2" selected>2层</option>
+                            <option value="3">3层</option>
+                            <option value="4">4层</option>
+                            <option value="5">5层</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary btn-block" onclick="buildGraph()">构建图谱</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>过滤条件</h3>
+                    <div class="form-group">
+                        <label>实体类型</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="PERSON" checked> 人员</label>
+                            <label><input type="checkbox" value="COMPANY" checked> 企业</label>
+                            <label><input type="checkbox" value="CONTRACT" checked> 合同</label>
+                            <label><input type="checkbox" value="BID" checked> 投标</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>关系类型</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="FAMILY" checked> 亲属</label>
+                            <label><input type="checkbox" value="EQUITY" checked> 股权</label>
+                            <label><input type="checkbox" value="EMPLOYMENT" checked> 任职</label>
+                            <label><input type="checkbox" value="APPROVAL" checked> 审批</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>风险等级</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" value="HIGH" checked> 高风险</label>
+                            <label><input type="checkbox" value="MEDIUM" checked> 中风险</label>
+                            <label><input type="checkbox" value="LOW" checked> 低风险</label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="includeHidden" checked> 显示隐藏关联</label>
+                    </div>
+                    <button class="btn btn-secondary btn-block" onclick="applyFilters()">应用过滤</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>分析功能</h3>
+                    <button class="btn btn-secondary btn-block" onclick="identifyHiddenRelations()">识别隐藏关联</button>
+                    <button class="btn btn-secondary btn-block" onclick="analyzeRiskPaths()">分析风险路径</button>
+                    <button class="btn btn-secondary btn-block" onclick="identifyKeyNodes()">识别关键节点</button>
+                    <button class="btn btn-secondary btn-block" onclick="generateReport()">生成分析报告</button>
+                </div>
+
+                <div class="panel-section">
+                    <h3>布局设置</h3>
+                    <select id="layoutSelect" onchange="changeLayout()">
+                        <option value="force" selected>力导向布局</option>
+                        <option value="circular">环形布局</option>
+                        <option value="radial">辐射布局</option>
+                        <option value="dagre">层次布局</option>
+                        <option value="concentric">同心圆布局</option>
+                    </select>
+                </div>
+
+                <div class="panel-section">
+                    <h3>操作</h3>
+                    <button class="btn btn-secondary btn-block" onclick="fitView()">适应画布</button>
+                    <button class="btn btn-secondary btn-block" onclick="exportImage()">导出图片</button>
+                    <button class="btn btn-secondary btn-block" onclick="clearGraph()">清空图谱</button>
+                </div>
+            </aside>
+
+            <!-- 中间图谱展示区 -->
+            <div class="graph-container">
+                <div class="graph-toolbar">
+                    <div class="toolbar-left">
+                        <span id="graphStats">节点: 0 | 边: 0</span>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn-icon" onclick="zoomIn()" title="放大">+</button>
+                        <button class="btn-icon" onclick="zoomOut()" title="缩小">-</button>
+                        <button class="btn-icon" onclick="fitView()" title="适应画布">⊡</button>
+                    </div>
+                </div>
+                <div id="graphCanvas"></div>
+                <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>正在分析...</p>
+                </div>
+            </div>
+
+            <!-- 右侧详情面板 -->
+            <aside class="detail-panel">
+                <div class="panel-tabs">
+                    <button class="tab-btn active" onclick="switchTab('node')">节点详情</button>
+                    <button class="tab-btn" onclick="switchTab('relation')">关系详情</button>
+                    <button class="tab-btn" onclick="switchTab('analysis')">分析结果</button>
+                </div>
+
+                <div id="nodeDetail" class="tab-content active">
+                    <div class="empty-state">
+                        <p>点击节点查看详情</p>
+                    </div>
+                </div>
+
+                <div id="relationDetail" class="tab-content">
+                    <div class="empty-state">
+                        <p>点击边查看关系详情</p>
+                    </div>
+                </div>
+
+                <div id="analysisResult" class="tab-content">
+                    <div class="empty-state">
+                        <p>执行分析后查看结果</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/relation-graph-service.js"></script>
+    <script src="js/hidden-relation-service.js"></script>
+    <script src="js/relation-graph-visualization.js"></script>
+    <script src="js/risk-path-analysis-service.js"></script>
+    <script src="js/relation-filter-service.js"></script>
+    <script>
+        let visualization = null;
+        let currentGraph = null;
+
+        // 初始化
+        async function init() {
+            try {
+                // 初始化服务
+                await window.relationGraphService.initialize();
+                await window.hiddenRelationService.initialize();
+                await window.riskPathAnalysisService.initialize();
+                await window.relationFilterService.initialize();
+
+                // 初始化可视化
+                visualization = new RelationGraphVisualization('graphCanvas');
+                await visualization.initialize();
+
+                // 绑定事件
+                visualization.onNodeClick = showNodeDetail;
+                visualization.onEdgeClick = showRelationDetail;
+
+                console.log('智能关联分析模块初始化完成');
+            } catch (error) {
+                console.error('初始化失败:', error);
+                alert('初始化失败: ' + error.message);
+            }
+        }
+
+        // 构建图谱
+        async function buildGraph() {
+            const entitySelect = document.getElementById('entitySelect');
+            const depthSelect = document.getElementById('depthSelect');
+            
+            const selectedEntities = Array.from(entitySelect.selectedOptions).map(opt => opt.value);
+            const depth = parseInt(depthSelect.value);
+
+            if (selectedEntities.length === 0) {
+                alert('请选择至少一个实体');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                currentGraph = await window.relationGraphService.buildGraph({
+                    entityIds: selectedEntities,
+                    depth: depth
+                });
+
+                visualization.render(currentGraph);
+                updateGraphStats(currentGraph);
+            } catch (error) {
+                console.error('构建图谱失败:', error);
+                alert('构建图谱失败: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 应用过滤
+        function applyFilters() {
+            if (!currentGraph) {
+                alert('请先构建图谱');
+                return;
+            }
+
+            const entityTypes = getCheckedValues('input[type="checkbox"][value="PERSON"], input[type="checkbox"][value="COMPANY"], input[type="checkbox"][value="CONTRACT"], input[type="checkbox"][value="BID"]');
+            const relationTypes = getCheckedValues('input[type="checkbox"][value="FAMILY"], input[type="checkbox"][value="EQUITY"], input[type="checkbox"][value="EMPLOYMENT"], input[type="checkbox"][value="APPROVAL"]');
+            const riskLevels = getCheckedValues('input[type="checkbox"][value="HIGH"], input[type="checkbox"][value="MEDIUM"], input[type="checkbox"][value="LOW"]');
+            const includeHidden = document.getElementById('includeHidden').checked;
+
+            visualization.setFilters({
+                entityTypes,
+                relationTypes,
+                riskLevels,
+                includeHidden
+            });
+        }
+
+        // 识别隐藏关联
+        async function identifyHiddenRelations() {
+            if (!currentGraph) {
+                alert('请先构建图谱');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const hiddenRelations = await window.hiddenRelationService.identifyHiddenRelations(currentGraph);
+                
+                // 将隐藏关联添加到图谱
+                currentGraph.edges.push(...hiddenRelations.map(r => ({
+                    id: r.id,
+                    source: r.sourceId,
+                    target: r.targetId,
+                    type: r.type,
+                    label: r.label,
+                    riskLevel: r.riskLevel,
+                    confidence: r.confidence,
+                    isHidden: true
+                })));
+
+                visualization.render(currentGraph);
+                updateGraphStats(currentGraph);
+
+                // 显示结果
+                showAnalysisResult('隐藏关联识别', {
+                    total: hiddenRelations.length,
+                    high: hiddenRelations.filter(r => r.riskLevel === 'HIGH').length,
+                    medium: hiddenRelations.filter(r => r.riskLevel === 'MEDIUM').length,
+                    relations: hiddenRelations
+                });
+
+                alert(`识别完成,发现 ${hiddenRelations.length} 个隐藏关联`);
+            } catch (error) {
+                console.error('识别隐藏关联失败:', error);
+                alert('识别失败: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 分析风险路径
+        async function analyzeRiskPaths() {
+            if (!currentGraph) {
+                alert('请先构建图谱');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const entitySelect = document.getElementById('entitySelect');
+                const selectedEntities = Array.from(entitySelect.selectedOptions).map(opt => opt.value);
+                const startNodeId = selectedEntities[0];
+
+                const riskPaths = await window.riskPathAnalysisService.analyzeRiskPaths(currentGraph, startNodeId);
+                
+                // 标识风险路径
+                const markedGraph = window.riskPathAnalysisService.markRiskPathsInGraph(currentGraph, riskPaths);
+                visualization.render(markedGraph);
+
+                // 显示结果
+                showAnalysisResult('风险路径分析', {
+                    total: riskPaths.length,
+                    high: riskPaths.filter(p => p.riskLevel === 'HIGH').length,
+                    medium: riskPaths.filter(p => p.riskLevel === 'MEDIUM').length,
+                    paths: riskPaths.slice(0, 10)
+                });
+
+                alert(`分析完成,发现 ${riskPaths.length} 条风险路径`);
+            } catch (error) {
+                console.error('分析风险路径失败:', error);
+                alert('分析失败: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 识别关键节点
+        function identifyKeyNodes() {
+            if (!currentGraph) {
+                alert('请先构建图谱');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                const keyNodes = window.relationFilterService.identifyKeyNodes(currentGraph);
+                
+                // 高亮关键节点
+                keyNodes.forEach(node => {
+                    visualization.highlightNode(node.id);
+                });
+
+                // 显示结果
+                showAnalysisResult('关键节点识别', {
+                    total: keyNodes.length,
+                    nodes: keyNodes
+                });
+
+                alert(`识别完成,发现 ${keyNodes.length} 个关键节点`);
+            } catch (error) {
+                console.error('识别关键节点失败:', error);
+                alert('识别失败: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 生成分析报告
+        async function generateReport() {
+            if (!currentGraph) {
+                alert('请先构建图谱');
+                return;
+            }
+
+            showLoading(true);
+
+            try {
+                // 执行完整分析
+                const hiddenRelations = await window.hiddenRelationService.identifyHiddenRelations(currentGraph);
+                const entitySelect = document.getElementById('entitySelect');
+                const selectedEntities = Array.from(entitySelect.selectedOptions).map(opt => opt.value);
+                const riskPaths = await window.riskPathAnalysisService.analyzeRiskPaths(currentGraph, selectedEntities[0]);
+                
+                const report = window.riskPathAnalysisService.generateAnalysisReport(currentGraph, riskPaths, hiddenRelations);
+                
+                // 显示报告
+                showAnalysisResult('综合分析报告', report);
+                switchTab('analysis');
+
+                alert('报告生成完成');
+            } catch (error) {
+                console.error('生成报告失败:', error);
+                alert('生成报告失败: ' + error.message);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // 切换布局
+        function changeLayout() {
+            const layoutSelect = document.getElementById('layoutSelect');
+            const layout = layoutSelect.value;
+            visualization.changeLayout(layout);
+        }
+
+        // 适应画布
+        function fitView() {
+            visualization.fitView();
+        }
+
+        // 放大
+        function zoomIn() {
+            visualization.zoom(1.2);
+        }
+
+        // 缩小
+        function zoomOut() {
+            visualization.zoom(0.8);
+        }
+
+        // 导出图片
+        function exportImage() {
+            visualization.exportImage('relation-graph');
+        }
+
+        // 清空图谱
+        function clearGraph() {
+            if (confirm('确定要清空图谱吗?')) {
+                currentGraph = null;
+                visualization.render({ nodes: [], edges: [] });
+                updateGraphStats({ nodes: [], edges: [] });
+                document.getElementById('nodeDetail').innerHTML = '<div class="empty-state"><p>点击节点查看详情</p></div>';
+                document.getElementById('relationDetail').innerHTML = '<div class="empty-state"><p>点击边查看关系详情</p></div>';
+                document.getElementById('analysisResult').innerHTML = '<div class="empty-state"><p>执行分析后查看结果</p></div>';
+            }
+        }
+
+        // 显示节点详情
+        function showNodeDetail(node) {
+            const html = `
+                <div class="detail-content">
+                    <h4>${node.label}</h4>
+                    <div class="detail-item">
+                        <label>类型:</label>
+                        <span>${node.type}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>风险等级:</label>
+                        <span class="risk-badge risk-${node.riskLevel.toLowerCase()}">${node.riskLevel}</span>
+                    </div>
+                    ${node.properties ? Object.entries(node.properties).map(([key, value]) => `
+                        <div class="detail-item">
+                            <label>${key}:</label>
+                            <span>${value}</span>
+                        </div>
+                    `).join('') : ''}
+                </div>
+            `;
+            document.getElementById('nodeDetail').innerHTML = html;
+            switchTab('node');
+        }
+
+        // 显示关系详情
+        function showRelationDetail(edge) {
+            const html = `
+                <div class="detail-content">
+                    <h4>${edge.label}</h4>
+                    <div class="detail-item">
+                        <label>类型:</label>
+                        <span>${edge.type}</span>
+                    </div>
+                    <div class="detail-item">
+                        <label>风险等级:</label>
+                        <span class="risk-badge risk-${edge.riskLevel.toLowerCase()}">${edge.riskLevel}</span>
+                    </div>
+                    ${edge.isHidden ? '<div class="detail-item"><span class="badge badge-warning">隐藏关联</span></div>' : ''}
+                    ${edge.confidence ? `<div class="detail-item"><label>置信度:</label><span>${(edge.confidence * 100).toFixed(0)}%</span></div>` : ''}
+                </div>
+            `;
+            document.getElementById('relationDetail').innerHTML = html;
+            switchTab('relation');
+        }
+
+        // 显示分析结果
+        function showAnalysisResult(title, data) {
+            let html = `<div class="detail-content"><h4>${title}</h4>`;
+            
+            if (data.summary) {
+                html += '<div class="summary-stats">';
+                html += `<div class="stat-item"><label>节点数:</label><span>${data.summary.totalNodes}</span></div>`;
+                html += `<div class="stat-item"><label>边数:</label><span>${data.summary.totalEdges}</span></div>`;
+                html += `<div class="stat-item"><label>高风险:</label><span class="risk-high">${data.summary.highRiskPaths || data.summary.highRiskNodes || 0}</span></div>`;
+                html += '</div>';
+            }
+            
+            html += '</div>';
+            document.getElementById('analysisResult').innerHTML = html;
+        }
+
+        // 切换标签页
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Detail').classList.add('active');
+        }
+
+        // 更新图谱统计
+        function updateGraphStats(graph) {
+            document.getElementById('graphStats').textContent = 
+                `节点: ${graph.nodes.length} | 边: ${graph.edges.length}`;
+        }
+
+        // 显示加载状态
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none';
+        }
+
+        // 获取选中的复选框值
+        function getCheckedValues(selector) {
+            return Array.from(document.querySelectorAll(selector))
+                .filter(cb => cb.checked)
+                .map(cb => cb.value);
+        }
+
+        // 页面加载完成后初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

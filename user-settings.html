@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>账号设置 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/user-settings.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <div id="top-navbar"></div>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <div id="side-navbar"></div>
+
+            <!-- 主内容区 -->
+            <div class="main-content">
+                <div class="page-header">
+                    <div class="page-title">
+                        <i class="fas fa-cog"></i>
+                        <span>账号设置</span>
+                    </div>
+                    <div class="page-breadcrumb">
+                        <a href="dashboard.html">首页</a>
+                        <i class="fas fa-chevron-right"></i>
+                        <span>账号设置</span>
+                    </div>
+                </div>
+
+                <div class="page-content">
+                    <div class="settings-container">
+                        <!-- 通知设置 -->
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <i class="fas fa-bell"></i>
+                                <div>
+                                    <h3>通知设置</h3>
+                                    <p>管理您接收通知的方式</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>系统通知</h4>
+                                        <p>接收系统更新、维护等通知</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>预警通知</h4>
+                                        <p>接收新的预警信息推送</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>工单通知</h4>
+                                        <p>接收工单分配、状态变更通知</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>邮件通知</h4>
+                                        <p>通过邮件接收重要通知</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 隐私设置 -->
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <i class="fas fa-user-shield"></i>
+                                <div>
+                                    <h3>隐私设置</h3>
+                                    <p>控制您的个人信息可见性</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>显示在线状态</h4>
+                                        <p>让其他用户看到您的在线状态</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>显示手机号</h4>
+                                        <p>在个人资料中显示手机号</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>显示邮箱</h4>
+                                        <p>在个人资料中显示邮箱地址</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 界面设置 -->
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <i class="fas fa-palette"></i>
+                                <div>
+                                    <h3>界面设置</h3>
+                                    <p>个性化您的使用体验</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>主题模式</h4>
+                                        <p>选择浅色或深色主题</p>
+                                    </div>
+                                    <select class="form-select">
+                                        <option value="light" selected>浅色模式</option>
+                                        <option value="dark">深色模式</option>
+                                        <option value="auto">跟随系统</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>语言</h4>
+                                        <p>选择界面显示语言</p>
+                                    </div>
+                                    <select class="form-select">
+                                        <option value="zh-CN" selected>简体中文</option>
+                                        <option value="en-US">English</option>
+                                    </select>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>侧边栏默认状态</h4>
+                                        <p>设置侧边栏默认展开或收起</p>
+                                    </div>
+                                    <select class="form-select">
+                                        <option value="expanded" selected>展开</option>
+                                        <option value="collapsed">收起</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 安全设置 -->
+                        <div class="settings-card">
+                            <div class="card-header">
+                                <i class="fas fa-shield-alt"></i>
+                                <div>
+                                    <h3>安全设置</h3>
+                                    <p>保护您的账号安全</p>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>双因素认证</h4>
+                                        <p>启用后登录需要额外验证</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>登录提醒</h4>
+                                        <p>账号登录时发送通知</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="setting-item">
+                                    <div class="setting-info">
+                                        <h4>会话超时</h4>
+                                        <p>长时间未操作自动退出</p>
+                                    </div>
+                                    <select class="form-select">
+                                        <option value="30">30分钟</option>
+                                        <option value="60" selected>1小时</option>
+                                        <option value="120">2小时</option>
+                                        <option value="0">不超时</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-actions">
+                            <button class="btn btn-primary" id="saveBtn">
+                                <i class="fas fa-save"></i>
+                                保存设置
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div id="footer"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/user-settings.js"></script>
+</body>
+</html>

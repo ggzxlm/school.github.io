@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义建模工具 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/custom-model-builder.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+<!-- 顶部栏 -->
+            <header class="top-bar">
+                <div class="page-title">
+                    <h1>自定义建模工具</h1>
+                    <p class="subtitle">创建和配置自定义监督模型</p>
+                </div>
+                <div class="top-actions">
+                    <button class="btn btn-secondary" onclick="modelBuilder.loadModel()">
+                        <span class="icon">📂</span>
+                        加载模型
+                    </button>
+                    <button class="btn btn-primary" onclick="modelBuilder.saveModel()">
+                        <span class="icon">💾</span>
+                        保存模型
+                    </button>
+                </div>
+            </header>
+
+            <!-- 建模工作区 -->
+            <div class="builder-workspace">
+                <!-- 左侧：基本信息 -->
+                <div class="builder-section">
+                    <div class="section-header">
+                        <h3>基本信息</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="form-group">
+                            <label>模型ID</label>
+                            <input type="text" id="modelId" class="form-control" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>模型名称 *</label>
+                            <input type="text" id="modelName" class="form-control" placeholder="请输入模型名称">
+                        </div>
+                        <div class="form-group">
+                            <label>模型分类 *</label>
+                            <select id="modelCategory" class="form-control">
+                                <option value="">请选择</option>
+                                <option value="财务监督">财务监督</option>
+                                <option value="科研监督">科研监督</option>
+                                <option value="资产监督">资产监督</option>
+                                <option value="采购监督">采购监督</option>
+                                <option value="招生监督">招生监督</option>
+                                <option value="作风监督">作风监督</option>
+                                <option value="其他">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>模型描述</label>
+                            <textarea id="modelDescription" class="form-control" rows="3" 
+                                placeholder="请描述模型的用途和监督目标"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>适用场景</label>
+                            <div id="scenariosList" class="scenarios-editor">
+                                <!-- 场景列表 -->
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="modelBuilder.addScenario()">
+                                <span class="icon">➕</span>
+                                添加场景
+                            </button>
+                        </div>
+                        <div class="form-group">
+                            <label>模型版本</label>
+                            <input type="text" id="modelVersion" class="form-control" value="1.0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：规则配置 -->
+                <div class="builder-section rules-section">
+                    <div class="section-header">
+                        <h3>检查规则配置</h3>
+                        <button class="btn btn-sm btn-primary" onclick="modelBuilder.addRule()">
+                            <span class="icon">➕</span>
+                            添加规则
+                        </button>
+                    </div>
+                    <div class="section-content">
+                        <div id="rulesList" class="rules-editor">
+                            <!-- 规则列表 -->
+                        </div>
+                        <div class="empty-rules" id="emptyRules">
+                            <div class="icon">📋</div>
+                            <p>暂无规则，点击"添加规则"开始配置</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+</body>
+</html>

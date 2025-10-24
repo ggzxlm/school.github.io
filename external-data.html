@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外部数据接入 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/data-governance.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-cloud-download-alt"></i>
+                            外部数据接入
+                        </h1>
+                        <p class="page-subtitle">管理外部数据源接入，包括API、文件、第三方系统等</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="externalDataPage.testConnection()">
+                            <i class="fas fa-plug"></i>
+                            测试连接
+                        </button>
+                        <button class="btn btn-primary" onclick="externalDataPage.showCreateModal()">
+                            <i class="fas fa-plus"></i>
+                            新增接入
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 统计卡片 -->
+                <div class="stats-grid mb-3">
+                    <div class="stat-card">
+                        <div class="stat-label">接入总数</div>
+                        <div class="stat-value" id="totalCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">运行中</div>
+                        <div class="stat-value" id="runningCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">今日同步</div>
+                        <div class="stat-value" id="todaySyncCount">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">同步失败</div>
+                        <div class="stat-value" id="failedCount">0</div>
+                    </div>
+                </div>
+
+                <!-- 标签页 -->
+                <div class="tabs mb-3">
+                    <button class="tab-btn active" data-tab="all" onclick="externalDataPage.switchTab('all')">
+                        全部接入
+                    </button>
+                    <button class="tab-btn" data-tab="api" onclick="externalDataPage.switchTab('api')">
+                        API接入
+                    </button>
+                    <button class="tab-btn" data-tab="file" onclick="externalDataPage.switchTab('file')">
+                        文件接入
+                    </button>
+                    <button class="tab-btn" data-tab="system" onclick="externalDataPage.switchTab('system')">
+                        系统接入
+                    </button>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="搜索接入名称、数据源..." 
+                                       class="search-input" onkeyup="externalDataPage.handleSearch()">
+                            </div>
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">状态</label>
+                                    <select class="form-select" id="filter-status" onchange="externalDataPage.loadData()">
+                                        <option value="">全部</option>
+                                        <option value="running">运行中</option>
+                                        <option value="stopped">已停止</option>
+                                        <option value="failed">失败</option>
+                                    </select>
+                                </div>
+                                <div class="filter-actions">
+                                    <button class="btn btn-secondary" onclick="externalDataPage.exportData()">
+                                        <i class="fas fa-download"></i>
+                                        导出
+                                    </button>
+                                    <button class="btn btn-primary" onclick="externalDataPage.refreshData()">
+                                        <i class="fas fa-sync-alt"></i>
+                                        刷新
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据列表 -->
+                <div class="card">
+                    <div class="table-container">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>接入名称</th>
+                                    <th>接入类型</th>
+                                    <th>数据源</th>
+                                    <th>同步频率</th>
+                                    <th>最后同步</th>
+                                    <th>状态</th>
+                                    <th width="150">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- 数据行将动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 空状态 -->
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                            <circle cx="32" cy="32" r="30" stroke="#E5E7EB" stroke-width="2"/>
+                            <path d="M32 20V32L40 40" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <p>暂无数据</p>
+                    </div>
+
+                    <!-- 分页 -->
+                    <div class="pagination" id="pagination">
+                        <div class="pagination-info">
+                            共 <span id="totalRecords">0</span> 条数据
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="btn btn-sm" onclick="externalDataPage.prevPage()" id="prevBtn">上一页</button>
+                            <span class="page-info">第 <span id="currentPage">1</span> / <span id="totalPages">1</span> 页</span>
+                            <button class="btn btn-sm" onclick="externalDataPage.nextPage()" id="nextBtn">下一页</button>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/external-data-service.js"></script>
+    <script src="js/external-data.js"></script>
+</body>
+</html>
