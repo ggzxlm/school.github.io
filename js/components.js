@@ -739,7 +739,7 @@ const SideNavbar = {
                 { id: 'enrollment', icon: 'fa-user-graduate', text: '招生录取', link: 'discipline-supervision.html?type=enrollment' },
                 { id: 'research-fund', icon: 'fa-flask', text: '科研经费', link: 'discipline-supervision.html?type=research-fund' },
                 { id: 'construction', icon: 'fa-building', text: '基建采购', link: 'discipline-supervision.html?type=construction' },
-                { id: 'procurement-projects', icon: 'fa-tasks', text: '采购项目监督', link: 'test-procurement-project.html' },
+                { id: 'procurement-projects', icon: 'fa-tasks', text: '采购项目监督', link: 'procurement-project.html' },
                 { id: 'finance', icon: 'fa-coins', text: '财务管理', link: 'discipline-supervision.html?type=finance' },
                 { id: 'eight-rules', icon: 'fa-list-ol', text: '八项规定', link: 'discipline-supervision.html?type=eight-rules' },
                 { id: 'three-major', icon: 'fa-star', text: '三重一大', link: 'discipline-supervision.html?type=three-major' }

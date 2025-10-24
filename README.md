@@ -57,7 +57,7 @@ npx http-server
 - ✅ **合同签订** - 检查内容匹配度、金额差异
 
 **快速访问：**
-- 项目列表：`test-procurement-project.html`
+- 项目列表：`procurement-project.html`
 - 高风险示例：`procurement-project-detail.html?id=P2025001`
 - 低风险示例：`procurement-project-detail.html?id=P2025002`
 
@@ -127,7 +127,7 @@ npx http-server
 │   ├── procurement-project-detail.js   # 采购项目详情
 │   └── search-results.js               # 搜索结果
 ├── procurement-project-detail.html     # 采购项目详情页
-├── test-procurement-project.html       # 采购项目测试页
+├── procurement-project.html            # 采购项目列表页
 ├── search-results.html                 # 搜索结果页
 ├── search-demo.html                    # 搜索演示页
 └── docs/                               # 文档目录

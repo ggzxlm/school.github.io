@@ -4,7 +4,7 @@
 
 ### 方式一：测试页面（推荐）⭐
 ```bash
-打开 test-procurement-project.html
+打开 procurement-project.html
 ```
 查看所有测试项目，点击项目卡片进入详情页面。
 
@@ -121,7 +121,7 @@
 ## 文档资源
 
 - 📖 [功能说明](PROCUREMENT-PROJECT-ALERT-GUIDE.md) - 详细的功能说明
-- 🧪 [测试页面](test-procurement-project.html) - 测试项目列表
+- 🧪 [测试页面](procurement-project.html) - 测试项目列表
 - 📄 [详情页面](procurement-project-detail.html) - 项目详情展示
 
 ## 快速提示
@@ -140,7 +140,7 @@
 
 ## 开始使用
 
-现在就打开 `test-procurement-project.html` 开始体验吧！🎉
+现在就打开 `procurement-project.html` 开始体验吧！🎉
 
 ---
 

@@ -44,7 +44,7 @@
 ### 其他访问方式不变
 - 快速访问页面：`quick-access.html`
 - 搜索功能：输入"采购"
-- 直接访问：`test-procurement-project.html`
+- 直接访问：`procurement-project.html`
 
 ## 更新原因
 

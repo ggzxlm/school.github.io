@@ -1173,6 +1173,9 @@ const majorDecisionData = [
 function loadMajorDecisionModule() {
     // 更新统计卡片
     updateMajorDecisionStats();
+    
+    // 初始化决策程序合规性分析图表
+    initDecisionComplianceChart();
 
     // 加载决策事项列表
     const tbody = document.querySelector('#major-decision-content table tbody');
@@ -1255,6 +1258,126 @@ function updateMajorDecisionStats() {
             statCards[3].querySelector('.stat-card-value').classList.add('warning');
         }
     }
+}
+
+// 初始化决策程序合规性分析图表
+function initDecisionComplianceChart() {
+    const chartDom = document.getElementById('decisionComplianceChart');
+    if (!chartDom) return;
+    
+    const myChart = echarts.init(chartDom);
+    
+    // 统计各个程序环节的完成情况
+    const total = majorDecisionData.length;
+    const researchCount = majorDecisionData.filter(d => d.research).length;
+    const expertCount = majorDecisionData.filter(d => d.expert).length;
+    const riskAssessCount = majorDecisionData.filter(d => d.riskAssess).length;
+    const collectiveCount = majorDecisionData.filter(d => d.collective).length;
+    
+    const option = {
+        title: {
+            text: '决策程序各环节完成率',
+            left: 'center',
+            top: 10,
+            textStyle: {
+                fontSize: 16,
+                fontWeight: 600,
+                color: '#111827'
+            }
+        },
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'shadow'
+            },
+            formatter: function(params) {
+                const data = params[0];
+                return `${data.name}<br/>完成率: ${data.value}%<br/>完成数: ${Math.round(data.value * total / 100)}/${total}`;
+            }
+        },
+        grid: {
+            left: '3%',
+            right: '4%',
+            bottom: '3%',
+            top: 60,
+            containLabel: true
+        },
+        xAxis: {
+            type: 'category',
+            data: ['调查研究', '专家论证', '风险评估', '集体决策'],
+            axisLabel: {
+                fontSize: 13,
+                color: '#6B7280'
+            },
+            axisLine: {
+                lineStyle: {
+                    color: '#E5E7EB'
+                }
+            }
+        },
+        yAxis: {
+            type: 'value',
+            name: '完成率(%)',
+            max: 100,
+            axisLabel: {
+                formatter: '{value}%',
+                fontSize: 12,
+                color: '#6B7280'
+            },
+            splitLine: {
+                lineStyle: {
+                    color: '#F3F4F6'
+                }
+            }
+        },
+        series: [
+            {
+                name: '完成率',
+                type: 'bar',
+                data: [
+                    {
+                        value: ((researchCount / total) * 100).toFixed(1),
+                        itemStyle: {
+                            color: researchCount === total ? '#10B981' : researchCount / total >= 0.8 ? '#F59E0B' : '#EF4444'
+                        }
+                    },
+                    {
+                        value: ((expertCount / total) * 100).toFixed(1),
+                        itemStyle: {
+                            color: expertCount === total ? '#10B981' : expertCount / total >= 0.8 ? '#F59E0B' : '#EF4444'
+                        }
+                    },
+                    {
+                        value: ((riskAssessCount / total) * 100).toFixed(1),
+                        itemStyle: {
+                            color: riskAssessCount === total ? '#10B981' : riskAssessCount / total >= 0.8 ? '#F59E0B' : '#EF4444'
+                        }
+                    },
+                    {
+                        value: ((collectiveCount / total) * 100).toFixed(1),
+                        itemStyle: {
+                            color: collectiveCount === total ? '#10B981' : collectiveCount / total >= 0.8 ? '#F59E0B' : '#EF4444'
+                        }
+                    }
+                ],
+                barWidth: '50%',
+                label: {
+                    show: true,
+                    position: 'top',
+                    formatter: '{c}%',
+                    fontSize: 12,
+                    fontWeight: 600
+                }
+            }
+        ]
+    };
+    
+    myChart.setOption(option);
+    
+    // 响应式调整
+    window.addEventListener('resize', function() {
+        myChart.resize();
+    });
 }
 
 // 查看重大决策详情
@@ -2788,6 +2911,7 @@ const projectCheckpointData = [
 // 加载基建采购监督模块
 function loadConstructionModule() {
     loadProjectCheckpoints();
+    initBidderRelationGraph();
     loadBidderRelationAnalysis();
     loadExclusiveClauseDetection();
 }
@@ -2911,6 +3035,259 @@ const bidderRelationData = [
         }
     }
 ];
+
+// 初始化投标人关联关系图谱
+function initBidderRelationGraph() {
+    const chartDom = document.getElementById('bidderRelationGraph');
+    if (!chartDom) return;
+    
+    const myChart = echarts.init(chartDom);
+    
+    // 构建图谱数据
+    const nodes = [];
+    const links = [];
+    const nodeMap = new Map();
+    
+    // 添加项目节点和企业节点
+    bidderRelationData.forEach((item, index) => {
+        // 添加项目节点
+        const projectId = `project_${index}`;
+        if (!nodeMap.has(projectId)) {
+            nodes.push({
+                id: projectId,
+                name: item.project,
+                symbolSize: 60,
+                category: 0,
+                itemStyle: {
+                    color: '#3B82F6'
+                }
+            });
+            nodeMap.set(projectId, true);
+        }
+        
+        // 添加企业A节点
+        const companyAId = `company_${item.companyACode}`;
+        if (!nodeMap.has(companyAId)) {
+            nodes.push({
+                id: companyAId,
+                name: item.companyA,
+                symbolSize: 50,
+                category: 1,
+                itemStyle: {
+                    color: '#10B981'
+                },
+                label: {
+                    fontSize: 11
+                }
+            });
+            nodeMap.set(companyAId, true);
+        }
+        
+        // 添加企业B节点
+        const companyBId = `company_${item.companyBCode}`;
+        if (!nodeMap.has(companyBId)) {
+            nodes.push({
+                id: companyBId,
+                name: item.companyB,
+                symbolSize: 50,
+                category: 1,
+                itemStyle: {
+                    color: '#10B981'
+                },
+                label: {
+                    fontSize: 11
+                }
+            });
+            nodeMap.set(companyBId, true);
+        }
+        
+        // 添加法人节点
+        const legalAId = `legal_${item.companyALegal}`;
+        if (!nodeMap.has(legalAId)) {
+            nodes.push({
+                id: legalAId,
+                name: item.companyALegal,
+                symbolSize: 35,
+                category: 2,
+                itemStyle: {
+                    color: '#F59E0B'
+                },
+                label: {
+                    fontSize: 10
+                }
+            });
+            nodeMap.set(legalAId, true);
+        }
+        
+        const legalBId = `legal_${item.companyBLegal}`;
+        if (!nodeMap.has(legalBId)) {
+            nodes.push({
+                id: legalBId,
+                name: item.companyBLegal,
+                symbolSize: 35,
+                category: 2,
+                itemStyle: {
+                    color: '#F59E0B'
+                },
+                label: {
+                    fontSize: 10
+                }
+            });
+            nodeMap.set(legalBId, true);
+        }
+        
+        // 添加关系连线
+        // 项目到企业A
+        links.push({
+            source: projectId,
+            target: companyAId,
+            label: {
+                show: true,
+                formatter: `¥${(item.bidAmount.companyA / 10000).toFixed(0)}万`,
+                fontSize: 10
+            },
+            lineStyle: {
+                color: '#94A3B8',
+                width: 2
+            }
+        });
+        
+        // 项目到企业B
+        links.push({
+            source: projectId,
+            target: companyBId,
+            label: {
+                show: true,
+                formatter: `¥${(item.bidAmount.companyB / 10000).toFixed(0)}万`,
+                fontSize: 10
+            },
+            lineStyle: {
+                color: '#94A3B8',
+                width: 2
+            }
+        });
+        
+        // 企业A到法人A
+        links.push({
+            source: companyAId,
+            target: legalAId,
+            label: {
+                show: true,
+                formatter: '法人',
+                fontSize: 9
+            },
+            lineStyle: {
+                color: '#CBD5E1',
+                width: 1.5
+            }
+        });
+        
+        // 企业B到法人B
+        links.push({
+            source: companyBId,
+            target: legalBId,
+            label: {
+                show: true,
+                formatter: '法人',
+                fontSize: 9
+            },
+            lineStyle: {
+                color: '#CBD5E1',
+                width: 1.5
+            }
+        });
+        
+        // 企业A和企业B之间的关联关系（高风险用红色标注）
+        links.push({
+            source: companyAId,
+            target: companyBId,
+            label: {
+                show: true,
+                formatter: item.relationType,
+                fontSize: 11,
+                fontWeight: 'bold',
+                color: item.risk === 'high' ? '#DC2626' : '#F59E0B'
+            },
+            lineStyle: {
+                color: item.risk === 'high' ? '#DC2626' : '#F59E0B',
+                width: 3,
+                type: 'dashed'
+            }
+        });
+    });
+    
+    const option = {
+        title: {
+            text: '投标人关联关系图谱',
+            left: 'center',
+            top: 10,
+            textStyle: {
+                fontSize: 16,
+                fontWeight: 600,
+                color: '#111827'
+            }
+        },
+        tooltip: {
+            trigger: 'item',
+            formatter: function(params) {
+                if (params.dataType === 'node') {
+                    return `${params.data.name}`;
+                } else if (params.dataType === 'edge') {
+                    return `${params.data.source} → ${params.data.target}`;
+                }
+            }
+        },
+        legend: [{
+            data: ['项目', '企业', '法人'],
+            orient: 'vertical',
+            left: 10,
+            top: 50,
+            textStyle: {
+                fontSize: 12,
+                color: '#6B7280'
+            }
+        }],
+        series: [{
+            type: 'graph',
+            layout: 'force',
+            data: nodes,
+            links: links,
+            categories: [
+                { name: '项目' },
+                { name: '企业' },
+                { name: '法人' }
+            ],
+            roam: true,
+            label: {
+                show: true,
+                position: 'bottom',
+                fontSize: 11,
+                color: '#374151'
+            },
+            force: {
+                repulsion: 800,
+                edgeLength: [100, 200],
+                gravity: 0.1
+            },
+            emphasis: {
+                focus: 'adjacency',
+                lineStyle: {
+                    width: 5
+                }
+            },
+            lineStyle: {
+                curveness: 0.2
+            }
+        }]
+    };
+    
+    myChart.setOption(option);
+    
+    // 响应式调整
+    window.addEventListener('resize', function() {
+        myChart.resize();
+    });
+}
 
 // 加载投标人关联分析
 function loadBidderRelationAnalysis() {

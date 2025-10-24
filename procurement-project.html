@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>采购项目监督 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/common.css">
+    <style>
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .project-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .project-card.high-risk {
+            border-left-color: #EF4444;
+        }
+
+        .project-card.medium-risk {
+            border-left-color: #F59E0B;
+        }
+
+        .project-card.low-risk {
+            border-left-color: #10B981;
+        }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .project-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .project-code {
+            font-size: 14px;
+            color: #6B7280;
+        }
+
+        .project-status {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .status-ongoing {
+            background: rgba(59, 130, 246, 0.1);
+            color: #3B82F6;
+        }
+
+        .status-completed {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .project-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .info-label {
+            font-size: 13px;
+            color: #6B7280;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        .project-alerts {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #E5E7EB;
+        }
+
+        .alert-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .alert-badge.high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #DC2626;
+        }
+
+        .alert-badge.medium {
+            background: rgba(251, 191, 36, 0.1);
+            color: #F59E0B;
+        }
+
+        .alert-badge.low {
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+
+        .alert-badge i {
+            font-size: 14px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid;
+        }
+
+        .stat-card.total {
+            border-left-color: #3B82F6;
+        }
+
+        .stat-card.high {
+            border-left-color: #EF4444;
+        }
+
+        .stat-card.medium {
+            border-left-color: #F59E0B;
+        }
+
+        .stat-card.low {
+            border-left-color: #10B981;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6B7280;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-card.total .stat-value {
+            color: #3B82F6;
+        }
+
+        .stat-card.high .stat-value {
+            color: #EF4444;
+        }
+
+        .stat-card.medium .stat-value {
+            color: #F59E0B;
+        }
+
+        .stat-card.low .stat-value {
+            color: #10B981;
+        }
+
+        .stat-desc {
+            font-size: 13px;
+            color: #9CA3AF;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-size: 14px;
+            color: #6B7280;
+            white-space: nowrap;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #374151;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-select:hover {
+            border-color: #3B82F6;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #9CA3AF;
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            color: #D1D5DB;
+        }
+
+        .empty-state p {
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- 顶部导航栏 -->
+    <nav id="top-navbar"></nav>
+
+    <div class="main-wrapper">
+        <!-- 侧边导航栏 -->
+        <div id="side-navbar"></div>
+
+        <!-- 主内容区 -->
+        <main class="content-area">
+            <!-- 页面标题 -->
+            <div class="page-header">
+                <div>
+                    <h1 class="page-title">
+                        <i class="fas fa-shopping-cart"></i>
+                        采购项目监督
+                    </h1>
+                    <p class="page-description">采购项目全流程预警监督，覆盖论证、立项、需求、公告、评标等各个环节</p>
+                </div>
+                <button class="btn btn-primary" onclick="window.location.href='quick-access.html'">
+                    <i class="fas fa-arrow-left"></i>
+                    返回快速访问
+                </button>
+            </div>
+
+            <!-- 统计卡片 -->
+            <div class="stats-grid">
+                <div class="stat-card total">
+                    <div class="stat-label">项目总数</div>
+                    <div class="stat-value" id="totalProjects">0</div>
+                    <div class="stat-desc">全部采购项目</div>
+                </div>
+                <div class="stat-card high">
+                    <div class="stat-label">高风险项目</div>
+                    <div class="stat-value" id="highRiskProjects">0</div>
+                    <div class="stat-desc">需要立即处理</div>
+                </div>
+                <div class="stat-card medium">
+                    <div class="stat-label">中风险项目</div>
+                    <div class="stat-value" id="mediumRiskProjects">0</div>
+                    <div class="stat-desc">需要关注处理</div>
+                </div>
+                <div class="stat-card low">
+                    <div class="stat-label">低风险项目</div>
+                    <div class="stat-value" id="lowRiskProjects">0</div>
+                    <div class="stat-desc">运行正常</div>
+                </div>
+            </div>
+
+            <!-- 筛选栏 -->
+            <div class="filter-bar">
+                <div class="filter-item">
+                    <span class="filter-label">项目状态</span>
+                    <select class="filter-select" id="statusFilter" onchange="filterProjects()">
+                        <option value="">全部状态</option>
+                        <option value="论证">论证</option>
+                        <option value="立项">立项</option>
+                        <option value="需求">需求</option>
+                        <option value="公告">公告</option>
+                        <option value="专家抽取">专家抽取</option>
+                        <option value="评标中">评标中</option>
+                        <option value="结果公示">结果公示</option>
+                        <option value="合同签订">合同签订</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <span class="filter-label">风险等级</span>
+                    <select class="filter-select" id="riskFilter" onchange="filterProjects()">
+                        <option value="">全部等级</option>
+                        <option value="high">高风险</option>
+                        <option value="medium">中风险</option>
+                        <option value="low">低风险</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <span class="filter-label">项目类型</span>
+                    <select class="filter-select" id="typeFilter" onchange="filterProjects()">
+                        <option value="">全部类型</option>
+                        <option value="货物类">货物类</option>
+                        <option value="工程类">工程类</option>
+                        <option value="服务类">服务类</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <span class="filter-label">申请部门</span>
+                    <select class="filter-select" id="departmentFilter" onchange="filterProjects()">
+                        <option value="">全部部门</option>
+                        <option value="图书馆">图书馆</option>
+                        <option value="后勤处">后勤处</option>
+                        <option value="信息中心">信息中心</option>
+                        <option value="基建处">基建处</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 项目列表 -->
+            <div id="projectList" style="display: grid; gap: 20px;">
+                <!-- 项目卡片将通过 JavaScript 动态加载 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 引入脚本 -->
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/procurement-project-service.js"></script>
+    <script>
+        let allProjects = [];
+        let filteredProjects = [];
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function () {
+            loadProjects();
+        });
+
+        // 加载项目列表
+        function loadProjects() {
+            Loading.show('加载项目数据...');
+
+            setTimeout(() => {
+                allProjects = ProcurementProjectService.getProjectList();
+                filteredProjects = [...allProjects];
+                
+                updateStatistics();
+                renderProjects();
+                
+                Loading.hide();
+            }, 500);
+        }
+
+        // 更新统计数据
+        function updateStatistics() {
+            const total = allProjects.length;
+            const high = allProjects.filter(p => p.riskLevel === 'high').length;
+            const medium = allProjects.filter(p => p.riskLevel === 'medium').length;
+            const low = allProjects.filter(p => p.riskLevel === 'low').length;
+
+            document.getElementById('totalProjects').textContent = total;
+            document.getElementById('highRiskProjects').textContent = high;
+            document.getElementById('mediumRiskProjects').textContent = medium;
+            document.getElementById('lowRiskProjects').textContent = low;
+        }
+
+        // 渲染项目列表
+        function renderProjects() {
+            const container = document.getElementById('projectList');
+
+            if (filteredProjects.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>暂无符合条件的项目</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = filteredProjects.map(project => `
+                <div class="project-card ${project.riskLevel}-risk" onclick="viewProjectDetail('${project.id}')">
+                    <div class="project-header">
+                        <div style="flex: 1;">
+                            <h3 class="project-title">${project.name}</h3>
+                            <p class="project-code">项目编号：${project.code}</p>
+                        </div>
+                        <span class="project-status ${project.status === '合同签订' ? 'status-completed' : 'status-ongoing'}">
+                            ${project.status}
+                        </span>
+                    </div>
+
+                    <div class="project-info">
+                        <div class="info-item">
+                            <span class="info-label">项目类型</span>
+                            <span class="info-value">${project.type}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">项目金额</span>
+                            <span class="info-value">${project.amount}万元</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">申请部门</span>
+                            <span class="info-value">${project.department}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">创建时间</span>
+                            <span class="info-value">${project.createTime}</span>
+                        </div>
+                    </div>
+
+                    <div class="project-alerts">
+                        <span class="alert-badge ${project.riskLevel}">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            ${project.alertCount}个预警
+                        </span>
+                        <span style="font-size: 13px; color: #6B7280;">
+                            风险等级：${project.riskLevel === 'high' ? '高风险' : project.riskLevel === 'medium' ? '中风险' : '低风险'}
+                        </span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 筛选项目
+        function filterProjects() {
+            const statusFilter = document.getElementById('statusFilter').value;
+            const riskFilter = document.getElementById('riskFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const departmentFilter = document.getElementById('departmentFilter').value;
+
+            filteredProjects = allProjects.filter(project => {
+                if (statusFilter && project.status !== statusFilter) return false;
+                if (riskFilter && project.riskLevel !== riskFilter) return false;
+                if (typeFilter && project.type !== typeFilter) return false;
+                if (departmentFilter && project.department !== departmentFilter) return false;
+                return true;
+            });
+
+            renderProjects();
+        }
+
+        // 查看项目详情
+        function viewProjectDetail(projectId) {
+            window.location.href = `procurement-project-detail.html?id=${projectId}`;
+        }
+    </script>
+</body>
+
+</html>

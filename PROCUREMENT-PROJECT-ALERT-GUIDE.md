@@ -105,7 +105,7 @@
 | `js/procurement-project-detail.js` | 采购项目详情页面逻辑 |
 | `procurement-project-detail.html` | 采购项目详情页面 |
 | `css/procurement-project-detail.css` | 采购项目详情页面样式 |
-| `test-procurement-project.html` | 测试页面 |
+| `procurement-project.html` | 项目列表页面 |
 
 ## 预置数据
 
@@ -145,7 +145,7 @@
 ### 1. 查看测试页面
 ```bash
 # 打开浏览器访问
-open test-procurement-project.html
+open procurement-project.html
 ```
 
 ### 2. 查看项目详情

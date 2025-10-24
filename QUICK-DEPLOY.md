@@ -50,7 +50,7 @@ https://你的用户名.github.io/仓库名/
 
 - 首页: `/`
 - 快速访问: `/quick-access.html`
-- 采购项目: `/test-procurement-project.html`
+- 采购项目: `/procurement-project.html`
 - 搜索演示: `/search-demo.html`
 
 ## 🔄 后续更新
