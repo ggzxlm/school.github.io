@@ -141,6 +141,152 @@ class ExternalDataService {
             failedCount: this.connections.filter(c => c.status === 'failed').length
         };
     }
+    
+    createConnection(data) {
+        try {
+            // 验证必填字段
+            if (!data.name || !data.type || !data.datasource || !data.syncFrequency) {
+                return {
+                    success: false,
+                    message: '请填写所有必填字段'
+                };
+            }
+            
+            // 生成ID
+            const id = 'E' + String(this.connections.length + 1).padStart(3, '0');
+            
+            // 创建新连接
+            const newConnection = {
+                id: id,
+                name: data.name,
+                type: data.type,
+                datasource: data.datasource,
+                description: data.description || '',
+                frequency: data.frequency,
+                syncFrequency: data.syncFrequency,
+                targetTable: data.targetTable || '',
+                config: data.config || {},
+                lastSync: '-',
+                nextSync: this.calculateNextSync(data.syncFrequency),
+                status: data.autoStart ? 'running' : 'stopped',
+                syncCount: 0,
+                errorCount: 0,
+                createTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+            
+            // 添加到列表
+            this.connections.push(newConnection);
+            
+            // 保存到localStorage（可选）
+            this.saveToStorage();
+            
+            console.log('[外部数据接入] 创建成功:', newConnection);
+            
+            return {
+                success: true,
+                data: newConnection
+            };
+        } catch (error) {
+            console.error('[外部数据接入] 创建失败:', error);
+            return {
+                success: false,
+                message: error.message
+            };
+        }
+    }
+    
+    calculateNextSync(frequency) {
+        const now = new Date();
+        let next = new Date(now);
+        
+        switch (frequency) {
+            case 'realtime':
+                return '-';
+            case 'hourly':
+                next.setHours(next.getHours() + 1);
+                break;
+            case 'daily':
+                next.setDate(next.getDate() + 1);
+                break;
+            case 'weekly':
+                next.setDate(next.getDate() + 7);
+                break;
+            case 'monthly':
+                next.setMonth(next.getMonth() + 1);
+                break;
+            case 'manual':
+                return '-';
+            default:
+                return '-';
+        }
+        
+        return next.toISOString().replace('T', ' ').substring(0, 19);
+    }
+    
+    saveToStorage() {
+        try {
+            localStorage.setItem('external_data_connections', JSON.stringify(this.connections));
+        } catch (error) {
+            console.error('[外部数据接入] 保存失败:', error);
+        }
+    }
+    
+    loadFromStorage() {
+        try {
+            const data = localStorage.getItem('external_data_connections');
+            if (data) {
+                this.connections = JSON.parse(data);
+                return true;
+            }
+        } catch (error) {
+            console.error('[外部数据接入] 加载失败:', error);
+        }
+        return false;
+    }
+    
+    getConnectionById(id) {
+        return this.connections.find(c => c.id === id);
+    }
+    
+    updateConnection(id, data) {
+        const index = this.connections.findIndex(c => c.id === id);
+        if (index === -1) {
+            return {
+                success: false,
+                message: '接入不存在'
+            };
+        }
+        
+        this.connections[index] = {
+            ...this.connections[index],
+            ...data,
+            updateTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+        };
+        
+        this.saveToStorage();
+        
+        return {
+            success: true,
+            data: this.connections[index]
+        };
+    }
+    
+    deleteConnection(id) {
+        const index = this.connections.findIndex(c => c.id === id);
+        if (index === -1) {
+            return {
+                success: false,
+                message: '接入不存在'
+            };
+        }
+        
+        this.connections.splice(index, 1);
+        this.saveToStorage();
+        
+        return {
+            success: true
+        };
+    }
 }
 
 window.externalDataService = new ExternalDataService();

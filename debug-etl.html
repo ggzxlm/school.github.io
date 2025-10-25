@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>ETL Debug</title>
+</head>
+<body>
+    <h1>ETL数据调试</h1>
+    <button onclick="checkData()">检查数据</button>
+    <button onclick="forceInit()">强制初始化</button>
+    <button onclick="clearStorage()">清空存储</button>
+    <pre id="output"></pre>
+
+    <script src="js/etl-service.js"></script>
+    <script>
+        function log(msg) {
+            const output = document.getElementById('output');
+            output.textContent += msg + '\n';
+        }
+
+        function checkData() {
+            document.getElementById('output').textContent = '';
+            
+            log('=== 检查 localStorage ===');
+            const jobs = localStorage.getItem('etl_jobs');
+            log('etl_jobs: ' + (jobs ? JSON.parse(jobs).length + ' 条记录' : '不存在'));
+            
+            log('\n=== 检查 ETL Service ===');
+            if (window.etlService) {
+                const allJobs = window.etlService.getAll();
+                log('getAll(): ' + allJobs.length + ' 条记录');
+                
+                const stats = window.etlService.getStatistics();
+                log('统计信息: ' + JSON.stringify(stats, null, 2));
+                
+                if (allJobs.length > 0) {
+                    log('\n前3个作业:');
+                    allJobs.slice(0, 3).forEach((job, i) => {
+                        log(`${i + 1}. ${job.jobName} (${job.status})`);
+                    });
+                }
+            } else {
+                log('window.etlService 不存在！');
+            }
+        }
+
+        function forceInit() {
+            document.getElementById('output').textContent = '';
+            log('强制初始化演示数据...');
+            
+            if (window.etlService) {
+                const result = window.etlService.reinitializeSampleData();
+                log('结果: ' + JSON.stringify(result));
+                
+                setTimeout(() => {
+                    checkData();
+                }, 100);
+            } else {
+                log('window.etlService 不存在！');
+            }
+        }
+
+        function clearStorage() {
+            localStorage.removeItem('etl_jobs');
+            localStorage.removeItem('etl_executions');
+            localStorage.removeItem('etl_versions');
+            log('已清空 localStorage');
+        }
+
+        // 页面加载时自动检查
+        window.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkData, 500);
+        });
+    </script>
+</body>
+</html>

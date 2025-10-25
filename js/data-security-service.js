@@ -101,6 +101,148 @@ class DataSecurityService {
             todayAccessCount: this.auditLogs.filter(l => l.time.startsWith('2024-10-23')).length
         };
     }
+    
+    /**
+     * 创建安全策略
+     */
+    createPolicy(data) {
+        try {
+            const newPolicy = {
+                id: 'P' + String(this.policies.length + 1).padStart(3, '0'),
+                name: data.name,
+                type: data.type,
+                level: data.level,
+                status: data.status || 'enabled',
+                description: data.description,
+                scope: data.scope || '',
+                rules: data.rules || '',
+                applyCount: 0,
+                successCount: 0,
+                failCount: 0,
+                createTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+            
+            this.policies.push(newPolicy);
+            this.saveToStorage();
+            
+            console.log('[数据安全] 策略创建成功:', newPolicy);
+            
+            return {
+                success: true,
+                data: newPolicy
+            };
+        } catch (error) {
+            console.error('[数据安全] 策略创建失败:', error);
+            return {
+                success: false,
+                message: error.message
+            };
+        }
+    }
+    
+    /**
+     * 获取单个策略
+     */
+    getPolicyById(id) {
+        return this.policies.find(p => p.id === id);
+    }
+    
+    /**
+     * 更新策略
+     */
+    updatePolicy(id, data) {
+        try {
+            const index = this.policies.findIndex(p => p.id === id);
+            if (index === -1) {
+                return {
+                    success: false,
+                    message: '策略不存在'
+                };
+            }
+            
+            this.policies[index] = {
+                ...this.policies[index],
+                ...data,
+                updateTime: new Date().toISOString().replace('T', ' ').substring(0, 19)
+            };
+            
+            this.saveToStorage();
+            
+            console.log('[数据安全] 策略更新成功:', this.policies[index]);
+            
+            return {
+                success: true,
+                data: this.policies[index]
+            };
+        } catch (error) {
+            console.error('[数据安全] 策略更新失败:', error);
+            return {
+                success: false,
+                message: error.message
+            };
+        }
+    }
+    
+    /**
+     * 删除策略
+     */
+    deletePolicy(id) {
+        try {
+            const index = this.policies.findIndex(p => p.id === id);
+            if (index === -1) {
+                return {
+                    success: false,
+                    message: '策略不存在'
+                };
+            }
+            
+            this.policies.splice(index, 1);
+            this.saveToStorage();
+            
+            return {
+                success: true
+            };
+        } catch (error) {
+            console.error('[数据安全] 策略删除失败:', error);
+            return {
+                success: false,
+                message: error.message
+            };
+        }
+    }
+    
+    /**
+     * 保存到localStorage
+     */
+    saveToStorage() {
+        try {
+            localStorage.setItem('data_security_policies', JSON.stringify(this.policies));
+            localStorage.setItem('data_security_masking', JSON.stringify(this.maskingRules));
+            localStorage.setItem('data_security_access', JSON.stringify(this.accessControls));
+        } catch (error) {
+            console.error('[数据安全] 保存失败:', error);
+        }
+    }
+    
+    /**
+     * 从localStorage加载
+     */
+    loadFromStorage() {
+        try {
+            const policies = localStorage.getItem('data_security_policies');
+            const masking = localStorage.getItem('data_security_masking');
+            const access = localStorage.getItem('data_security_access');
+            
+            if (policies) this.policies = JSON.parse(policies);
+            if (masking) this.maskingRules = JSON.parse(masking);
+            if (access) this.accessControls = JSON.parse(access);
+            
+            return true;
+        } catch (error) {
+            console.error('[数据安全] 加载失败:', error);
+            return false;
+        }
+    }
 }
 
 window.dataSecurityService = new DataSecurityService();

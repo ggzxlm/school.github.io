@@ -14,12 +14,23 @@ class ETLService {
 
     init() {
         // 检查是否需要初始化演示数据
-        const needsInit = !localStorage.getItem(this.storageKey);
+        const existingData = localStorage.getItem(this.storageKey);
+        let existingJobs = [];
+        
+        try {
+            existingJobs = existingData ? JSON.parse(existingData) : [];
+        } catch (error) {
+            console.error('[ETL服务] 解析现有数据失败:', error);
+            existingJobs = [];
+        }
+        
+        // 如果没有数据或数据为空数组，则需要初始化
+        const needsInit = !existingData || existingJobs.length === 0;
+        
+        console.log('[ETL服务] 初始化检查 - needsInit:', needsInit);
+        console.log('[ETL服务] 现有数据:', existingJobs.length, '条记录');
         
         // 初始化存储
-        if (needsInit) {
-            localStorage.setItem(this.storageKey, JSON.stringify([]));
-        }
         if (!localStorage.getItem(this.executionStorageKey)) {
             localStorage.setItem(this.executionStorageKey, JSON.stringify([]));
         }
@@ -27,10 +38,13 @@ class ETLService {
             localStorage.setItem(this.versionStorageKey, JSON.stringify([]));
         }
         
-        // 如果是首次初始化，添加演示数据
+        // 如果需要初始化，添加演示数据
         if (needsInit) {
-            console.log('[ETL服务] 首次初始化，创建演示数据');
+            console.log('[ETL服务] 数据为空，开始初始化演示数据...');
             this.initSampleData();
+            console.log('[ETL服务] 演示数据创建完成，当前记录数:', this.getAll().length);
+        } else {
+            console.log('[ETL服务] 使用现有数据，当前记录数:', this.getAll().length);
         }
         
         console.log('[ETL服务] 已初始化');
@@ -43,7 +57,7 @@ class ETLService {
         const sampleJobs = [
             {
                 jobName: '财务数据日度同步',
-                description: '每日凌晨同步财务系统数据到数据仓库ODS层',
+                description: '每日凌晨同步财务系统数据到数据仓库ODS层，包含收入、支出、预算执行等核心财务数据',
                 sourceConfig: {
                     dataSourceId: 'ds_finance',
                     query: 'SELECT * FROM finance_transactions WHERE date = CURRENT_DATE'
@@ -60,6 +74,12 @@ class ETLService {
                         sourceField: 'trans_date',
                         targetField: 'transaction_date',
                         description: '字段名称映射'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'amount_yuan',
+                        expression: 'amount / 100',
+                        description: '金额从分转换为元'
                     }
                 ],
                 targetConfig: {
@@ -73,7 +93,7 @@ class ETLService {
             },
             {
                 jobName: '人事数据增量同步',
-                description: '实时同步人事系统变更数据',
+                description: '每15分钟同步人事系统变更数据，包含员工信息、组织架构、岗位变动等',
                 sourceConfig: {
                     dataSourceId: 'ds_hr',
                     query: 'SELECT * FROM hr_employees WHERE updated_at > :last_sync_time'
@@ -104,7 +124,7 @@ class ETLService {
             },
             {
                 jobName: '采购数据月度汇总',
-                description: '每月汇总采购数据到DWS层',
+                description: '每月1日凌晨2点汇总上月采购数据到DWS层，生成部门和供应商维度的统计报表',
                 sourceConfig: {
                     dataSourceId: 'ds_procurement',
                     query: `
@@ -137,10 +157,10 @@ class ETLService {
             },
             {
                 jobName: '学生成绩数据清洗',
-                description: '清洗和标准化学生成绩数据',
+                description: '每日凌晨3点清洗和标准化学生成绩数据，过滤异常值并计算等级',
                 sourceConfig: {
                     dataSourceId: 'ds_academic',
-                    query: 'SELECT * FROM raw_student_scores'
+                    query: 'SELECT * FROM raw_student_scores WHERE score_date = CURRENT_DATE - 1'
                 },
                 transformRules: [
                     {
@@ -181,10 +201,10 @@ class ETLService {
             },
             {
                 jobName: '科研项目数据整合',
-                description: '整合多个系统的科研项目数据',
+                description: '整合多个系统的科研项目数据，包含项目基本信息、成员、经费等',
                 sourceConfig: {
                     dataSourceId: 'ds_research',
-                    query: 'SELECT * FROM research_projects'
+                    query: 'SELECT * FROM research_projects WHERE status IN ("ACTIVE", "PENDING")'
                 },
                 transformRules: [
                     {
@@ -209,6 +229,274 @@ class ETLService {
                 enabled: false,
                 status: 'DRAFT',
                 createdBy: '科研管理员'
+            },
+            {
+                jobName: '资产设备数据同步',
+                description: '每日同步资产管理系统的设备信息，包含采购、使用、维护、报废等全生命周期数据',
+                sourceConfig: {
+                    dataSourceId: 'ds_asset',
+                    query: 'SELECT * FROM asset_equipment WHERE updated_at >= CURRENT_DATE'
+                },
+                transformRules: [
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'usage_years',
+                        expression: 'YEAR(CURRENT_DATE) - YEAR(purchase_date)',
+                        description: '计算使用年限'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'depreciation_rate',
+                        expression: '(original_value - current_value) / original_value * 100',
+                        description: '计算折旧率'
+                    },
+                    {
+                        type: 'MAP',
+                        sourceField: 'equip_no',
+                        targetField: 'equipment_number',
+                        description: '标准化设备编号字段'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'ods_asset_equipment',
+                    writeMode: 'UPSERT'
+                },
+                schedule: '0 1 * * *',
+                enabled: true,
+                status: 'PUBLISHED',
+                createdBy: '资产管理员'
+            },
+            {
+                jobName: '审计线索数据汇总',
+                description: '每小时汇总各监督模型产生的审计线索，生成统计分析数据',
+                sourceConfig: {
+                    dataSourceId: 'ds_audit',
+                    query: `
+                        SELECT 
+                            model_id,
+                            risk_level,
+                            department_id,
+                            COUNT(*) as clue_count,
+                            AVG(risk_score) as avg_risk_score
+                        FROM audit_clues
+                        WHERE created_at >= DATE_SUB(NOW(), INTERVAL 1 HOUR)
+                        GROUP BY model_id, risk_level, department_id
+                    `
+                },
+                transformRules: [
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'risk_level_score',
+                        expression: `
+                            CASE 
+                                WHEN risk_level = 'HIGH' THEN 3
+                                WHEN risk_level = 'MEDIUM' THEN 2
+                                ELSE 1
+                            END
+                        `,
+                        description: '风险等级转数值'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'dws_audit_clue_hourly',
+                    writeMode: 'INSERT'
+                },
+                schedule: '0 * * * *',
+                enabled: true,
+                status: 'PUBLISHED',
+                createdBy: '审计专员'
+            },
+            {
+                jobName: '教师师德数据采集',
+                description: '从多个渠道采集教师师德相关数据，包含教学评价、学生反馈、违规记录等',
+                sourceConfig: {
+                    dataSourceId: 'ds_teacher_ethics',
+                    query: 'SELECT * FROM teacher_ethics_records WHERE record_date >= CURRENT_DATE - 7'
+                },
+                transformRules: [
+                    {
+                        type: 'FILTER',
+                        field: 'status',
+                        condition: 'value != "DELETED"',
+                        description: '过滤已删除记录'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'ethics_score',
+                        expression: '(teaching_score * 0.4 + student_feedback * 0.3 + conduct_score * 0.3)',
+                        description: '计算综合师德分数'
+                    },
+                    {
+                        type: 'MAP',
+                        sourceField: 'teacher_no',
+                        targetField: 'teacher_id',
+                        description: '统一教师编号字段'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'dwd_teacher_ethics',
+                    writeMode: 'INSERT'
+                },
+                schedule: '0 4 * * *',
+                enabled: true,
+                status: 'PUBLISHED',
+                createdBy: '人事处'
+            },
+            {
+                jobName: '三公经费数据整合',
+                description: '整合公务接待、公务用车、因公出国（境）三类经费数据，支持监督分析',
+                sourceConfig: {
+                    dataSourceId: 'ds_three_public',
+                    query: `
+                        SELECT * FROM (
+                            SELECT 'RECEPTION' as type, * FROM official_reception
+                            UNION ALL
+                            SELECT 'VEHICLE' as type, * FROM official_vehicle
+                            UNION ALL
+                            SELECT 'TRAVEL' as type, * FROM official_travel
+                        ) WHERE expense_date >= CURRENT_DATE - 1
+                    `
+                },
+                transformRules: [
+                    {
+                        type: 'FILTER',
+                        field: 'amount',
+                        condition: 'value > 0',
+                        description: '过滤无效金额'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'is_over_standard',
+                        expression: 'amount > standard_amount ? 1 : 0',
+                        description: '标记超标记录'
+                    },
+                    {
+                        type: 'MERGE',
+                        sourceFields: ['expense_date', 'type'],
+                        targetField: 'expense_key',
+                        separator: '_',
+                        description: '生成唯一键'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'dwd_three_public_expenses',
+                    writeMode: 'INSERT'
+                },
+                schedule: '0 5 * * *',
+                enabled: true,
+                status: 'PUBLISHED',
+                createdBy: '财务处'
+            },
+            {
+                jobName: '工单数据实时同步',
+                description: '实时同步工单系统数据，支持工单处理进度监控和统计分析',
+                sourceConfig: {
+                    dataSourceId: 'ds_workorder',
+                    query: 'SELECT * FROM work_orders WHERE updated_at > :last_sync_time'
+                },
+                transformRules: [
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'processing_hours',
+                        expression: 'TIMESTAMPDIFF(HOUR, created_at, updated_at)',
+                        description: '计算处理时长（小时）'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'is_overdue',
+                        expression: 'processing_hours > sla_hours ? 1 : 0',
+                        description: '判断是否超时'
+                    },
+                    {
+                        type: 'MAP',
+                        sourceField: 'wo_status',
+                        targetField: 'status',
+                        description: '标准化状态字段'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'ods_work_orders',
+                    writeMode: 'UPSERT'
+                },
+                schedule: '*/5 * * * *',
+                enabled: true,
+                status: 'PUBLISHED',
+                createdBy: '系统管理员'
+            },
+            {
+                jobName: '招生数据质量检查',
+                description: '检查招生系统数据质量，识别重复、缺失、异常等问题',
+                sourceConfig: {
+                    dataSourceId: 'ds_admission',
+                    query: 'SELECT * FROM admission_applications WHERE application_year = YEAR(CURRENT_DATE)'
+                },
+                transformRules: [
+                    {
+                        type: 'FILTER',
+                        field: 'id_card',
+                        condition: 'value != null AND value.length == 18',
+                        description: '过滤身份证号异常记录'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'data_quality_score',
+                        expression: '(name ? 20 : 0) + (id_card ? 20 : 0) + (phone ? 20 : 0) + (address ? 20 : 0) + (score ? 20 : 0)',
+                        description: '计算数据完整性分数'
+                    },
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'age_from_id',
+                        expression: 'YEAR(CURRENT_DATE) - SUBSTR(id_card, 7, 4)',
+                        description: '从身份证提取年龄'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'dwd_admission_quality',
+                    writeMode: 'INSERT'
+                },
+                schedule: '0 6 * * *',
+                enabled: false,
+                status: 'DRAFT',
+                createdBy: '招生办'
+            },
+            {
+                jobName: '图书借阅数据分析',
+                description: '分析图书馆借阅数据，生成读者画像和图书利用率统计',
+                sourceConfig: {
+                    dataSourceId: 'ds_library',
+                    query: `
+                        SELECT 
+                            reader_id,
+                            book_category,
+                            COUNT(*) as borrow_count,
+                            AVG(DATEDIFF(return_date, borrow_date)) as avg_borrow_days
+                        FROM library_borrow_records
+                        WHERE borrow_date >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)
+                        GROUP BY reader_id, book_category
+                    `
+                },
+                transformRules: [
+                    {
+                        type: 'CALCULATE',
+                        targetField: 'reader_level',
+                        expression: `
+                            CASE 
+                                WHEN borrow_count >= 20 THEN 'ACTIVE'
+                                WHEN borrow_count >= 10 THEN 'NORMAL'
+                                ELSE 'INACTIVE'
+                            END
+                        `,
+                        description: '读者活跃度分级'
+                    }
+                ],
+                targetConfig: {
+                    tableName: 'dws_library_reader_profile',
+                    writeMode: 'INSERT'
+                },
+                schedule: '0 7 * * 1',
+                enabled: false,
+                status: 'DRAFT',
+                createdBy: '图书馆'
             }
         ];
 
@@ -992,6 +1280,37 @@ class ETLService {
             enabled: jobs.filter(j => j.enabled).length,
             disabled: jobs.filter(j => !j.enabled).length
         };
+    }
+
+    /**
+     * 重新初始化演示数据（清空现有数据并重新创建）
+     */
+    reinitializeSampleData() {
+        console.log('[ETL服务] 重新初始化演示数据...');
+        
+        // 清空现有数据
+        localStorage.setItem(this.storageKey, JSON.stringify([]));
+        localStorage.setItem(this.executionStorageKey, JSON.stringify([]));
+        localStorage.setItem(this.versionStorageKey, JSON.stringify([]));
+        
+        // 重新创建演示数据
+        this.initSampleData();
+        
+        console.log('[ETL服务] 演示数据重新初始化完成');
+        return { success: true, message: '演示数据已重新初始化' };
+    }
+
+    /**
+     * 清空所有数据
+     */
+    clearAllData() {
+        console.log('[ETL服务] 清空所有数据...');
+        localStorage.setItem(this.storageKey, JSON.stringify([]));
+        localStorage.setItem(this.executionStorageKey, JSON.stringify([]));
+        localStorage.setItem(this.versionStorageKey, JSON.stringify([]));
+        this.runningJobs.clear();
+        console.log('[ETL服务] 所有数据已清空');
+        return { success: true, message: '所有数据已清空' };
     }
 }
 

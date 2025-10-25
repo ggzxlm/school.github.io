@@ -60,6 +60,12 @@ function setupEventListeners() {
         resetBtn.addEventListener('click', resetFilters);
     }
     
+    // 重新加载演示数据按钮
+    const reloadSampleDataBtn = document.getElementById('reloadSampleDataBtn');
+    if (reloadSampleDataBtn) {
+        reloadSampleDataBtn.addEventListener('click', reloadSampleData);
+    }
+    
     // 创建作业按钮
     const createJobBtn = document.getElementById('createJobBtn');
     if (createJobBtn) {
@@ -165,7 +171,13 @@ function resetFilters() {
  * 更新统计信息
  */
 function updateStatistics() {
+    if (!window.etlService) {
+        console.error('[ETL管理] window.etlService 不存在，无法更新统计信息');
+        return;
+    }
+    
     const stats = window.etlService.getStatistics();
+    console.log('[ETL管理] 统计信息:', stats);
     renderStatsCards(stats);
 }
 
@@ -173,61 +185,34 @@ function updateStatistics() {
  * 渲染统计卡片
  */
 function renderStatsCards(stats) {
-    const container = document.getElementById('statsContainer');
-    if (!container) return;
-
-    const statsData = [
-        {
-            title: '总作业数',
-            value: stats.total,
-            percentage: '100%',
-            icon: 'fa-tasks',
-            color: 'primary'
-        },
-        {
-            title: '已发布',
-            value: stats.published,
-            percentage: stats.total > 0 ? `${Math.round(stats.published / stats.total * 100)}%` : '0%',
-            icon: 'fa-check-circle',
-            color: 'success'
-        },
-        {
-            title: '草稿',
-            value: stats.draft,
-            percentage: stats.total > 0 ? `${Math.round(stats.draft / stats.total * 100)}%` : '0%',
-            icon: 'fa-edit',
-            color: 'info'
-        },
-        {
-            title: '启用中',
-            value: stats.enabled,
-            percentage: stats.total > 0 ? `${Math.round(stats.enabled / stats.total * 100)}%` : '0%',
-            icon: 'fa-play-circle',
-            color: 'warning'
-        }
-    ];
-
-    const html = statsData.map(stat => `
-        <div class="stat-card stat-card-${stat.color}">
-            <div class="stat-icon">
-                <i class="fas ${stat.icon}"></i>
-            </div>
-            <div class="stat-content">
-                <div class="stat-label">${stat.title}</div>
-                <div class="stat-value">${stat.value}</div>
-                <div class="stat-extra">${stat.percentage} 占比</div>
-            </div>
-        </div>
-    `).join('');
-
-    container.innerHTML = html;
+    // 更新各个统计数值
+    const totalJobsEl = document.getElementById('totalJobs');
+    const publishedJobsEl = document.getElementById('publishedJobs');
+    const draftJobsEl = document.getElementById('draftJobs');
+    const archivedJobsEl = document.getElementById('archivedJobs');
+    
+    if (totalJobsEl) totalJobsEl.textContent = stats.total;
+    if (publishedJobsEl) publishedJobsEl.textContent = stats.published;
+    if (draftJobsEl) draftJobsEl.textContent = stats.draft;
+    if (archivedJobsEl) archivedJobsEl.textContent = stats.archived;
+    
+    console.log('[ETL管理] 统计卡片已更新:', stats);
 }
 
 /**
  * 加载作业列表
  */
 function loadJobs() {
+    console.log('[ETL管理] 开始加载作业列表...');
+    
+    if (!window.etlService) {
+        console.error('[ETL管理] window.etlService 不存在！');
+        return;
+    }
+    
     const jobs = window.etlService.getAll();
+    console.log('[ETL管理] 获取到作业数量:', jobs.length);
+    
     const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
     const statusFilter = document.getElementById('statusFilter')?.value || '';
     const enabledFilter = document.getElementById('enabledFilter')?.value || '';
@@ -239,6 +224,8 @@ function loadJobs() {
         const matchEnabled = !enabledFilter || job.enabled.toString() === enabledFilter;
         return matchSearch && matchStatus && matchEnabled;
     });
+
+    console.log('[ETL管理] 筛选后作业数量:', filteredJobs.length);
 
     // 排序：最新的在前
     filteredJobs.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -1356,4 +1343,33 @@ function resetFilters() {
     document.getElementById('statusFilter').value = '';
     document.getElementById('enabledFilter').value = '';
     loadJobs();
+}
+
+/**
+ * 重新加载演示数据
+ */
+function reloadSampleData() {
+    Modal.confirm({
+        title: '确认重新加载',
+        content: '此操作将清空所有现有的ETL作业数据并重新加载演示数据。此操作不可恢复，确定继续吗？',
+        onConfirm: () => {
+            Loading.show('正在重新加载演示数据...');
+            
+            try {
+                const result = window.etlService.reinitializeSampleData();
+                
+                Loading.hide();
+                
+                if (result.success) {
+                    Toast.success('演示数据已重新加载');
+                    loadJobs();
+                } else {
+                    Toast.error(result.message || '重新加载失败');
+                }
+            } catch (error) {
+                Loading.hide();
+                Toast.error('重新加载失败: ' + error.message);
+            }
+        }
+    });
 }

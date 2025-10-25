@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据分级分类功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            border-bottom: 3px solid #3B82F6;
+            padding-bottom: 10px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 6px;
+            border-left: 4px solid #3B82F6;
+        }
+        .test-section h2 {
+            margin-top: 0;
+            color: #3B82F6;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3B82F6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563EB;
+        }
+        .btn-success {
+            background: #10B981;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        .result pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .success {
+            color: #10B981;
+        }
+        .error {
+            color: #EF4444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 数据分级分类功能测试</h1>
+        
+        <div class="stats" id="stats">
+            <div class="stat-card">
+                <div class="stat-label">数据分类</div>
+                <div class="stat-value" id="categoryCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">敏感数据</div>
+                <div class="stat-value" id="sensitiveCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">重要数据</div>
+                <div class="stat-value" id="importantCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">普通数据</div>
+                <div class="stat-value" id="normalCount">0</div>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试1: 自动分类功能</h2>
+            <p>测试系统自动识别和分类数据表的能力</p>
+            <button class="btn btn-primary" onclick="testAutoClassify()">
+                🤖 执行自动分类测试
+            </button>
+            <div id="result1" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试2: 创建分类功能</h2>
+            <p>测试手动创建新数据分类</p>
+            <button class="btn btn-primary" onclick="testCreateCategory()">
+                ➕ 测试创建分类
+            </button>
+            <div id="result2" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试3: 更新分类功能</h2>
+            <p>测试修改现有分类信息</p>
+            <button class="btn btn-primary" onclick="testUpdateCategory()">
+                ✏️ 测试更新分类
+            </button>
+            <div id="result3" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试4: 更新映射功能</h2>
+            <p>测试修改表与分类的映射关系</p>
+            <button class="btn btn-primary" onclick="testUpdateMapping()">
+                🔗 测试更新映射
+            </button>
+            <div id="result4" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试5: 查询功能</h2>
+            <p>测试数据查询和统计功能</p>
+            <button class="btn btn-primary" onclick="testQuery()">
+                🔍 测试查询功能
+            </button>
+            <div id="result5" class="result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h2>综合测试</h2>
+            <button class="btn btn-success" onclick="runAllTests()">
+                ▶️ 运行所有测试
+            </button>
+            <button class="btn btn-primary" onclick="updateStats()">
+                🔄 刷新统计
+            </button>
+            <button class="btn btn-primary" onclick="window.location.href='data-classification.html'">
+                📊 打开分类页面
+            </button>
+        </div>
+    </div>
+
+    <script src="js/data-classification-service.js"></script>
+    <script>
+        async function init() {
+            await dataClassificationService.initialize();
+            updateStats();
+        }
+
+        function updateStats() {
+            const stats = dataClassificationService.getStatistics();
+            document.getElementById('categoryCount').textContent = stats.categoryCount;
+            document.getElementById('sensitiveCount').textContent = stats.sensitiveCount;
+            document.getElementById('importantCount').textContent = stats.importantCount;
+            document.getElementById('normalCount').textContent = stats.normalCount;
+        }
+
+        function showResult(id, content, isSuccess = true) {
+            const result = document.getElementById(id);
+            result.style.display = 'block';
+            result.innerHTML = `
+                <div class="${isSuccess ? 'success' : 'error'}">
+                    ${isSuccess ? '✅ 测试通过' : '❌ 测试失败'}
+                </div>
+                <pre>${content}</pre>
+            `;
+        }
+
+        async function testAutoClassify() {
+            console.log('测试自动分类...');
+            const result = dataClassificationService.performAutoClassification();
+            showResult('result1', JSON.stringify(result, null, 2), result.success);
+            updateStats();
+        }
+
+        function testCreateCategory() {
+            console.log('测试创建分类...');
+            const testData = {
+                name: '测试分类_' + Date.now(),
+                code: 'TEST_' + Date.now(),
+                level: 'L2',
+                description: '这是一个测试分类',
+                fields: 'test_field1, test_field2',
+                controlMeasure: '测试控制措施',
+                active: true
+            };
+            
+            const result = dataClassificationService.createCategory(testData);
+            showResult('result2', JSON.stringify(result, null, 2), result.success);
+            updateStats();
+        }
+
+        function testUpdateCategory() {
+            console.log('测试更新分类...');
+            const categories = dataClassificationService.getCategories();
+            if (categories.length === 0) {
+                showResult('result3', '没有可更新的分类，请先创建分类', false);
+                return;
+            }
+            
+            const category = categories[0];
+            const updateData = {
+                description: '更新后的描述 - ' + new Date().toLocaleString(),
+                level: 'L3'
+            };
+            
+            const result = dataClassificationService.updateCategory(category.id, updateData);
+            showResult('result3', JSON.stringify(result, null, 2), result.success);
+            updateStats();
+        }
+
+        function testUpdateMapping() {
+            console.log('测试更新映射...');
+            const mappings = dataClassificationService.getMappings();
+            if (mappings.length === 0) {
+                showResult('result4', '没有可更新的映射，请先执行自动分类', false);
+                return;
+            }
+            
+            const mapping = mappings[0];
+            const updateData = {
+                level: 'L4',
+                fields: ['updated_field1', 'updated_field2'],
+                autoClassified: false
+            };
+            
+            const result = dataClassificationService.updateMapping(mapping.id, updateData);
+            showResult('result4', JSON.stringify(result, null, 2), result.success);
+            updateStats();
+        }
+
+        function testQuery() {
+            console.log('测试查询功能...');
+            const categories = dataClassificationService.getCategories();
+            const mappings = dataClassificationService.getMappings();
+            const stats = dataClassificationService.getStatistics();
+            
+            const result = {
+                categories: categories.length,
+                mappings: mappings.length,
+                stats: stats,
+                sampleCategory: categories[0] || null,
+                sampleMapping: mappings[0] || null
+            };
+            
+            showResult('result5', JSON.stringify(result, null, 2), true);
+        }
+
+        async function runAllTests() {
+            console.log('运行所有测试...');
+            await testAutoClassify();
+            await new Promise(r => setTimeout(r, 500));
+            testCreateCategory();
+            await new Promise(r => setTimeout(r, 500));
+            testUpdateCategory();
+            await new Promise(r => setTimeout(r, 500));
+            testUpdateMapping();
+            await new Promise(r => setTimeout(r, 500));
+            testQuery();
+            alert('所有测试完成！请查看各测试结果。');
+        }
+
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
