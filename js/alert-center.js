@@ -589,7 +589,7 @@ const AlertCenter = {
         `;
 
         return `
-            <div class="alert-card ${alert.risk}" onclick="AlertCenter.viewAlertDetail(${alert.id})">
+            <div class="alert-card ${alert.risk}" onclick="AlertCenter.viewAlertDetail('${alert.id}')">
                 <div class="alert-card-header">
                     <div class="alert-card-meta">
                         <span class="alert-risk-badge ${alert.risk}">
@@ -600,7 +600,7 @@ const AlertCenter = {
                             type="checkbox" 
                             class="alert-checkbox" 
                             data-id="${alert.id}"
-                            onclick="event.stopPropagation(); AlertCenter.toggleAlertSelection(${alert.id})"
+                            onclick="event.stopPropagation(); AlertCenter.toggleAlertSelection('${alert.id}')"
                         >
                     </div>
                     <h3 class="alert-title">${alert.title}</h3>
@@ -621,20 +621,20 @@ const AlertCenter = {
                         <span>${Utils.formatDate(alert.createdAt, 'YYYY-MM-DD HH:mm')}</span>
                     </div>
                     <div class="alert-actions" onclick="event.stopPropagation()">
-                        <button class="btn btn-sm btn-primary" onclick="AlertCenter.viewAlertDetail(${alert.id})">
+                        <button class="btn btn-sm btn-primary" onclick="AlertCenter.viewAlertDetail('${alert.id}')">
                             <i class="fas fa-eye"></i>
                             查看
                         </button>
                         ${alert.status === 'pending' ? `
-                            <button class="btn btn-sm btn-success" onclick="AlertCenter.createClueFromAlert(${alert.id})">
+                            <button class="btn btn-sm btn-success" onclick="AlertCenter.createClueFromAlert('${alert.id}')">
                                 <i class="fas fa-lightbulb"></i>
                                 生成线索
                             </button>
-                            <button class="btn btn-sm btn-secondary" onclick="AlertCenter.assignAlert(${alert.id})">
+                            <button class="btn btn-sm btn-secondary" onclick="AlertCenter.assignAlert('${alert.id}')">
                                 <i class="fas fa-share"></i>
                                 分发
                             </button>
-                            <button class="btn btn-sm btn-secondary" onclick="AlertCenter.ignoreAlert(${alert.id})">
+                            <button class="btn btn-sm btn-secondary" onclick="AlertCenter.ignoreAlert('${alert.id}')">
                                 <i class="fas fa-eye-slash"></i>
                                 忽略
                             </button>
@@ -1163,7 +1163,11 @@ const AlertCenter = {
             return;
         }
         
-        this.selectedAlertIds = Array.from(checked).map(cb => parseInt(cb.dataset.id));
+        this.selectedAlertIds = Array.from(checked).map(cb => {
+            const id = cb.dataset.id;
+            // 如果id是纯数字字符串，转换为数字，否则保持字符串
+            return /^\d+$/.test(id) ? parseInt(id) : id;
+        });
         this.openAssignModal();
     },
 
@@ -1199,7 +1203,11 @@ const AlertCenter = {
         }
         
         // 获取选中的预警ID
-        const selectedIds = Array.from(checked).map(cb => parseInt(cb.dataset.id));
+        const selectedIds = Array.from(checked).map(cb => {
+            const id = cb.dataset.id;
+            // 如果id是纯数字字符串，转换为数字，否则保持字符串
+            return /^\d+$/.test(id) ? parseInt(id) : id;
+        });
         const selectedAlerts = this.mockData.alerts.filter(alert => selectedIds.includes(alert.id));
         
         this.exportAlertsData(selectedAlerts);

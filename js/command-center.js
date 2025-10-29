@@ -44,98 +44,99 @@ const mockData = {
     overview: [
         {
             label: '预警总量',
-            value: 1247,
+            value: 1568,
             unit: '条',
             trend: 'up',
-            trendValue: '+12.5%',
+            trendValue: '+18.2%',
             icon: 'fa-bell',
             color: '#ef4444'
         },
         {
             label: '问题数量',
-            value: 328,
+            value: 425,
             unit: '个',
             trend: 'up',
-            trendValue: '+8.3%',
+            trendValue: '+12.6%',
             icon: 'fa-exclamation-triangle',
             color: '#f59e0b'
         },
         {
             label: '整改完成率',
-            value: 87.5,
+            value: 91.3,
             unit: '%',
             trend: 'up',
-            trendValue: '+3.2%',
+            trendValue: '+5.8%',
             icon: 'fa-check-circle',
             color: '#10b981'
         },
         {
             label: '待处理事项',
-            value: 156,
+            value: 132,
             unit: '项',
             trend: 'down',
-            trendValue: '-5.1%',
+            trendValue: '-8.4%',
             icon: 'fa-tasks',
             color: '#3b82f6'
         },
         {
             label: '涉及单位',
-            value: 42,
+            value: 48,
             unit: '个',
-            trend: 'neutral',
-            trendValue: '0%',
+            trend: 'up',
+            trendValue: '+6.7%',
             icon: 'fa-building',
             color: '#8b5cf6'
         },
         {
             label: '涉及金额',
-            value: 2847,
+            value: 3526,
             unit: '万元',
             trend: 'up',
-            trendValue: '+15.7%',
+            trendValue: '+23.8%',
             icon: 'fa-coins',
             color: '#f59e0b'
         }
     ],
     alertTrend: {
-        dates: ['10-14', '10-15', '10-16', '10-17', '10-18', '10-19', '10-20'],
-        high: [12, 15, 18, 14, 20, 17, 22],
-        medium: [25, 28, 32, 30, 35, 33, 38],
-        low: [45, 42, 48, 50, 52, 48, 55]
+        dates: ['10-23', '10-24', '10-25', '10-26', '10-27', '10-28', '10-29'],
+        high: [18, 22, 25, 20, 28, 24, 30],
+        medium: [32, 38, 42, 38, 45, 40, 48],
+        low: [52, 58, 62, 58, 65, 60, 68]
     },
     unitRisk: [
-        { name: '信息学院', value: 85 },
-        { name: '经管学院', value: 78 },
-        { name: '机械学院', value: 72 },
-        { name: '化工学院', value: 68 },
-        { name: '外语学院', value: 65 },
-        { name: '材料学院', value: 62 },
-        { name: '土木学院', value: 58 },
-        { name: '生命学院', value: 55 }
+        { name: '计算机学院', value: 92 },
+        { name: '设备处', value: 88 },
+        { name: '经管学院', value: 82 },
+        { name: '机械学院', value: 76 },
+        { name: '化工学院', value: 71 },
+        { name: '外语学院', value: 68 },
+        { name: '材料学院', value: 64 },
+        { name: '土木学院', value: 60 }
     ],
     problemType: [
-        { name: '科研经费', value: 156 },
-        { name: '基建采购', value: 98 },
-        { name: '财务管理', value: 87 },
-        { name: '招生录取', value: 65 },
-        { name: '资产管理', value: 54 },
-        { name: '其他', value: 42 }
+        { name: '采购管理', value: 198 },
+        { name: '科研经费', value: 176 },
+        { name: '基建工程', value: 125 },
+        { name: '财务管理', value: 102 },
+        { name: '招生录取', value: 78 },
+        { name: '资产管理', value: 65 },
+        { name: '其他', value: 48 }
     ],
     rectification: {
-        completed: 287,
-        inProgress: 156,
-        overdue: 23,
-        total: 466
+        completed: 356,
+        inProgress: 132,
+        overdue: 18,
+        total: 506
     },
     realtimeAlerts: [
-        { level: 'high', content: '信息学院科研经费报销异常，涉及金额15.8万元', source: '规则引擎', time: '10:25' },
-        { level: 'medium', content: '经管学院采购项目存在拆分规避招标嫌疑', source: '智能分析', time: '10:18' },
-        { level: 'high', content: '机械学院固定资产账实不符，差异率达12%', source: '数据比对', time: '10:12' },
-        { level: 'low', content: '化工学院预算执行进度偏慢，执行率仅45%', source: '规则引擎', time: '10:05' },
-        { level: 'medium', content: '外语学院三公经费支出接近预算红线', source: '实时监控', time: '09:58' },
-        { level: 'high', content: '材料学院发现连号发票，疑似虚假报销', source: '智能识别', time: '09:45' },
-        { level: 'low', content: '土木学院工程变更频率超过阈值', source: '规则引擎', time: '09:32' },
-        { level: 'medium', content: '生命学院科研设备重复采购预警', source: '关联分析', time: '09:20' }
+        { level: 'high', content: '设备处采购人员与供应商存在关联关系，涉及金额500万元', source: '规则引擎', time: '14:35' },
+        { level: 'high', content: '计算机学院科研经费报销异常，发现5张连号发票', source: '智能识别', time: '14:28' },
+        { level: 'medium', content: '经管学院采购项目技术参数存在明显倾向性', source: '智能分析', time: '14:15' },
+        { level: 'high', content: '机械学院固定资产账实不符，2台设备实物缺失', source: '数据比对', time: '14:08' },
+        { level: 'medium', content: '化工学院三公经费支出达预算95%，接近红线', source: '实时监控', time: '13:52' },
+        { level: 'low', content: '外语学院预算执行进度偏慢，执行率仅48%', source: '规则引擎', time: '13:40' },
+        { level: 'high', content: '材料学院招生录取发现3例低分高录异常', source: '审计发现', time: '13:25' },
+        { level: 'medium', content: '土木学院工程项目变更频率异常，已达8次', source: '规则引擎', time: '13:10' }
     ]
 };
 
@@ -282,6 +283,7 @@ function initAlertTrendChart() {
             borderColor: 'transparent',
             borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
+            confine: true,
             axisPointer: {
                 type: 'line',
                 lineStyle: {
@@ -291,7 +293,8 @@ function initAlertTrendChart() {
                 },
                 label: {
                     show: false
-                }
+                },
+                z: 1
             },
             formatter: function(params) {
                 let result = `<div style="font-weight: bold; margin-bottom: 5px;">${params[0].axisValue}</div>`;
@@ -434,6 +437,7 @@ function initUnitRiskChart() {
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
+            confine: true,
             axisPointer: { 
                 type: 'line',
                 lineStyle: {
@@ -443,7 +447,8 @@ function initUnitRiskChart() {
                 },
                 label: {
                     show: false
-                }
+                },
+                z: 1
             },
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
             borderColor: 'transparent',
@@ -576,6 +581,7 @@ function initRiskMapChart() {
             borderColor: 'transparent',
             borderWidth: 0,
             textStyle: { color: '#e2e8f0' },
+            confine: true,
             formatter: '{b}<br/>风险指数: {c}'
         },
         grid: {
@@ -662,6 +668,7 @@ function initProblemTypeChart() {
             borderColor: 'transparent',
             borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
+            confine: true,
             formatter: function(params) {
                 return `<div style="font-weight: bold; margin-bottom: 5px;">${params.name}</div>
                     <div>数量: <strong>${params.value}</strong></div>
@@ -750,6 +757,7 @@ function initRectificationChart() {
             borderColor: 'transparent',
             borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
+            confine: true,
             formatter: function(params) {
                 const percent = ((params.value / total) * 100).toFixed(1);
                 return `<div style="font-weight: bold; margin-bottom: 5px;">${params.name}</div>
