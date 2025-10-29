@@ -875,7 +875,8 @@ const AlertCenter = {
      * 查看预警详情
      */
     viewAlertDetail(id) {
-        const alert = this.mockData.alerts.find(a => a.id === id);
+        // 使用宽松比较，支持数字和字符串ID
+        const alert = this.mockData.alerts.find(a => a.id == id);
         if (!alert) {
             Toast.error('预警不存在');
             return;
@@ -969,7 +970,8 @@ const AlertCenter = {
      * 标注误报
      */
     markAsFalsePositive(alertId) {
-        const alert = this.mockData.alerts.find(a => a.id === alertId);
+        // 使用宽松比较，支持数字和字符串ID
+        const alert = this.mockData.alerts.find(a => a.id == alertId);
         if (!alert) {
             Toast.error('预警不存在');
             return;
@@ -1004,7 +1006,8 @@ const AlertCenter = {
      * 提交误报标注
      */
     async submitFalsePositive() {
-        const alert = this.mockData.alerts.find(a => a.id === this.currentAlertId);
+        // 使用宽松比较，支持数字和字符串ID
+        const alert = this.mockData.alerts.find(a => a.id == this.currentAlertId);
         if (!alert) return;
 
         const reason = document.getElementById('fp-reason').value;
@@ -1203,12 +1206,9 @@ const AlertCenter = {
         }
         
         // 获取选中的预警ID
-        const selectedIds = Array.from(checked).map(cb => {
-            const id = cb.dataset.id;
-            // 如果id是纯数字字符串，转换为数字，否则保持字符串
-            return /^\d+$/.test(id) ? parseInt(id) : id;
-        });
-        const selectedAlerts = this.mockData.alerts.filter(alert => selectedIds.includes(alert.id));
+        const selectedIds = Array.from(checked).map(cb => cb.dataset.id);
+        // 使用宽松比较，支持数字和字符串ID
+        const selectedAlerts = this.mockData.alerts.filter(alert => selectedIds.includes(String(alert.id)));
         
         this.exportAlertsData(selectedAlerts);
         Toast.success(`已导出 ${checked.length} 条预警`);
@@ -1368,7 +1368,8 @@ const AlertCenter = {
      * @param {number} alertId - 预警ID
      */
     createClueFromAlert(alertId) {
-        const alert = this.mockData.alerts.find(a => a.id === alertId);
+        // 使用宽松比较，支持数字和字符串ID
+        const alert = this.mockData.alerts.find(a => a.id == alertId);
         if (!alert) {
             Toast.error('预警不存在');
             return;
