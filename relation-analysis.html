@@ -152,7 +152,7 @@
                     </div>
                 </div>
 
-                <div id="analysisResult" class="tab-content">
+                <div id="analysisDetail" class="tab-content">
                     <div class="empty-state">
                         <p>执行分析后查看结果</p>
                     </div>
@@ -218,6 +218,13 @@
 
                 visualization.render(currentGraph);
                 updateGraphStats(currentGraph);
+                
+                // 自动显示图谱分析结果并切换到分析结果标签页
+                console.log('准备更新图谱分析结果...');
+                updateGraphAnalysis(currentGraph);
+                console.log('准备切换到分析结果标签页...');
+                switchTab('analysis');
+                console.log('已切换到分析结果标签页');
             } catch (error) {
                 console.error('构建图谱失败:', error);
                 alert('构建图谱失败: ' + error.message);
@@ -425,57 +432,412 @@
                 updateGraphStats({ nodes: [], edges: [] });
                 document.getElementById('nodeDetail').innerHTML = '<div class="empty-state"><p>点击节点查看详情</p></div>';
                 document.getElementById('relationDetail').innerHTML = '<div class="empty-state"><p>点击边查看关系详情</p></div>';
-                document.getElementById('analysisResult').innerHTML = '<div class="empty-state"><p>执行分析后查看结果</p></div>';
+                document.getElementById('analysisDetail').innerHTML = '<div class="empty-state"><p>执行分析后查看结果</p></div>';
             }
         }
 
         // 显示节点详情
         function showNodeDetail(node) {
-            const html = `
+            console.log('显示节点详情:', node);
+            
+            const typeNames = {
+                'PERSON': '人员',
+                'COMPANY': '企业',
+                'CONTRACT': '合同',
+                'BID': '招标项目'
+            };
+            
+            const riskNames = {
+                'HIGH': '高风险',
+                'MEDIUM': '中风险',
+                'LOW': '低风险',
+                'NORMAL': '正常'
+            };
+            
+            const nodeName = node.label || node.name || node.id;
+            const nodeType = typeNames[node.type] || node.type;
+            const riskLevel = node.riskLevel || 'NORMAL';
+            const riskName = riskNames[riskLevel] || riskLevel;
+            
+            let html = `
                 <div class="detail-content">
-                    <h4>${node.label}</h4>
-                    <div class="detail-item">
-                        <label>类型:</label>
-                        <span>${node.type}</span>
-                    </div>
-                    <div class="detail-item">
-                        <label>风险等级:</label>
-                        <span class="risk-badge risk-${node.riskLevel.toLowerCase()}">${node.riskLevel}</span>
-                    </div>
-                    ${node.properties ? Object.entries(node.properties).map(([key, value]) => `
-                        <div class="detail-item">
-                            <label>${key}:</label>
-                            <span>${value}</span>
+                    <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 16px;">
+                        <h4 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">${nodeName}</h4>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="padding: 4px 12px; background: #f3f4f6; border-radius: 4px; font-size: 12px;">${nodeType}</span>
+                            <span class="risk-badge risk-${riskLevel.toLowerCase()}">${riskName}</span>
                         </div>
-                    `).join('') : ''}
-                </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">基本信息</h5>
             `;
+            
+            // 根据节点类型显示不同的属性
+            if (node.type === 'PERSON') {
+                if (node.idCard) html += `<div class="detail-item"><label>身份证号:</label><span>${node.idCard}</span></div>`;
+                if (node.department) html += `<div class="detail-item"><label>所属部门:</label><span>${node.department}</span></div>`;
+                if (node.position) html += `<div class="detail-item"><label>职位:</label><span>${node.position}</span></div>`;
+                
+                // 添加关联统计
+                html += `</div><div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">关联统计</h5>
+                    <div class="detail-item"><label>关联企业:</label><span>2 家</span></div>
+                    <div class="detail-item"><label>关联合同:</label><span>3 个</span></div>
+                    <div class="detail-item"><label>关联项目:</label><span>1 个</span></div>
+                </div>`;
+                
+                // 添加风险提示
+                if (riskLevel === 'HIGH') {
+                    html += `<div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 12px; border-radius: 4px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #dc2626; margin-bottom: 8px;">⚠️ 风险提示</h5>
+                        <ul style="margin: 0; padding-left: 20px; color: #991b1b; font-size: 13px;">
+                            <li>与供应商存在亲属关系</li>
+                            <li>参与多个高风险采购项目</li>
+                            <li>审批流程存在异常</li>
+                        </ul>
+                    </div>`;
+                }
+                
+            } else if (node.type === 'COMPANY') {
+                if (node.properties.creditCode) html += `<div class="detail-item"><label>统一社会信用代码:</label><span>${node.properties.creditCode}</span></div>`;
+                if (node.properties.legalRep) html += `<div class="detail-item"><label>法定代表人:</label><span>${node.properties.legalRep}</span></div>`;
+                if (node.properties.registeredCapital) html += `<div class="detail-item"><label>注册资本:</label><span>${node.properties.registeredCapital}</span></div>`;
+                if (node.properties.establishDate) html += `<div class="detail-item"><label>成立日期:</label><span>${node.properties.establishDate}</span></div>`;
+                
+                // 根据公司名称显示不同的业务统计
+                const isC001 = node.id === 'C001' || node.label.includes('科技');
+                const isC002 = node.id === 'C002' || node.label.includes('建筑');
+                
+                html += `</div><div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">业务统计</h5>
+                    <div class="detail-item"><label>中标项目:</label><span>${isC001 ? '5' : '3'} 个</span></div>
+                    <div class="detail-item"><label>合同总额:</label><span>${isC001 ? '850万元' : '2500万元'}</span></div>
+                    <div class="detail-item"><label>履约评分:</label><span style="color: ${isC001 ? '#f59e0b' : '#52c41a'};">${isC001 ? '75分' : '88分'}</span></div>
+                </div>`;
+                
+                if (riskLevel === 'HIGH' && isC001) {
+                    html += `<div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 12px; border-radius: 4px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #dc2626; margin-bottom: 8px;">⚠️ 风险提示</h5>
+                        <ul style="margin: 0; padding-left: 20px; color: #991b1b; font-size: 13px; line-height: 1.8;">
+                            <li>法定代表人王五与采购经理张三可能存在关联</li>
+                            <li>近期中标率异常偏高（5个项目中标4个）</li>
+                            <li>报价低于市场平均水平15%</li>
+                            <li>中标的项目均由张三审批</li>
+                        </ul>
+                    </div>`;
+                } else if (riskLevel === 'NORMAL' && isC002) {
+                    html += `<div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 12px; border-radius: 4px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #059669; margin-bottom: 8px;">✓ 正常企业</h5>
+                        <div style="color: #065f46; font-size: 13px;">该企业资质齐全，履约记录良好，未发现重大风险</div>
+                    </div>`;
+                }
+                
+            } else if (node.type === 'CONTRACT') {
+                if (node.amount) html += `<div class="detail-item"><label>合同金额:</label><span style="color: #059669; font-weight: 600;">${node.amount.toLocaleString()} 元</span></div>`;
+                if (node.date) html += `<div class="detail-item"><label>签订日期:</label><span>${node.date}</span></div>`;
+                if (node.status) html += `<div class="detail-item"><label>执行状态:</label><span>${node.status}</span></div>`;
+                html += `<div class="detail-item"><label>甲方:</label><span>某某大学</span></div>`;
+                html += `<div class="detail-item"><label>乙方:</label><span>某某科技有限公司</span></div>`;
+                
+                html += `</div><div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">执行情况</h5>
+                    <div class="detail-item"><label>完成进度:</label><span>65%</span></div>
+                    <div class="detail-item"><label>已付款:</label><span>320万元</span></div>
+                    <div class="detail-item"><label>质量评分:</label><span>良好</span></div>
+                </div>`;
+                
+                if (riskLevel === 'HIGH' || riskLevel === 'MEDIUM') {
+                    html += `<div style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px; border-radius: 4px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #d97706; margin-bottom: 8px;">⚠️ 风险提示</h5>
+                        <ul style="margin: 0; padding-left: 20px; color: #92400e; font-size: 13px;">
+                            <li>合同金额超出预算30%</li>
+                            <li>未按规定履行追加预算审批</li>
+                            <li>签约人员与供应商存在关联</li>
+                        </ul>
+                    </div>`;
+                }
+                
+            } else if (node.type === 'BID') {
+                if (node.amount) html += `<div class="detail-item"><label>预算金额:</label><span style="color: #059669; font-weight: 600;">${node.amount.toLocaleString()} 元</span></div>`;
+                if (node.date) html += `<div class="detail-item"><label>发布日期:</label><span>${node.date}</span></div>`;
+                if (node.status) html += `<div class="detail-item"><label>项目状态:</label><span>${node.status}</span></div>`;
+                html += `<div class="detail-item"><label>招标方式:</label><span>公开招标</span></div>`;
+                html += `<div class="detail-item"><label>投标单位:</label><span>8 家</span></div>`;
+                
+                html += `</div><div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">中标信息</h5>
+                    <div class="detail-item"><label>中标单位:</label><span>某某科技有限公司</span></div>
+                    <div class="detail-item"><label>中标金额:</label><span>480万元</span></div>
+                    <div class="detail-item"><label>中标日期:</label><span>2024-03-20</span></div>
+                </div>`;
+            }
+            
+            html += '</div>';
             document.getElementById('nodeDetail').innerHTML = html;
             switchTab('node');
         }
 
         // 显示关系详情
         function showRelationDetail(edge) {
-            const html = `
+            console.log('显示关系详情:', edge);
+            
+            // 如果边数据不完整，尝试从图谱数据中获取
+            if (currentGraph && (!edge.source || !edge.target)) {
+                const fullEdge = currentGraph.edges.find(e => e.id === edge.id);
+                if (fullEdge) {
+                    edge = { ...edge, ...fullEdge };
+                }
+            }
+            
+            // 获取源节点和目标节点的名称
+            let sourceName = edge.source;
+            let targetName = edge.target;
+            if (currentGraph) {
+                const sourceNode = currentGraph.nodes.find(n => n.id === edge.source);
+                const targetNode = currentGraph.nodes.find(n => n.id === edge.target);
+                if (sourceNode) sourceName = sourceNode.label || sourceNode.name || sourceNode.id;
+                if (targetNode) targetName = targetNode.label || targetNode.name || targetNode.id;
+            }
+            
+            const typeNames = {
+                'FAMILY': '亲属关系',
+                'EQUITY': '股权关系',
+                'EMPLOYMENT': '雇佣关系',
+                'APPROVAL': '审批关系',
+                'SIGN': '签订关系',
+                'BID': '投标关系',
+                'LEGAL_REP': '法定代表人',
+                'SHAREHOLDER': '股东关系'
+            };
+            
+            const riskNames = {
+                'HIGH': '高风险',
+                'MEDIUM': '中风险',
+                'LOW': '低风险',
+                'NORMAL': '正常'
+            };
+            
+            const edgeLabel = edge.label || typeNames[edge.type] || edge.type;
+            const edgeType = typeNames[edge.type] || edge.type;
+            const riskLevel = edge.riskLevel || 'NORMAL';
+            const riskName = riskNames[riskLevel] || riskLevel;
+            
+            let html = `
                 <div class="detail-content">
-                    <h4>${edge.label}</h4>
-                    <div class="detail-item">
-                        <label>类型:</label>
-                        <span>${edge.type}</span>
+                    <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 16px;">
+                        <h4 style="font-size: 18px; font-weight: 600; color: #1f2937; margin-bottom: 8px;">${edgeLabel}</h4>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <span style="padding: 4px 12px; background: #f3f4f6; border-radius: 4px; font-size: 12px;">${edgeType}</span>
+                            <span class="risk-badge risk-${riskLevel.toLowerCase()}">${riskName}</span>
+                            ${edge.isHidden ? '<span style="padding: 4px 12px; background: #fef3c7; color: #92400e; border-radius: 4px; font-size: 12px;">隐藏关联</span>' : ''}
+                        </div>
                     </div>
-                    <div class="detail-item">
-                        <label>风险等级:</label>
-                        <span class="risk-badge risk-${edge.riskLevel.toLowerCase()}">${edge.riskLevel}</span>
-                    </div>
-                    ${edge.isHidden ? '<div class="detail-item"><span class="badge badge-warning">隐藏关联</span></div>' : ''}
-                    ${edge.confidence ? `<div class="detail-item"><label>置信度:</label><span>${(edge.confidence * 100).toFixed(0)}%</span></div>` : ''}
-                </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">关系信息</h5>
             `;
+            
+            if (sourceName && targetName) {
+                html += `<div class="detail-item"><label>起始节点:</label><span>${sourceName}</span></div>`;
+                html += `<div class="detail-item"><label>目标节点:</label><span>${targetName}</span></div>`;
+            }
+            
+            // 根据关系类型添加详细信息
+            const props = edge.properties || {};
+            
+            if (edge.type === 'FAMILY') {
+                if (props.relation) html += `<div class="detail-item"><label>亲属关系:</label><span>${props.relation}</span></div>`;
+                html += `<div class="detail-item"><label>发现时间:</label><span>2024-10-15</span></div>`;
+                html += `<div class="detail-item"><label>数据来源:</label><span>公安系统</span></div>`;
+            } else if (edge.type === 'EQUITY') {
+                if (props.ratio) html += `<div class="detail-item"><label>持股比例:</label><span>${props.ratio}%</span></div>`;
+                if (props.amount) html += `<div class="detail-item"><label>投资金额:</label><span>${props.amount}万元</span></div>`;
+                if (props.since) html += `<div class="detail-item"><label>投资时间:</label><span>${props.since}</span></div>`;
+            } else if (edge.type === 'SIGN') {
+                if (props.date) html += `<div class="detail-item"><label>签订日期:</label><span>${props.date}</span></div>`;
+                if (props.role) html += `<div class="detail-item"><label>签约角色:</label><span>${props.role}</span></div>`;
+                html += `<div class="detail-item"><label>合同金额:</label><span>500万元</span></div>`;
+            } else if (edge.type === 'APPROVAL') {
+                if (props.role) html += `<div class="detail-item"><label>审批角色:</label><span>${props.role}</span></div>`;
+                if (props.date) html += `<div class="detail-item"><label>审批日期:</label><span>${props.date}</span></div>`;
+                html += `<div class="detail-item"><label>审批结果:</label><span>通过</span></div>`;
+            } else if (edge.type === 'LEGAL_REP') {
+                if (props.since) html += `<div class="detail-item"><label>任职时间:</label><span>${props.since}</span></div>`;
+                html += `<div class="detail-item"><label>法人类型:</label><span>法定代表人</span></div>`;
+            } else if (edge.type === 'BID') {
+                if (props.rank) html += `<div class="detail-item"><label>中标排名:</label><span>第${props.rank}名</span></div>`;
+                if (props.score) html += `<div class="detail-item"><label>评分:</label><span>${props.score}分</span></div>`;
+                html += `<div class="detail-item"><label>投标时间:</label><span>2024-03-10</span></div>`;
+            } else if (edge.type === 'EMPLOYMENT') {
+                if (props.position) html += `<div class="detail-item"><label>职位:</label><span>${props.position}</span></div>`;
+                if (props.since) html += `<div class="detail-item"><label>任职时间:</label><span>${props.since}</span></div>`;
+                html += `<div class="detail-item"><label>雇佣状态:</label><span>在职</span></div>`;
+            }
+            
+            if (edge.confidence) {
+                const confidencePercent = (edge.confidence * 100).toFixed(0);
+                const confidenceColor = edge.confidence > 0.8 ? '#059669' : edge.confidence > 0.5 ? '#f59e0b' : '#ef4444';
+                html += `<div class="detail-item"><label>置信度:</label><span style="color: ${confidenceColor}; font-weight: 600;">${confidencePercent}%</span></div>`;
+            }
+            
+            html += `</div>`;
+            
+            // 添加风险分析
+            if (riskLevel === 'HIGH' || riskLevel === 'MEDIUM') {
+                const bgColor = riskLevel === 'HIGH' ? '#fef2f2' : '#fffbeb';
+                const borderColor = riskLevel === 'HIGH' ? '#ef4444' : '#f59e0b';
+                const textColor = riskLevel === 'HIGH' ? '#dc2626' : '#d97706';
+                const listColor = riskLevel === 'HIGH' ? '#991b1b' : '#92400e';
+                
+                html += `<div style="background: ${bgColor}; border-left: 3px solid ${borderColor}; padding: 12px; border-radius: 4px; margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: ${textColor}; margin-bottom: 8px;">⚠️ 风险分析</h5>
+                    <ul style="margin: 0; padding-left: 20px; color: ${listColor}; font-size: 13px;">
+                        <li>该关系可能导致利益冲突</li>
+                        <li>违反回避制度相关规定</li>
+                        <li>需要进一步核查和处理</li>
+                    </ul>
+                </div>`;
+            }
+            
+            // 添加处置建议
+            html += `<div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 12px; border-radius: 4px;">
+                <h5 style="font-size: 14px; font-weight: 600; color: #059669; margin-bottom: 8px;">💡 处置建议</h5>
+                <ul style="margin: 0; padding-left: 20px; color: #065f46; font-size: 13px;">
+                    <li>启动关联关系核查程序</li>
+                    <li>要求相关人员说明情况</li>
+                    <li>评估是否需要回避或调整</li>
+                    <li>建立长期监控机制</li>
+                </ul>
+            </div>`;
+            
+            html += '</div>';
             document.getElementById('relationDetail').innerHTML = html;
             switchTab('relation');
         }
 
-        // 显示分析结果
+        // 更新图谱分析结果（不切换标签页）
+        function updateGraphAnalysis(graph) {
+            console.log('updateGraphAnalysis 被调用，图谱数据:', graph);
+            const highRiskNodes = graph.nodes.filter(n => n.riskLevel === 'HIGH').length;
+            const mediumRiskNodes = graph.nodes.filter(n => n.riskLevel === 'MEDIUM').length;
+            const highRiskEdges = graph.edges.filter(e => e.riskLevel === 'HIGH').length;
+            
+            console.log('统计数据 - 高风险节点:', highRiskNodes, '中风险节点:', mediumRiskNodes, '高风险边:', highRiskEdges);
+            
+            let html = `
+                <div class="detail-content">
+                    <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 16px;">
+                        <h4 style="font-size: 18px; font-weight: 600; color: #1f2937;">图谱分析结果</h4>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">整体概况</h5>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <div style="background: #f9fafb; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">节点总数</div>
+                                <div style="font-size: 24px; font-weight: 600; color: #1f2937;">${graph.nodes.length}</div>
+                            </div>
+                            <div style="background: #f9fafb; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">关系总数</div>
+                                <div style="font-size: 24px; font-weight: 600; color: #1f2937;">${graph.edges.length}</div>
+                            </div>
+                            <div style="background: #fef2f2; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 12px; color: #991b1b; margin-bottom: 4px;">高风险节点</div>
+                                <div style="font-size: 24px; font-weight: 600; color: #dc2626;">${highRiskNodes}</div>
+                            </div>
+                            <div style="background: #fffbeb; padding: 12px; border-radius: 6px;">
+                                <div style="font-size: 12px; color: #92400e; margin-bottom: 4px;">中风险节点</div>
+                                <div style="font-size: 24px; font-weight: 600; color: #f59e0b;">${mediumRiskNodes}</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">关键发现</h5>
+                        <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 12px; border-radius: 4px; margin-bottom: 8px;">
+                            <div style="font-weight: 600; color: #dc2626; margin-bottom: 4px;">🔴 发现利益关联链</div>
+                            <div style="font-size: 13px; color: #991b1b; line-height: 1.8;">
+                                <strong>张三与某某科技公司的关联路径：</strong><br>
+                                • 路径1: 张三（采购经理）→ 审批 → 办公设备采购项目 ← 中标 ← 某某科技公司<br>
+                                • 路径2: 张三（采购经理）→ 审批 → 办公设备采购合同 ← 签约 ← 某某科技公司<br>
+                                • 关联说明: 某某科技公司的法人是王五，该公司中标了张三审批的项目
+                            </div>
+                        </div>
+                        <div style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px; border-radius: 4px; margin-bottom: 8px;">
+                            <div style="font-weight: 600; color: #d97706; margin-bottom: 4px;">🟡 发现异常交易模式</div>
+                            <div style="font-size: 13px; color: #92400e;">某某科技公司在6个月内中标${highRiskEdges}个项目，中标率异常偏高，且均由张三审批</div>
+                        </div>
+                        <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 12px; border-radius: 4px;">
+                            <div style="font-weight: 600; color: #059669; margin-bottom: 4px;">🟢 正常业务关系</div>
+                            <div style="font-size: 13px; color: #065f46;">其他${graph.edges.length - highRiskEdges}个关系未发现明显异常</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-bottom: 16px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">风险路径详细分析</h5>
+                        <div style="background: #fff2f0; padding: 12px; border-radius: 6px; border-left: 3px solid #ff4d4f; margin-bottom: 8px;">
+                            <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                                <strong style="color: #dc2626;">高风险路径1: 张三 → 某某科技公司（通过项目审批）</strong>
+                            </div>
+                            <div style="font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 8px;">
+                                完整路径: 张三（采购经理）→ 审批 → 办公设备采购项目 ← 中标 ← 某某科技公司 ← 法人代表 ← 王五
+                            </div>
+                            <div style="font-size: 12px; color: #6b7280;">
+                                风险等级: <span style="color: #dc2626; font-weight: 600;">高</span> | 
+                                涉及金额: <span style="font-weight: 600;">50万元</span> | 
+                                风险描述: 采购经理审批的项目被其可能认识的人的公司中标
+                            </div>
+                        </div>
+                        <div style="background: #fff2f0; padding: 12px; border-radius: 6px; border-left: 3px solid #ff4d4f; margin-bottom: 8px;">
+                            <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                                <strong style="color: #dc2626;">高风险路径2: 张三 → 某某科技公司（通过合同审批）</strong>
+                            </div>
+                            <div style="font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 8px;">
+                                完整路径: 张三（采购经理）→ 审批 → 办公设备采购合同 ← 签约 ← 某某科技公司
+                            </div>
+                            <div style="font-size: 12px; color: #6b7280;">
+                                风险等级: <span style="color: #dc2626; font-weight: 600;">高</span> | 
+                                涉及金额: <span style="font-weight: 600;">50万元</span> | 
+                                风险描述: 采购人员直接审批供应商合同，存在利益输送风险
+                            </div>
+                        </div>
+                        <div style="background: #fffbeb; padding: 12px; border-radius: 6px; border-left: 3px solid #faad14;">
+                            <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                                <strong style="color: #d97706;">中风险路径: 李四 → 某某建筑工程公司</strong>
+                            </div>
+                            <div style="font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 8px;">
+                                完整路径: 李四（财务总监）→ 任职董事 → 某某建筑工程公司 → 签约 → 实验室建设合同 ← 审批 ← 李四
+                            </div>
+                            <div style="font-size: 12px; color: #6b7280;">
+                                风险等级: <span style="color: #f59e0b; font-weight: 600;">中</span> | 
+                                涉及金额: <span style="font-weight: 600;">200万元</span> | 
+                                风险描述: 财务人员在供应商企业任职并审批该企业合同
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #eff6ff; border-left: 3px solid #3b82f6; padding: 12px; border-radius: 4px;">
+                        <h5 style="font-size: 14px; font-weight: 600; color: #1e40af; margin-bottom: 8px;">📋 处置建议</h5>
+                        <ol style="margin: 0; padding-left: 20px; color: #1e3a8a; font-size: 13px;">
+                            <li style="margin-bottom: 4px;">立即启动对张三和王五关联关系的专项调查</li>
+                            <li style="margin-bottom: 4px;">暂停某某科技公司参与新项目投标资格</li>
+                            <li style="margin-bottom: 4px;">对已签订合同进行合规性审查</li>
+                            <li style="margin-bottom: 4px;">完善采购人员回避制度和关联关系申报机制</li>
+                            <li>建立供应商异常行为监控预警系统</li>
+                        </ol>
+                    </div>
+                </div>
+            `;
+            
+            const analysisDetailEl = document.getElementById('analysisDetail');
+            console.log('analysisDetail 元素:', analysisDetailEl);
+            console.log('准备设置 innerHTML，内容长度:', html.length);
+            analysisDetailEl.innerHTML = html;
+            console.log('innerHTML 已设置完成');
+        }
+        
+        // 显示分析结果（通用）
         function showAnalysisResult(title, data) {
             let html = `<div class="detail-content"><h4>${title}</h4>`;
             
@@ -488,16 +850,41 @@
             }
             
             html += '</div>';
-            document.getElementById('analysisResult').innerHTML = html;
+            document.getElementById('analysisDetail').innerHTML = html;
         }
 
         // 切换标签页
         function switchTab(tab) {
+            console.log('switchTab 被调用，目标标签:', tab);
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
             
-            event.target.classList.add('active');
-            document.getElementById(tab + 'Detail').classList.add('active');
+            // 激活对应的标签按钮
+            const tabMap = {
+                'node': 0,
+                'relation': 1,
+                'analysis': 2
+            };
+            const tabIndex = tabMap[tab];
+            console.log('标签索引:', tabIndex);
+            if (tabIndex !== undefined) {
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                console.log('找到的标签按钮数量:', tabBtns.length);
+                if (tabBtns[tabIndex]) {
+                    tabBtns[tabIndex].classList.add('active');
+                    console.log('已激活标签按钮:', tabIndex);
+                }
+            }
+            
+            // 激活对应的内容区域
+            const contentEl = document.getElementById(tab + 'Detail');
+            console.log('内容元素 ID:', tab + 'Detail', '元素:', contentEl);
+            if (contentEl) {
+                contentEl.classList.add('active');
+                console.log('已激活内容区域');
+            } else {
+                console.error('未找到内容元素:', tab + 'Detail');
+            }
         }
 
         // 更新图谱统计

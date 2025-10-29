@@ -251,6 +251,9 @@
                 <button id="editOrderBtn" class="btn btn-primary">
                     <i class="fas fa-edit"></i> 编辑
                 </button>
+                <button id="createRectificationBtn" class="btn btn-success" style="display: none;">
+                    <i class="fas fa-plus-circle"></i> 生成整改单
+                </button>
             </div>
         </div>
     </div>
@@ -318,6 +321,59 @@
                     <div class="form-group">
                         <label class="form-label required">工单描述</label>
                         <textarea id="createOrderDescription" required rows="4" class="form-control"></textarea>
+                    </div>
+                    
+                    <!-- 核查组成员 -->
+                    <div class="form-group">
+                        <label class="form-label">核查组成员</label>
+                        <div id="teamMembersSection" class="team-members-section">
+                            <div class="team-member-item">
+                                <select class="form-control member-select">
+                                    <option value="">选择成员</option>
+                                    <option value="张三">张三</option>
+                                    <option value="李四">李四</option>
+                                    <option value="王五">王五</option>
+                                    <option value="赵六">赵六</option>
+                                    <option value="钱七">钱七</option>
+                                    <option value="孙八">孙八</option>
+                                </select>
+                                <select class="form-control role-select">
+                                    <option value="组长">组长</option>
+                                    <option value="成员">成员</option>
+                                    <option value="协助">协助</option>
+                                </select>
+                                <button type="button" class="btn btn-sm btn-danger remove-member-btn" onclick="removeMember(this)" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="addTeamMember()">
+                            <i class="fas fa-plus"></i> 添加成员
+                        </button>
+                    </div>
+                    
+                    <!-- 任务分解 -->
+                    <div class="form-group">
+                        <label class="form-label">任务分解</label>
+                        <div id="tasksSection" class="tasks-section">
+                            <div class="task-item">
+                                <input type="text" class="form-control task-title" placeholder="任务标题">
+                                <select class="form-control task-assignee">
+                                    <option value="">负责人</option>
+                                    <option value="张三">张三</option>
+                                    <option value="李四">李四</option>
+                                    <option value="王五">王五</option>
+                                    <option value="赵六">赵六</option>
+                                </select>
+                                <input type="date" class="form-control task-deadline" placeholder="截止日期">
+                                <button type="button" class="btn btn-sm btn-danger remove-task-btn" onclick="removeTask(this)" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="addTask()">
+                            <i class="fas fa-plus"></i> 添加任务
+                        </button>
                     </div>
                     
                     <div class="form-group">

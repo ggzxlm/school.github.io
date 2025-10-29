@@ -56,11 +56,15 @@ class RelationGraphVisualization {
             layout: {
                 type: 'force',
                 preventOverlap: true,
-                nodeSpacing: 100,
-                linkDistance: 150,
-                nodeStrength: -300,
-                edgeStrength: 0.6,
-                collideStrength: 0.8
+                nodeSpacing: 50,
+                linkDistance: 100,
+                nodeStrength: -150,
+                edgeStrength: 0.5,
+                collideStrength: 0.7,
+                center: [width / 2, height / 2],
+                gravity: 10,
+                alphaDecay: 0.028,
+                alphaMin: 0.01
             },
             defaultNode: {
                 size: 40,
@@ -152,8 +156,15 @@ class RelationGraphVisualization {
         this.graph.data(filteredData);
         this.graph.render();
 
-        // 自适应画布
-        this.fitView();
+        // 立即适应画布
+        setTimeout(() => {
+            this.fitView();
+        }, 100);
+
+        // 布局稳定后再次适应
+        setTimeout(() => {
+            this.fitView();
+        }, 500);
 
         console.log(`图谱渲染完成: ${filteredData.nodes.length} 个节点, ${filteredData.edges.length} 条边`);
     }
@@ -313,12 +324,20 @@ class RelationGraphVisualization {
     changeLayout(layoutType) {
         this.layout = layoutType;
 
+        const container = document.getElementById(this.containerId);
+        const width = container.offsetWidth || 800;
+        const height = container.offsetHeight || 600;
+        
         const layouts = {
             force: {
                 type: 'force',
                 preventOverlap: true,
-                nodeSpacing: 100,
-                linkDistance: 150
+                nodeSpacing: 50,
+                linkDistance: 100,
+                nodeStrength: -150,
+                edgeStrength: 0.5,
+                center: [width / 2, height / 2],
+                gravity: 10
             },
             circular: {
                 type: 'circular',
@@ -447,7 +466,22 @@ class RelationGraphVisualization {
      * 自适应画布
      */
     fitView() {
-        this.graph.fitView(20);
+        if (!this.graph) return;
+        
+        // 使用更大的padding确保节点不会贴边
+        this.graph.fitView(50, {
+            onlyOutOfViewPort: false,
+            direction: 'both',
+            ratioRule: 'max'
+        });
+        
+        // 确保缩放比例合理
+        const zoom = this.graph.getZoom();
+        if (zoom > 2) {
+            this.graph.zoomTo(2);
+        } else if (zoom < 0.5) {
+            this.graph.zoomTo(0.5);
+        }
     }
 
     /**

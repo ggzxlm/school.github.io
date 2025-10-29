@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据查看 - 高校纪检审计监管一体化平台</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/data-viewer.css">
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header-section">
+                    <h1 class="page-title">数据查看</h1>
+                    <p class="page-description">查看采集的原始数据和治理后的数据</p>
+                </div>
+
+                <!-- 数据统计卡片 -->
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">数据表总数</div>
+                            <div class="stat-value" id="totalTables">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-icon">
+                            <i class="fas fa-table"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">原始数据表</div>
+                            <div class="stat-value" id="rawTables">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">治理后数据表</div>
+                            <div class="stat-value" id="cleanedTables">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">总记录数</div>
+                            <div class="stat-value" id="totalRecords">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据表选择和筛选区域 -->
+                <div class="filter-section">
+                    <!-- 数据类型切换 -->
+                    <div class="data-type-tabs">
+                        <button class="tab-btn active" data-type="raw" onclick="switchDataType('raw')">
+                            <i class="fas fa-file-import"></i> 原始数据
+                        </button>
+                        <button class="tab-btn" data-type="cleaned" onclick="switchDataType('cleaned')">
+                            <i class="fas fa-check-double"></i> 治理后数据
+                        </button>
+                    </div>
+
+                    <div class="filter-row">
+                        <div class="filter-left">
+                            <!-- 数据表选择 -->
+                            <select id="tableSelect" class="filter-select" onchange="loadTableData()">
+                                <option value="">请选择数据表</option>
+                            </select>
+
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <input type="text" id="searchInput" placeholder="搜索数据...">
+                                <i class="fas fa-search"></i>
+                            </div>
+
+                            <button id="resetBtn" class="btn btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-redo"></i> 重置
+                            </button>
+                        </div>
+
+                        <!-- 操作按钮 -->
+                        <div class="filter-right">
+                            <button id="refreshBtn" class="btn btn-secondary" onclick="refreshData()">
+                                <i class="fas fa-sync-alt"></i> 刷新
+                            </button>
+                            <button id="exportBtn" class="btn btn-secondary" onclick="exportData()">
+                                <i class="fas fa-download"></i> 导出
+                            </button>
+                            <button id="compareBtn" class="btn btn-info" onclick="showCompareModal()">
+                                <i class="fas fa-exchange-alt"></i> 对比数据
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据表信息 -->
+                <div id="tableInfo" class="table-info-section" style="display: none;">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>表名:</label>
+                            <span id="infoTableName">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>记录数:</label>
+                            <span id="infoRecordCount">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>字段数:</label>
+                            <span id="infoFieldCount">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>最后更新:</label>
+                            <span id="infoLastUpdate">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>数据源:</label>
+                            <span id="infoDataSource">-</span>
+                        </div>
+                        <div class="info-item">
+                            <label>采集任务:</label>
+                            <span id="infoCollectionTask">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 数据表格 -->
+                <div class="table-container">
+                    <div id="emptyState" class="empty-state">
+                        <div class="empty-icon">
+                            <i class="fas fa-table"></i>
+                        </div>
+                        <p>请选择数据表查看数据</p>
+                    </div>
+
+                    <div id="dataTableWrapper" style="display: none;">
+                        <div class="table-scroll">
+                            <table class="table" id="dataTable">
+                                <thead id="dataTableHead">
+                                    <!-- 表头将动态生成 -->
+                                </thead>
+                                <tbody id="dataTableBody">
+                                    <!-- 数据行将动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 分页器 -->
+                        <div class="pagination-info">
+                            <div>
+                                显示 <span id="pageStart">0</span> 到 <span id="pageEnd">0</span> 条，共 <span id="totalCount">0</span> 条
+                            </div>
+                            <div class="pagination-controls">
+                                <button id="prevPage" onclick="prevPage()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div id="pageNumbers" class="page-numbers">
+                                    <!-- 页码按钮将动态生成 -->
+                                </div>
+                                <button id="nextPage" onclick="nextPage()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 数据对比模态框 -->
+    <div id="compareModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container modal-xl">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-exchange-alt"></i>
+                    数据对比
+                </h2>
+                <button class="modal-close-btn" onclick="closeCompareModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="compare-config">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">原始数据表</label>
+                            <select id="compareRawTable" class="form-control">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">治理后数据表</label>
+                            <select id="compareCleanedTable" class="form-control">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="performCompare()">
+                        <i class="fas fa-play"></i> 开始对比
+                    </button>
+                </div>
+
+                <div id="compareResult" class="compare-result" style="display: none;">
+                    <!-- 对比结果将动态生成 -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeCompareModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 记录详情模态框 -->
+    <div id="recordDetailModal" class="modal-overlay" style="display: none;">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h2 class="modal-title">
+                    <i class="fas fa-info-circle"></i>
+                    记录详情
+                </h2>
+                <button class="modal-close-btn" onclick="closeRecordDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body">
+                <div id="recordDetailContent" class="record-detail-content">
+                    <!-- 记录详情将动态生成 -->
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeRecordDetailModal()">关闭</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/data-viewer-service.js"></script>
+    <script src="js/data-viewer.js"></script>
+</body>
+</html>

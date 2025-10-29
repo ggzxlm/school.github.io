@@ -530,61 +530,25 @@ function viewOrderDetail(orderId) {
     document.getElementById('detailCreateTime').textContent = order.createTime;
     document.getElementById('detailDescription').textContent = order.description;
     
-    // 填充核查组成员
-    const teamMembers = document.getElementById('teamMembers');
-    if (order.team.length > 0) {
-        teamMembers.innerHTML = order.team.map(member => `
-            <div class="team-member-item">
-                <div class="member-avatar">${member.name.charAt(0)}</div>
-                <div class="member-info">
-                    <div class="member-name">${member.name}</div>
-                    <div class="member-role">${member.role} · ${member.department}</div>
-                </div>
-            </div>
-        `).join('');
-    } else {
-        teamMembers.innerHTML = '<p style="color: #6B7280; font-size: 13px;">暂无成员</p>';
-    }
+    // 渲染核查组成员
+    renderTeamMembers(order.team);
     
-    // 填充任务分解
-    const taskList = document.getElementById('taskList');
-    if (order.tasks.length > 0) {
-        taskList.innerHTML = order.tasks.map(task => `
-            <div class="task-item">
-                <div class="task-header">
-                    <span class="task-title">${task.name}</span>
-                    <span class="task-progress">${task.assignee} · ${task.progress}%</span>
-                </div>
-                <div class="task-description">
-                    状态：<span class="status-badge ${
-                        task.status === '已完成' ? 'status-completed' :
-                        task.status === '进行中' ? 'status-in-progress' :
-                        'status-pending'
-                    }">${task.status}</span>
-                </div>
-            </div>
-        `).join('');
-    } else {
-        taskList.innerHTML = '<p style="color: #6B7280; font-size: 13px;">暂无任务</p>';
-    }
+    // 渲染任务分解
+    renderTaskList(order.tasks);
     
-    // 填充讨论记录
-    const discussionList = document.getElementById('discussionList');
-    if (order.discussions.length > 0) {
-        discussionList.innerHTML = order.discussions.map(discussion => `
-            <div class="discussion-item">
-                <div class="discussion-header">
-                    <div class="discussion-avatar">${discussion.user.charAt(0)}</div>
-                    <div class="discussion-meta">
-                        <div class="discussion-author">${discussion.user}</div>
-                        <div class="discussion-time">${discussion.time}</div>
-                    </div>
-                </div>
-                <div class="discussion-content">${discussion.content}</div>
-            </div>
-        `).join('');
-    } else {
-        discussionList.innerHTML = '<p style="color: #6B7280; font-size: 13px;">暂无讨论记录</p>';
+    // 渲染讨论记录
+    renderDiscussions(order.discussions)
+    
+    // 显示/隐藏生成整改单按钮
+    const createRectBtn = document.getElementById('createRectificationBtn');
+    if (createRectBtn) {
+        // 只有已完成或待审核的工单才显示生成整改单按钮
+        if (order.status === '已完成' || order.status === '待审核') {
+            createRectBtn.style.display = 'inline-flex';
+            createRectBtn.onclick = () => createRectificationFromOrder(orderId);
+        } else {
+            createRectBtn.style.display = 'none';
+        }
     }
     
     // 显示模态框
@@ -732,6 +696,10 @@ function submitCreateOrder() {
     const deadline = document.getElementById('createOrderDeadline').value;
     const description = document.getElementById('createOrderDescription').value;
     
+    // 获取核查组成员和任务数据
+    const teamMembers = getTeamMembersData();
+    const tasks = getTasksData();
+    
     // 生成新工单编号
     const newOrderNo = `WO-2025-${String(mockOrders.length + 1).padStart(4, '0')}`;
     
@@ -743,13 +711,14 @@ function submitCreateOrder() {
         type: type,
         priority: priority,
         status: '待处理',
+        leader: assignee,
         assignee: assignee,
-        createdAt: new Date().toISOString().split('T')[0],
+        creator: '当前用户',
+        createTime: new Date().toISOString().replace('T', ' ').substring(0, 19),
         deadline: deadline,
         description: description,
-        progress: 0,
-        members: [assignee],
-        tasks: [],
+        team: teamMembers.length > 0 ? teamMembers : [{ name: assignee, role: '负责人', department: '纪检监察室' }],
+        tasks: tasks,
         discussions: []
     };
     
@@ -794,4 +763,264 @@ function showToast(message, type = 'info') {
             document.body.removeChild(toast);
         }, 300);
     }, 2000);
+}
+
+
+// 添加核查组成员
+function addTeamMember() {
+    const section = document.getElementById('teamMembersSection');
+    const memberItem = document.createElement('div');
+    memberItem.className = 'team-member-item';
+    memberItem.innerHTML = `
+        <select class="form-control member-select">
+            <option value="">选择成员</option>
+            <option value="张三">张三</option>
+            <option value="李四">李四</option>
+            <option value="王五">王五</option>
+            <option value="赵六">赵六</option>
+            <option value="钱七">钱七</option>
+            <option value="孙八">孙八</option>
+        </select>
+        <select class="form-control role-select">
+            <option value="组长">组长</option>
+            <option value="成员">成员</option>
+            <option value="协助">协助</option>
+        </select>
+        <button type="button" class="btn btn-sm btn-danger remove-member-btn" onclick="removeMember(this)">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    section.appendChild(memberItem);
+    
+    // 显示所有删除按钮
+    updateRemoveButtons('teamMembersSection', 'remove-member-btn');
+}
+
+// 移除核查组成员
+function removeMember(button) {
+    const section = document.getElementById('teamMembersSection');
+    const memberItem = button.closest('.team-member-item');
+    memberItem.remove();
+    
+    // 更新删除按钮显示状态
+    updateRemoveButtons('teamMembersSection', 'remove-member-btn');
+}
+
+// 添加任务
+function addTask() {
+    const section = document.getElementById('tasksSection');
+    const taskItem = document.createElement('div');
+    taskItem.className = 'task-item';
+    taskItem.innerHTML = `
+        <input type="text" class="form-control task-title" placeholder="任务标题">
+        <select class="form-control task-assignee">
+            <option value="">负责人</option>
+            <option value="张三">张三</option>
+            <option value="李四">李四</option>
+            <option value="王五">王五</option>
+            <option value="赵六">赵六</option>
+        </select>
+        <input type="date" class="form-control task-deadline" placeholder="截止日期">
+        <button type="button" class="btn btn-sm btn-danger remove-task-btn" onclick="removeTask(this)">
+            <i class="fas fa-times"></i>
+        </button>
+    `;
+    section.appendChild(taskItem);
+    
+    // 显示所有删除按钮
+    updateRemoveButtons('tasksSection', 'remove-task-btn');
+}
+
+// 移除任务
+function removeTask(button) {
+    const section = document.getElementById('tasksSection');
+    const taskItem = button.closest('.task-item');
+    taskItem.remove();
+    
+    // 更新删除按钮显示状态
+    updateRemoveButtons('tasksSection', 'remove-task-btn');
+}
+
+// 更新删除按钮的显示状态
+function updateRemoveButtons(sectionId, buttonClass) {
+    const section = document.getElementById(sectionId);
+    const items = section.children;
+    const removeButtons = section.querySelectorAll('.' + buttonClass);
+    
+    // 如果只有一个项目，隐藏删除按钮；否则显示所有删除按钮
+    if (items.length <= 1) {
+        removeButtons.forEach(btn => btn.style.display = 'none');
+    } else {
+        removeButtons.forEach(btn => btn.style.display = 'flex');
+    }
+}
+
+// 获取核查组成员数据
+function getTeamMembersData() {
+    const section = document.getElementById('teamMembersSection');
+    const memberItems = section.querySelectorAll('.team-member-item');
+    const members = [];
+    
+    memberItems.forEach(item => {
+        const name = item.querySelector('.member-select').value;
+        const role = item.querySelector('.role-select').value;
+        
+        if (name) {
+            members.push({
+                name: name,
+                role: role,
+                department: '纪检监察室' // 可以根据实际情况设置
+            });
+        }
+    });
+    
+    return members;
+}
+
+// 获取任务数据
+function getTasksData() {
+    const section = document.getElementById('tasksSection');
+    const taskItems = section.querySelectorAll('.task-item');
+    const tasks = [];
+    
+    taskItems.forEach(item => {
+        const title = item.querySelector('.task-title').value;
+        const assignee = item.querySelector('.task-assignee').value;
+        const deadline = item.querySelector('.task-deadline').value;
+        
+        if (title) {
+            tasks.push({
+                name: title,
+                assignee: assignee || '未分配',
+                deadline: deadline || '',
+                status: '待开始',
+                progress: 0
+            });
+        }
+    });
+    
+    return tasks;
+}
+
+// 渲染核查组成员（详情页）
+function renderTeamMembers(members) {
+    const container = document.getElementById('teamMembers');
+    
+    if (!members || members.length === 0) {
+        container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">暂无核查组成员</p>';
+        return;
+    }
+    
+    container.innerHTML = members.map(member => `
+        <div class="team-member-card">
+            <div class="member-avatar">${member.name.charAt(0)}</div>
+            <div class="member-info">
+                <div class="member-name">${member.name}</div>
+                <div class="member-role">${member.role} · ${member.department}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 渲染任务列表（详情页）
+function renderTaskList(tasks) {
+    const container = document.getElementById('taskList');
+    
+    if (!tasks || tasks.length === 0) {
+        container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">暂无任务分解</p>';
+        return;
+    }
+    
+    container.innerHTML = tasks.map(task => {
+        const statusClass = task.status === '已完成' ? 'completed' : 
+                           task.status === '进行中' ? 'in-progress' : 'pending';
+        const statusText = task.status || '待开始';
+        
+        return `
+            <div class="task-card">
+                <div class="task-header">
+                    <div class="task-title-text">${task.name}</div>
+                    <div class="task-status ${statusClass}">${statusText}</div>
+                </div>
+                <div class="task-meta">
+                    <div class="task-meta-item">
+                        <i class="fas fa-user"></i>
+                        <span>${task.assignee}</span>
+                    </div>
+                    ${task.deadline ? `
+                        <div class="task-meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>${task.deadline}</span>
+                        </div>
+                    ` : ''}
+                    ${task.progress !== undefined ? `
+                        <div class="task-meta-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>进度 ${task.progress}%</span>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// 渲染讨论记录（详情页）
+function renderDiscussions(discussions) {
+    const container = document.getElementById('discussionList');
+    
+    if (!discussions || discussions.length === 0) {
+        container.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">暂无讨论记录</p>';
+        return;
+    }
+    
+    container.innerHTML = discussions.map(discussion => `
+        <div class="discussion-item">
+            <div class="discussion-avatar">${discussion.user.charAt(0)}</div>
+            <div class="discussion-content">
+                <div class="discussion-header">
+                    <span class="discussion-author">${discussion.user}</span>
+                    <span class="discussion-time">${discussion.time}</span>
+                </div>
+                <div class="discussion-text">${discussion.content}</div>
+            </div>
+        </div>
+    `).join('');
+}
+
+// 从工单生成整改单
+function createRectificationFromOrder(orderId) {
+    const order = mockOrders.find(o => o.id === orderId);
+    if (!order) {
+        showToast('工单不存在', 'error');
+        return;
+    }
+    
+    // 检查工单状态
+    if (order.status !== '已完成' && order.status !== '待审核') {
+        showToast('只有已完成或待审核的工单才能生成整改单', 'warning');
+        return;
+    }
+    
+    // 确认对话框
+    if (!confirm(`确认要从工单"${order.title}"生成整改单吗？`)) {
+        return;
+    }
+    
+    // 构建URL参数
+    const params = new URLSearchParams({
+        action: 'create',
+        workOrderId: order.orderNo,
+        workOrderTitle: order.title,
+        workOrderType: order.type,
+        description: order.description,
+        clueId: order.clueId || '',
+        clueTitle: order.clueTitle || ''
+    });
+    
+    // 跳转到整改管理页面
+    showToast('正在跳转到整改管理页面...', 'info');
+    setTimeout(() => {
+        window.location.href = 'rectification.html?' + params.toString();
+    }, 500);
 }

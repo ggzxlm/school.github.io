@@ -53,66 +53,391 @@ const Dashboard = {
             {
                 id: 1,
                 title: '审核科研经费报销单 - 张教授课题组',
+                description: '监督模型发现张教授课题组科研经费报销存在5张连号发票，金额合计8.5万元，存在虚假报销嫌疑，需要立即核查。',
                 type: '预警核查',
                 deadline: '2025-10-21 18:00',
                 priority: 'urgent',
-                status: 'pending'
+                status: 'pending',
+                source: {
+                    type: 'alert',
+                    id: 'YJ-2025-001',
+                    title: '科研经费报销异常',
+                    module: '科研经费监督',
+                    createdAt: '2025-10-20 08:30'
+                },
+                relations: {
+                    clueId: 'CLUE2025001',
+                    clueTitle: '科研经费报销存在连号发票异常',
+                    workOrderId: null,
+                    rectificationId: null
+                },
+                details: {
+                    unit: '计算机学院',
+                    person: '张教授',
+                    amount: 85000,
+                    riskLevel: 'high',
+                    evidence: [
+                        '连号发票5张（发票号：12345-12349）',
+                        '报销金额8.5万元',
+                        '报销时间：2025-10-15',
+                        '报销项目：办公用品采购'
+                    ],
+                    attachments: [
+                        { name: '报销单扫描件.pdf', size: '2.3 MB' },
+                        { name: '发票清单.xlsx', size: '156 KB' }
+                    ]
+                },
+                process: {
+                    expectedDuration: 2,
+                    requiredActions: [
+                        { action: '调取报销凭证', completed: false },
+                        { action: '核实发票真伪', completed: false },
+                        { action: '约谈当事人', completed: false },
+                        { action: '形成核查结论', completed: false }
+                    ],
+                    notes: '请在2个工作日内完成核查，如发现问题及时上报。'
+                },
+                history: [
+                    {
+                        time: '2025-10-20 08:30',
+                        user: '系统',
+                        action: '预警触发',
+                        note: '监督模型发现异常'
+                    },
+                    {
+                        time: '2025-10-20 09:00',
+                        user: '李主任',
+                        action: '创建待办',
+                        note: '分配给张三进行核查'
+                    }
+                ]
             },
             {
                 id: 2,
                 title: '复查基建项目整改材料 - 图书馆改造工程',
+                description: '基建处已完成招标文件排他性条款的整改工作，提交了整改报告和相关材料，需要进行复查验收。',
                 type: '整改复查',
                 deadline: '2025-10-21 17:00',
                 priority: 'high',
-                status: 'pending'
+                status: 'pending',
+                source: {
+                    type: 'rectification',
+                    id: 'ZG2025004',
+                    title: '基建项目招标文件排他性条款整改',
+                    module: '整改管理',
+                    createdAt: '2025-10-18 10:00'
+                },
+                relations: {
+                    clueId: 'CLUE2025004',
+                    clueTitle: '基建项目招标文件存在排他性条款',
+                    workOrderId: 'WO202510200002',
+                    rectificationId: 'ZG2025004'
+                },
+                details: {
+                    unit: '基建处',
+                    person: '赵处长',
+                    amount: 0,
+                    riskLevel: 'medium',
+                    evidence: [
+                        '整改报告',
+                        '修订后的招标文件',
+                        '专家论证意见',
+                        '重新招标公告'
+                    ],
+                    attachments: [
+                        { name: '整改报告.pdf', size: '3.2 MB' },
+                        { name: '招标文件（修订版）.pdf', size: '4.2 MB' },
+                        { name: '专家论证意见.pdf', size: '850 KB' }
+                    ]
+                },
+                process: {
+                    expectedDuration: 1,
+                    requiredActions: [
+                        { action: '审查整改报告', completed: false },
+                        { action: '核实整改措施', completed: false },
+                        { action: '检查招标文件', completed: false },
+                        { action: '出具复查意见', completed: false }
+                    ],
+                    notes: '重点检查排他性条款是否已完全删除。'
+                },
+                history: [
+                    {
+                        time: '2025-10-18 14:00',
+                        user: '审计处',
+                        action: '发现问题',
+                        note: '招标文件存在排他性条款'
+                    },
+                    {
+                        time: '2025-10-20 09:00',
+                        user: '纪检监察室',
+                        action: '下达整改通知',
+                        note: '要求基建处立即整改'
+                    },
+                    {
+                        time: '2025-10-21 09:00',
+                        user: '赵处长',
+                        action: '提交整改材料',
+                        note: '已完成整改，申请复查'
+                    }
+                ]
             },
             {
                 id: 3,
                 title: '处理招生录取异常预警 - 计算机学院',
+                description: '数据比对发现计算机学院存在3例低分高录情况，需要核查录取流程是否规范，是否存在违规操作。',
                 type: '预警处置',
                 deadline: '2025-10-22 12:00',
                 priority: 'urgent',
-                status: 'pending'
+                status: 'pending',
+                source: {
+                    type: 'alert',
+                    id: 'YJ-2025-003',
+                    title: '招生录取数据异常',
+                    module: '招生监督',
+                    createdAt: '2025-10-20 16:45'
+                },
+                details: {
+                    unit: '计算机学院',
+                    person: '招生办',
+                    amount: 0,
+                    riskLevel: 'high',
+                    evidence: [
+                        '3例低分高录情况',
+                        '录取分数低于最低控制线',
+                        '缺少特殊录取审批材料'
+                    ],
+                    attachments: [
+                        { name: '异常数据清单.xlsx', size: '180 KB' }
+                    ]
+                },
+                process: {
+                    expectedDuration: 1,
+                    requiredActions: [
+                        { action: '调取录取档案', completed: false },
+                        { action: '核实录取流程', completed: false },
+                        { action: '约谈相关人员', completed: false }
+                    ],
+                    notes: '涉及招生公平问题，需要高度重视。'
+                },
+                history: [
+                    {
+                        time: '2025-10-20 16:45',
+                        user: '系统',
+                        action: '预警触发',
+                        note: '数据比对发现异常'
+                    }
+                ]
             },
             {
                 id: 4,
                 title: '审批工单分配申请 - 三公经费超标核查',
+                description: '行政办公室本月三公经费支出已达预算的85%，需要审批工单分配申请，安排专人进行核查。',
                 type: '工单审批',
                 deadline: '2025-10-22 15:00',
                 priority: 'normal',
-                status: 'pending'
+                status: 'pending',
+                source: {
+                    type: 'workorder',
+                    id: 'WO202510210003',
+                    title: '三公经费超标核查',
+                    module: '工单管理',
+                    createdAt: '2025-10-21 10:00'
+                },
+                details: {
+                    unit: '行政办公室',
+                    person: '办公室主任',
+                    amount: 0,
+                    riskLevel: 'medium',
+                    evidence: [
+                        '三公经费支出明细',
+                        '预算执行情况表'
+                    ]
+                },
+                process: {
+                    requiredActions: [
+                        { action: '审查工单内容', completed: false },
+                        { action: '分配核查人员', completed: false },
+                        { action: '批准工单', completed: false }
+                    ]
+                },
+                history: [
+                    {
+                        time: '2025-10-21 10:00',
+                        user: '李主任',
+                        action: '创建工单',
+                        note: '申请分配核查人员'
+                    }
+                ]
             },
             {
                 id: 5,
                 title: '完成月度监督报告编写',
+                description: '需要完成10月份监督工作总结报告，汇总本月预警处置、线索核查、工单处理、整改跟进等情况。',
                 type: '报告编写',
                 deadline: '2025-10-23 18:00',
                 priority: 'high',
-                status: 'pending'
+                status: 'pending',
+                details: {
+                    unit: '纪检监察室',
+                    person: '本人',
+                    amount: 0,
+                    riskLevel: 'low'
+                },
+                process: {
+                    requiredActions: [
+                        { action: '收集数据', completed: true },
+                        { action: '撰写报告', completed: false },
+                        { action: '审核报告', completed: false },
+                        { action: '提交报告', completed: false }
+                    ]
+                },
+                history: [
+                    {
+                        time: '2025-10-20 09:00',
+                        user: '系统',
+                        action: '创建待办',
+                        note: '月度例行任务'
+                    },
+                    {
+                        time: '2025-10-21 14:00',
+                        user: '本人',
+                        action: '开始处理',
+                        note: '已完成数据收集'
+                    }
+                ]
             },
             {
                 id: 6,
                 title: '参加纪检工作协调会',
+                description: '参加学校纪检工作协调会，讨论本月监督工作情况和下月工作计划。',
                 type: '会议参加',
                 deadline: '2025-10-23 10:00',
                 priority: 'normal',
-                status: 'pending'
+                status: 'pending',
+                details: {
+                    unit: '纪检监察室',
+                    person: '本人',
+                    amount: 0,
+                    riskLevel: 'low'
+                },
+                history: [
+                    {
+                        time: '2025-10-20 15:00',
+                        user: '办公室',
+                        action: '发送会议通知',
+                        note: '会议时间：10月23日上午10:00'
+                    }
+                ]
             },
             {
                 id: 7,
                 title: '审核供应商关联冲突预警',
+                description: '监督模型发现某采购项目的中标供应商与评审专家存在关联关系，需要核查是否存在利益冲突。',
                 type: '预警核查',
                 deadline: '2025-10-24 16:00',
                 priority: 'normal',
-                status: 'pending'
+                status: 'pending',
+                source: {
+                    type: 'alert',
+                    id: 'YJ-2025-006',
+                    title: '供应商关联冲突',
+                    module: '采购监督',
+                    createdAt: '2025-10-19 15:30'
+                },
+                details: {
+                    unit: '采购中心',
+                    person: '采购负责人',
+                    amount: 0,
+                    riskLevel: 'medium',
+                    evidence: [
+                        '供应商与专家存在关联关系',
+                        '未进行回避申报'
+                    ]
+                },
+                process: {
+                    requiredActions: [
+                        { action: '调取采购档案', completed: false },
+                        { action: '核实关联关系', completed: false },
+                        { action: '形成处理意见', completed: false }
+                    ]
+                },
+                history: [
+                    {
+                        time: '2025-10-22 09:00',
+                        user: '系统',
+                        action: '预警触发',
+                        note: '发现关联关系'
+                    }
+                ]
             },
             {
                 id: 8,
                 title: '跟进学术不端行为调查',
+                description: '收到实名举报，某教师论文存在抄袭嫌疑，查重率达到45%，存在大段抄袭，需要深入调查。',
                 type: '线索跟进',
                 deadline: '2025-10-25 18:00',
                 priority: 'high',
-                status: 'pending'
+                status: 'pending',
+                source: {
+                    type: 'clue',
+                    id: 'CLUE2025007',
+                    title: '论文存在抄袭嫌疑',
+                    module: '学术诚信监督',
+                    createdAt: '2025-10-18 14:20'
+                },
+                relations: {
+                    clueId: 'CLUE2025007',
+                    clueTitle: '论文存在抄袭嫌疑',
+                    workOrderId: 'WO202510250001',
+                    rectificationId: null
+                },
+                details: {
+                    unit: '数学学院',
+                    person: '某教师',
+                    amount: 0,
+                    riskLevel: 'high',
+                    evidence: [
+                        '查重报告显示重复率45%',
+                        '存在大段文字抄袭',
+                        '参考文献标注不规范',
+                        '实名举报材料'
+                    ],
+                    attachments: [
+                        { name: '查重报告.pdf', size: '2.8 MB' },
+                        { name: '举报材料.docx', size: '450 KB' }
+                    ]
+                },
+                process: {
+                    expectedDuration: 3,
+                    requiredActions: [
+                        { action: '核实举报内容', completed: true },
+                        { action: '调取论文原文', completed: true },
+                        { action: '进行查重检测', completed: true },
+                        { action: '约谈当事人', completed: false },
+                        { action: '形成调查结论', completed: false }
+                    ],
+                    notes: '涉及学术诚信问题，需要严肃处理。'
+                },
+                history: [
+                    {
+                        time: '2025-10-18 14:20',
+                        user: '举报人',
+                        action: '提交举报',
+                        note: '实名举报学术不端行为'
+                    },
+                    {
+                        time: '2025-10-18 15:00',
+                        user: '学术委员会',
+                        action: '创建待办',
+                        note: '分配给相关人员调查'
+                    },
+                    {
+                        time: '2025-10-19 10:30',
+                        user: '张三',
+                        action: '开始调查',
+                        note: '已完成初步核实'
+                    }
+                ]
             }
         ],
 
@@ -988,70 +1313,175 @@ const Dashboard = {
         const isOverdue = deadline < now;
 
         const detailHtml = `
-            <div class="detail-section">
-                <h3 class="detail-section-title">基本信息</h3>
-                <div class="detail-grid">
-                    <div class="detail-item">
-                        <label>待办ID</label>
-                        <div><code>#${todo.id}</code></div>
+            <div style="max-height: 70vh; overflow-y: auto; padding: 20px;">
+                <!-- 基本信息 -->
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h3 class="detail-section-title" style="font-size: 18px; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-info-circle"></i>
+                        ${todo.title}
+                        <span class="priority-badge ${todo.priority}" style="padding: 4px 12px; border-radius: 4px; font-size: 13px; margin-left: auto;">
+                            ${this.getPriorityText(todo.priority)}
+                        </span>
+                    </h3>
+                    <p style="color: var(--color-gray-600); line-height: 1.6; margin-bottom: 12px;">${todo.description || '此待办事项需要您及时处理，请根据实际情况完成相关工作。'}</p>
+                    ${todo.process?.notes ? `
+                        <div style="padding: 12px; background: #fef2f2; border-left: 3px solid #dc2626; border-radius: 4px; color: #991b1b; font-size: 14px;">
+                            <strong>注意事项：</strong>${todo.process.notes}
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- 来源追溯 -->
+                ${todo.source ? `
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-link"></i>
+                        来源追溯
+                    </h4>
+                    <div style="display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--color-gray-50); border-radius: 8px; border: 1px solid var(--color-gray-200);">
+                        <div style="width: 40px; height: 40px; border-radius: 8px; background: ${todo.source.type === 'alert' ? '#ef4444' : todo.source.type === 'clue' ? '#10b981' : todo.source.type === 'workorder' ? '#3b82f6' : '#f59e0b'}; color: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                            <i class="fas ${todo.source.type === 'alert' ? 'fa-bell' : todo.source.type === 'clue' ? 'fa-lightbulb' : todo.source.type === 'workorder' ? 'fa-clipboard-check' : 'fa-tasks'}"></i>
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin-bottom: 2px;">${todo.source.id} - ${todo.source.title}</div>
+                            <div style="font-size: 12px; color: var(--color-gray-600);">模块: ${todo.source.module} · 时间: ${todo.source.createdAt}</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary" onclick="Dashboard.viewSourceDetail('${todo.source.type}', '${todo.source.id}')" style="padding: 6px 12px; font-size: 13px;">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看
+                        </button>
                     </div>
-                    <div class="detail-item">
-                        <label>类型</label>
-                        <div><span class="badge badge-processing">${todo.type}</span></div>
-                    </div>
-                    <div class="detail-item">
-                        <label>优先级</label>
-                        <div><span class="priority-badge ${todo.priority}">${this.getPriorityText(todo.priority)}</span></div>
-                    </div>
-                    <div class="detail-item">
-                        <label>状态</label>
-                        <div><span class="badge badge-${isOverdue ? 'danger' : 'warning'}">${isOverdue ? '已超期' : '待处理'}</span></div>
-                    </div>
-                    <div class="detail-item">
-                        <label>截止时间</label>
-                        <div class="${isOverdue ? 'text-danger' : ''}">
-                            <i class="fas fa-clock"></i> ${Utils.formatDate(todo.deadline)}
-                            ${isOverdue ? '<i class="fas fa-exclamation-circle"></i>' : ''}
+                </div>
+                ` : ''}
+
+                <!-- 任务详情 -->
+                ${todo.details ? `
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-list-alt"></i>
+                        任务详情
+                    </h4>
+                    <div class="detail-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; padding: 16px; background: var(--color-gray-50); border-radius: 8px;">
+                        <div>
+                            <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">涉及单位</div>
+                            <div style="font-size: 14px; color: var(--color-gray-900);">${todo.details.unit}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">涉及人员</div>
+                            <div style="font-size: 14px; color: var(--color-gray-900);">${todo.details.person}</div>
+                        </div>
+                        ${todo.details.amount > 0 ? `
+                        <div>
+                            <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">涉及金额</div>
+                            <div style="font-size: 14px; color: var(--color-gray-900);">${(todo.details.amount / 10000).toFixed(1)}万元</div>
+                        </div>
+                        ` : ''}
+                        <div>
+                            <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">风险等级</div>
+                            <div>
+                                <span style="display: inline-flex; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 500; ${todo.details.riskLevel === 'high' ? 'background: rgba(239, 68, 68, 0.1); color: #991b1b;' : todo.details.riskLevel === 'medium' ? 'background: rgba(245, 158, 11, 0.1); color: #92400e;' : 'background: rgba(59, 130, 246, 0.1); color: #1e40af;'}">
+                                    ${todo.details.riskLevel === 'high' ? '高风险' : todo.details.riskLevel === 'medium' ? '中风险' : '低风险'}
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">截止时间</div>
+                            <div style="font-size: 14px; color: var(--color-gray-900);">${Utils.formatDate(todo.deadline)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">任务类型</div>
+                            <div style="font-size: 14px; color: var(--color-gray-900);">${todo.type}</div>
                         </div>
                     </div>
-                    <div class="detail-item">
-                        <label>创建时间</label>
-                        <div>${Utils.formatDate(new Date())}</div>
-                    </div>
-                    <div class="detail-item full-width">
-                        <label>标题</label>
-                        <div style="font-weight: 500;">${todo.title}</div>
+                </div>
+                ` : ''}
+
+                <!-- 证据材料 -->
+                ${todo.details?.evidence?.length > 0 ? `
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-file-alt"></i>
+                        证据材料
+                    </h4>
+                    <ul style="list-style: none; padding: 0; margin: 0;">
+                        ${todo.details.evidence.map(item => `
+                            <li style="padding: 8px 12px; background: var(--color-gray-50); border-radius: 6px; margin-bottom: 8px; border-left: 3px solid var(--color-primary); font-size: 14px; color: var(--color-gray-700);">
+                                ${item}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                ` : ''}
+
+                <!-- 附件列表 -->
+                ${todo.details?.attachments?.length > 0 ? `
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-paperclip"></i>
+                        附件列表
+                    </h4>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        ${todo.details.attachments.map(file => `
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: var(--color-gray-50); border-radius: 6px; border: 1px solid var(--color-gray-200);">
+                                <i class="fas fa-file-pdf" style="color: #dc2626; font-size: 18px;"></i>
+                                <span style="flex: 1; font-size: 14px; color: var(--color-gray-900);">${file.name}</span>
+                                <span style="font-size: 12px; color: var(--color-gray-500);">${file.size}</span>
+                                <button class="btn-icon" onclick="Toast.info('下载功能开发中')" style="padding: 4px 8px; color: var(--color-primary); cursor: pointer; background: none; border: none;">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        `).join('')}
                     </div>
                 </div>
-            </div>
-            
-            <div class="detail-section">
-                <h3 class="detail-section-title">详细说明</h3>
-                <div style="padding: 16px; background: #F9FAFB; border-radius: 8px; line-height: 1.6;">
-                    <p>此待办事项需要您及时处理，请根据实际情况完成相关工作。</p>
-                    <p style="margin-top: 12px;">如有疑问，请联系相关负责人。</p>
-                </div>
-            </div>
-            
-            <div class="detail-section">
-                <h3 class="detail-section-title">操作记录</h3>
-                <div class="timeline" style="padding: 16px; background: #F9FAFB; border-radius: 8px;">
-                    <div class="timeline-item primary">
-                        <div class="timeline-dot"></div>
-                        <div class="timeline-time">${Utils.formatDate(new Date(), 'MM-DD HH:mm')}</div>
-                        <div class="timeline-content">
-                            <span class="timeline-user">系统</span>
-                            创建了待办事项
-                        </div>
+                ` : ''}
+
+                <!-- 需要的操作 -->
+                ${todo.process?.requiredActions?.length > 0 ? `
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-tasks"></i>
+                        需要的操作
+                    </h4>
+                    <div style="background: var(--color-gray-50); border-radius: 8px; padding: 16px;">
+                        ${todo.process.requiredActions.map((action, index) => `
+                            <label style="display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; font-size: 14px; color: var(--color-gray-700);">
+                                <input type="checkbox" ${action.completed ? 'checked' : ''} style="margin-right: 12px; width: 16px; height: 16px;" disabled>
+                                <span style="${action.completed ? 'text-decoration: line-through; color: #6b7280;' : ''}">${action.action}</span>
+                            </label>
+                        `).join('')}
                     </div>
                 </div>
+                ` : ''}
+
+                <!-- 操作记录 -->
+                ${todo.history?.length > 0 ? `
+                <div class="detail-section" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-history"></i>
+                        操作记录
+                    </h4>
+                    <div class="timeline">
+                        ${todo.history.map((record, index) => `
+                            <div style="position: relative; padding-left: 32px; padding-bottom: 20px; ${index === todo.history.length - 1 ? 'padding-bottom: 0;' : ''}">
+                                <div style="position: absolute; left: 0; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: ${index === todo.history.length - 1 ? 'var(--color-primary)' : 'var(--color-success)'}; border: 2px solid white; box-shadow: 0 0 0 2px ${index === todo.history.length - 1 ? 'var(--color-primary)' : 'var(--color-success)'};"></div>
+                                ${index < todo.history.length - 1 ? '<div style="position: absolute; left: 5px; top: 16px; bottom: 0; width: 2px; background: var(--color-gray-200);"></div>' : ''}
+                                <div>
+                                    <h5 style="font-size: 14px; font-weight: 600; color: var(--color-gray-900); margin: 0 0 4px 0;">${record.action}</h5>
+                                    <div style="font-size: 12px; color: var(--color-gray-500); margin-bottom: 4px;">${record.time} · ${record.user}</div>
+                                    <div style="font-size: 13px; color: var(--color-gray-600); line-height: 1.4;">${record.note}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
             </div>
         `;
 
         Modal.show({
             title: '待办详情',
             content: detailHtml,
-            width: '800px',
+            width: '900px',
             showFooter: true,
             confirmText: '立即处理',
             cancelText: '关闭',
@@ -1061,6 +1491,27 @@ const Dashboard = {
                 return false; // 阻止自动关闭
             }
         });
+    },
+    
+    /**
+     * 查看来源详情
+     */
+    viewSourceDetail(type, id) {
+        console.log('[Dashboard] 查看来源详情:', type, id);
+        
+        const urlMap = {
+            'alert': `alert-center.html?id=${id}`,
+            'clue': `clue-library.html?id=${id}`,
+            'workorder': `work-order.html?id=${id}`,
+            'rectification': `rectification.html?id=${id}`
+        };
+        
+        const url = urlMap[type];
+        if (url) {
+            window.open(url, '_blank');
+        } else {
+            Toast.info('功能开发中...');
+        }
     },
 
     /**

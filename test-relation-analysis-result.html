@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试关联分析结果</title>
+    <link rel="stylesheet" href="css/relation-analysis.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .test-header {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .test-tab-btn {
+            padding: 10px 20px;
+            border: 1px solid #d9d9d9;
+            background: white;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .test-tab-btn.active {
+            background: #1890ff;
+            color: white;
+            border-color: #1890ff;
+        }
+        .test-content {
+            display: none;
+        }
+        .test-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>关联分析结果测试页面</h1>
+            <p>测试分析结果标签页的显示效果</p>
+        </div>
+
+        <div class="test-tabs">
+            <button class="test-tab-btn active" onclick="switchTestTab('result1')">完整分析结果</button>
+            <button class="test-tab-btn" onclick="switchTestTab('result2')">简化版本</button>
+        </div>
+
+        <div id="result1" class="test-content active">
+            <div class="detail-content">
+                <div style="border-bottom: 2px solid #e5e7eb; padding-bottom: 12px; margin-bottom: 16px;">
+                    <h4 style="font-size: 18px; font-weight: 600; color: #1f2937;">图谱分析结果</h4>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">整体概况</h5>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div style="background: #f9fafb; padding: 12px; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">节点总数</div>
+                            <div style="font-size: 24px; font-weight: 600; color: #1f2937;">8</div>
+                        </div>
+                        <div style="background: #f9fafb; padding: 12px; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #6b7280; margin-bottom: 4px;">关系总数</div>
+                            <div style="font-size: 24px; font-weight: 600; color: #1f2937;">12</div>
+                        </div>
+                        <div style="background: #fef2f2; padding: 12px; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #991b1b; margin-bottom: 4px;">高风险节点</div>
+                            <div style="font-size: 24px; font-weight: 600; color: #dc2626;">2</div>
+                        </div>
+                        <div style="background: #fffbeb; padding: 12px; border-radius: 6px;">
+                            <div style="font-size: 12px; color: #92400e; margin-bottom: 4px;">中风险节点</div>
+                            <div style="font-size: 24px; font-weight: 600; color: #f59e0b;">3</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">关键发现</h5>
+                    <div style="background: #fef2f2; border-left: 3px solid #ef4444; padding: 12px; border-radius: 4px; margin-bottom: 8px;">
+                        <div style="font-weight: 600; color: #dc2626; margin-bottom: 4px;">🔴 发现利益关联链</div>
+                        <div style="font-size: 13px; color: #991b1b; line-height: 1.8;">
+                            <strong>张三与某某科技公司的关联路径：</strong><br>
+                            • 路径1: 张三（采购经理）→ 审批 → 办公设备采购项目 ← 中标 ← 某某科技公司<br>
+                            • 路径2: 张三（采购经理）→ 审批 → 办公设备采购合同 ← 签约 ← 某某科技公司<br>
+                            • 关联说明: 某某科技公司的法人是王五，该公司中标了张三审批的项目
+                        </div>
+                    </div>
+                    <div style="background: #fffbeb; border-left: 3px solid #f59e0b; padding: 12px; border-radius: 4px; margin-bottom: 8px;">
+                        <div style="font-weight: 600; color: #d97706; margin-bottom: 4px;">🟡 发现异常交易模式</div>
+                        <div style="font-size: 13px; color: #92400e;">某某科技公司在6个月内中标3个项目，中标率异常偏高，且均由张三审批</div>
+                    </div>
+                    <div style="background: #f0fdf4; border-left: 3px solid #10b981; padding: 12px; border-radius: 4px;">
+                        <div style="font-weight: 600; color: #059669; margin-bottom: 4px;">🟢 正常业务关系</div>
+                        <div style="font-size: 13px; color: #065f46;">其他9个关系未发现明显异常</div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 16px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #374151; margin-bottom: 8px;">风险路径详细分析</h5>
+                    <div style="background: #fff2f0; padding: 12px; border-radius: 6px; border-left: 3px solid #ff4d4f; margin-bottom: 8px;">
+                        <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                            <strong style="color: #dc2626;">高风险路径1: 张三 → 某某科技公司（通过项目审批）</strong>
+                        </div>
+                        <div style="font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 8px;">
+                            完整路径: 张三（采购经理）→ 审批 → 办公设备采购项目 ← 中标 ← 某某科技公司 ← 法人代表 ← 王五
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280;">
+                            风险等级: <span style="color: #dc2626; font-weight: 600;">高</span> | 
+                            涉及金额: <span style="font-weight: 600;">50万元</span> | 
+                            风险描述: 采购经理审批的项目被其可能认识的人的公司中标
+                        </div>
+                    </div>
+                    <div style="background: #fff2f0; padding: 12px; border-radius: 6px; border-left: 3px solid #ff4d4f; margin-bottom: 8px;">
+                        <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                            <strong style="color: #dc2626;">高风险路径2: 张三 → 某某科技公司（通过合同审批）</strong>
+                        </div>
+                        <div style="font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 8px;">
+                            完整路径: 张三（采购经理）→ 审批 → 办公设备采购合同 ← 签约 ← 某某科技公司
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280;">
+                            风险等级: <span style="color: #dc2626; font-weight: 600;">高</span> | 
+                            涉及金额: <span style="font-weight: 600;">50万元</span> | 
+                            风险描述: 采购人员直接审批供应商合同，存在利益输送风险
+                        </div>
+                    </div>
+                    <div style="background: #fffbeb; padding: 12px; border-radius: 6px; border-left: 3px solid #faad14;">
+                        <div style="font-size: 13px; color: #374151; margin-bottom: 8px;">
+                            <strong style="color: #d97706;">中风险路径: 李四 → 某某建筑工程公司</strong>
+                        </div>
+                        <div style="font-size: 12px; color: #666; line-height: 1.8; margin-bottom: 8px;">
+                            完整路径: 李四（财务总监）→ 任职董事 → 某某建筑工程公司 → 签约 → 实验室建设合同 ← 审批 ← 李四
+                        </div>
+                        <div style="font-size: 12px; color: #6b7280;">
+                            风险等级: <span style="color: #f59e0b; font-weight: 600;">中</span> | 
+                            涉及金额: <span style="font-weight: 600;">200万元</span> | 
+                            风险描述: 财务人员在供应商企业任职并审批该企业合同
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="background: #eff6ff; border-left: 3px solid #3b82f6; padding: 12px; border-radius: 4px;">
+                    <h5 style="font-size: 14px; font-weight: 600; color: #1e40af; margin-bottom: 8px;">📋 处置建议</h5>
+                    <ol style="margin: 0; padding-left: 20px; color: #1e3a8a; font-size: 13px;">
+                        <li style="margin-bottom: 4px;">立即启动对张三和王五关联关系的专项调查</li>
+                        <li style="margin-bottom: 4px;">暂停某某科技公司参与新项目投标资格</li>
+                        <li style="margin-bottom: 4px;">对已签订合同进行合规性审查</li>
+                        <li style="margin-bottom: 4px;">完善采购人员回避制度和关联关系申报机制</li>
+                        <li>建立供应商异常行为监控预警系统</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div id="result2" class="test-content">
+            <div class="detail-content">
+                <h4>简化版分析结果</h4>
+                <p>这是一个简化版本的分析结果展示。</p>
+                <div class="summary-stats">
+                    <div class="stat-item">
+                        <label>节点数</label>
+                        <span>8</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>边数</label>
+                        <span>12</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>高风险</label>
+                        <span class="risk-high">2</span>
+                    </div>
+                    <div class="stat-item">
+                        <label>中风险</label>
+                        <span class="risk-medium">3</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTestTab(tabId) {
+            // 移除所有active类
+            document.querySelectorAll('.test-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.test-content').forEach(content => content.classList.remove('active'));
+            
+            // 添加active类到当前标签
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+</body>
+</html>

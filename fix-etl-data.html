@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ETL数据修复工具</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -15,58 +21,70 @@
             justify-content: center;
             padding: 20px;
         }
+
         .container {
             background: white;
             border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
             max-width: 600px;
             width: 100%;
             padding: 40px;
         }
+
         h1 {
             color: #333;
             margin-bottom: 10px;
             font-size: 28px;
         }
+
         .subtitle {
             color: #666;
             margin-bottom: 30px;
             font-size: 14px;
         }
+
         .status {
             background: #f5f5f5;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
         }
+
         .status-item {
             display: flex;
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #e0e0e0;
         }
+
         .status-item:last-child {
             border-bottom: none;
         }
+
         .status-label {
             color: #666;
             font-size: 14px;
         }
+
         .status-value {
             font-weight: 600;
             color: #333;
         }
+
         .status-value.success {
             color: #4CAF50;
         }
+
         .status-value.error {
             color: #f44336;
         }
+
         .buttons {
             display: flex;
             gap: 10px;
             margin-top: 20px;
         }
+
         button {
             flex: 1;
             padding: 14px 24px;
@@ -77,28 +95,35 @@
             cursor: pointer;
             transition: all 0.3s;
         }
+
         .btn-primary {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
+
         .btn-primary:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
         }
+
         .btn-secondary {
             background: #f5f5f5;
             color: #333;
         }
+
         .btn-secondary:hover {
             background: #e0e0e0;
         }
+
         .btn-danger {
             background: #f44336;
             color: white;
         }
+
         .btn-danger:hover {
             background: #d32f2f;
         }
+
         .log {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -111,16 +136,31 @@
             overflow-y: auto;
             display: none;
         }
+
         .log.show {
             display: block;
         }
+
         .log-line {
             margin: 4px 0;
         }
-        .log-success { color: #4CAF50; }
-        .log-error { color: #f44336; }
-        .log-warning { color: #FF9800; }
-        .log-info { color: #2196F3; }
+
+        .log-success {
+            color: #4CAF50;
+        }
+
+        .log-error {
+            color: #f44336;
+        }
+
+        .log-warning {
+            color: #FF9800;
+        }
+
+        .log-info {
+            color: #2196F3;
+        }
+
         .icon {
             font-size: 48px;
             text-align: center;
@@ -128,6 +168,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="icon">🔧</div>
@@ -191,52 +232,52 @@
 
         function checkStatus() {
             log('开始检查状态...', 'info');
-            
+
             if (!window.etlService) {
                 log('错误: ETL服务未加载', 'error');
                 updateStatus(false, 0, 0, 0);
                 return false;
             }
-            
+
             log('✓ ETL服务已加载', 'success');
-            
+
             const jobs = window.etlService.getAll();
             const stats = window.etlService.getStatistics();
-            
+
             log(`找到 ${jobs.length} 个作业`, jobs.length > 0 ? 'success' : 'warning');
             log(`统计: 总计${stats.total}, 已发布${stats.published}, 草稿${stats.draft}`, 'info');
-            
+
             updateStatus(true, stats.total, stats.published, stats.draft);
-            
+
             return jobs.length > 0;
         }
 
         function fixData() {
             log('开始修复数据...', 'info');
-            
+
             if (!window.etlService) {
                 log('错误: ETL服务未加载', 'error');
                 alert('ETL服务未加载，无法修复');
                 return;
             }
-            
+
             try {
                 log('清空现有数据...', 'warning');
                 localStorage.removeItem('etl_jobs');
                 localStorage.removeItem('etl_executions');
                 localStorage.removeItem('etl_versions');
-                
+
                 log('重新创建服务实例...', 'info');
                 window.etlService = new ETLService();
-                
+
                 const jobs = window.etlService.getAll();
                 const stats = window.etlService.getStatistics();
-                
+
                 log(`✓ 修复完成！创建了 ${jobs.length} 个作业`, 'success');
                 log(`统计: 总计${stats.total}, 已发布${stats.published}, 草稿${stats.draft}`, 'success');
-                
+
                 updateStatus(true, stats.total, stats.published, stats.draft);
-                
+
                 alert(`修复成功！已创建 ${jobs.length} 个演示作业。\n\n现在可以打开ETL管理页面查看数据。`);
             } catch (error) {
                 log(`错误: ${error.message}`, 'error');
@@ -248,17 +289,17 @@
             if (!confirm('确定要清空所有ETL数据吗？此操作不可恢复。')) {
                 return;
             }
-            
+
             log('清空所有数据...', 'warning');
-            
+
             try {
                 localStorage.removeItem('etl_jobs');
                 localStorage.removeItem('etl_executions');
                 localStorage.removeItem('etl_versions');
-                
+
                 log('✓ 数据已清空', 'success');
                 updateStatus(true, 0, 0, 0);
-                
+
                 alert('所有数据已清空');
             } catch (error) {
                 log(`错误: ${error.message}`, 'error');
@@ -277,4 +318,5 @@
         });
     </script>
 </body>
+
 </html>

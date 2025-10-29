@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>整改归档查询 - 高校纪检审计监管一体化平台</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="css/common.css?v=4">
+    <link rel="stylesheet" href="css/rectification.css?v=4">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 顶部导航栏 -->
+        <header id="top-navbar"></header>
+        
+        <div class="main-wrapper">
+            <!-- 侧边导航栏 -->
+            <aside id="side-navbar"></aside>
+            
+            <!-- 主内容区 -->
+            <main class="content-area">
+                <!-- 页面标题 -->
+                <div class="page-header">
+                    <div>
+                        <h1 class="page-title">
+                            <i class="fas fa-archive"></i>
+                            整改归档查询
+                        </h1>
+                        <p class="page-subtitle">查询已销号归档的整改任务</p>
+                    </div>
+                    <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="exportArchive()">
+                            <i class="fas fa-download"></i>
+                            导出归档数据
+                        </button>
+                        <button class="btn btn-secondary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt"></i>
+                            刷新
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 归档统计看板 -->
+                <div class="stats-row mb-3">
+                    <div class="stat-card stat-card-success">
+                        <div class="stat-icon">
+                            <i class="fas fa-archive"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">归档总数</div>
+                            <div class="stat-value" id="totalArchived">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-primary">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-year"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">本年度归档</div>
+                            <div class="stat-value" id="thisYearArchived">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-info">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-month"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">本月归档</div>
+                            <div class="stat-value" id="thisMonthArchived">0</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-warning">
+                        <div class="stat-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">平均整改周期</div>
+                            <div class="stat-value" id="avgDuration">0</div>
+                            <div class="stat-extra">天</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 搜索和筛选 -->
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="search-filter-section">
+                            <!-- 搜索框 -->
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input 
+                                    type="text" 
+                                    id="searchInput" 
+                                    placeholder="搜索任务编号、标题、责任人..."
+                                    class="search-input"
+                                >
+                            </div>
+                            
+                            <!-- 筛选器 -->
+                            <div class="filter-row">
+                                <div class="filter-item">
+                                    <label class="filter-label">归档年份</label>
+                                    <select class="form-select" id="yearFilter">
+                                        <option value="">全部年份</option>
+                                        <option value="2025">2025年</option>
+                                        <option value="2024">2024年</option>
+                                        <option value="2023">2023年</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">责任单位</label>
+                                    <select class="form-select" id="unitFilter">
+                                        <option value="">全部单位</option>
+                                        <option value="财务处">财务处</option>
+                                        <option value="科研处">科研处</option>
+                                        <option value="资产处">资产处</option>
+                                        <option value="人事处">人事处</option>
+                                        <option value="教务处">教务处</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-item">
+                                    <label class="filter-label">来源类型</label>
+                                    <select class="form-select" id="sourceFilter">
+                                        <option value="">全部来源</option>
+                                        <option value="纪检核查">纪检核查</option>
+                                        <option value="审计核查">审计核查</option>
+                                        <option value="联合核查">联合核查</option>
+                                        <option value="专项核查">专项核查</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="filter-actions">
+                                    <button class="btn btn-secondary btn-sm" onclick="resetFilters()">
+                                        <i class="fas fa-redo"></i>
+                                        重置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 归档任务列表 -->
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 120px;">任务编号</th>
+                                        <th>整改任务</th>
+                                        <th style="width: 120px;">责任单位</th>
+                                        <th style="width: 100px;">责任人</th>
+                                        <th style="width: 120px;">创建时间</th>
+                                        <th style="width: 120px;">归档时间</th>
+                                        <th style="width: 100px;">整改周期</th>
+                                        <th style="width: 150px;">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="archiveTableBody">
+                                    <!-- 数据将通过 JavaScript 动态生成 -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <!-- 分页 -->
+                        <div class="table-footer">
+                            <div class="pagination-info">
+                                显示 <span id="pageStart">0</span> 到 <span id="pageEnd">0</span> 条，共 <span id="totalItems">0</span> 条
+                            </div>
+                            <div class="pagination">
+                                <button class="btn btn-sm" id="prevPage" onclick="prevPage()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div class="pagination-pages" id="paginationPages">
+                                    <!-- 页码将通过 JavaScript 动态生成 -->
+                                </div>
+                                <button class="btn btn-sm" id="nextPage" onclick="nextPage()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- 页脚 -->
+        <footer id="footer"></footer>
+    </div>
+
+    <!-- 归档详情模态框 -->
+    <div id="archiveDetailModal" class="modal-overlay">
+        <div class="modal-container modal-lg">
+            <div class="modal-header">
+                <h3 class="modal-title">归档详情</h3>
+                <button class="modal-close-btn" onclick="closeArchiveDetailModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- 基本信息 -->
+                <div class="detail-section">
+                    <h4 class="detail-section-title">基本信息</h4>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <label>任务编号</label>
+                            <div id="detailTaskNo">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>状态</label>
+                            <div><span class="status-badge status-completed">已归档</span></div>
+                        </div>
+                        <div class="detail-item">
+                            <label>责任单位</label>
+                            <div id="detailUnit">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>责任人</label>
+                            <div id="detailPerson">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>创建时间</label>
+                            <div id="detailCreateTime">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>归档时间</label>
+                            <div id="detailArchiveTime">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>整改周期</label>
+                            <div id="detailDuration">-</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>来源</label>
+                            <div id="detailSource">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 整改内容 -->
+                <div class="detail-section">
+                    <h4 class="detail-section-title">整改内容</h4>
+                    <div class="detail-item full-width">
+                        <label>问题描述</label>
+                        <div id="detailProblem" class="detail-text">-</div>
+                    </div>
+                    <div class="detail-item full-width">
+                        <label>整改措施</label>
+                        <div id="detailMeasures" class="detail-text">-</div>
+                    </div>
+                </div>
+
+                <!-- 整改成果 -->
+                <div class="detail-section">
+                    <h4 class="detail-section-title">整改成果</h4>
+                    <div id="achievementsList">
+                        <!-- 整改成果将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 佐证材料 -->
+                <div class="detail-section">
+                    <h4 class="detail-section-title">佐证材料</h4>
+                    <div id="evidencesList" class="evidence-grid">
+                        <!-- 佐证材料将通过 JavaScript 动态生成 -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeArchiveDetailModal()">关闭</button>
+                <button class="btn btn-primary" onclick="downloadArchiveReport()">
+                    <i class="fas fa-download"></i>
+                    下载归档报告
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/common.js?v=3"></script>
+    <script src="js/components.js?v=3"></script>
+    <script>
+        // 确保组件初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof TopNavbar !== 'undefined') TopNavbar.init();
+            if (typeof SideNavbar !== 'undefined') SideNavbar.init();
+            if (typeof Footer !== 'undefined') Footer.init();
+        });
+    </script>
+    <script src="js/rectification-archive.js?v=1"></script>
+</body>
+</html>

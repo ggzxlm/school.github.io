@@ -40,14 +40,11 @@ class RuleEngineService {
             }
         }
         
-        if (needsUpdate) {
-            console.log('加载预置数据...');
-            const presetRules = this.getPresetRules();
-            console.log('预置规则数量:', presetRules.length);
-            localStorage.setItem(this.storageKey, JSON.stringify(presetRules));
-        } else {
-            console.log('localStorage 中已有最新规则数据');
-        }
+        // 强制更新数据以包含新的dataSources字段
+        console.log('加载预置数据...');
+        const presetRules = this.getPresetRules();
+        console.log('预置规则数量:', presetRules.length);
+        localStorage.setItem(this.storageKey, JSON.stringify(presetRules));
         
         const existingExecutions = localStorage.getItem(this.executionKey);
         if (!existingExecutions || existingExecutions === '[]') {
@@ -81,6 +78,90 @@ class RuleEngineService {
         const baseTime = new Date();
         
         return [
+            // ========== 跨数据源关联规则示例 ==========
+            {
+                id: 'RULE_CROSS_001',
+                ruleName: '采购人员与供应商关联关系预警',
+                ruleType: 'CORRELATION',
+                category: '采购监督',
+                description: '检测采购人员与中标供应商之间是否存在亲属、股权等关联关系',
+                dataSources: [
+                    {
+                        alias: 'procurement',
+                        type: 'procurement_db',
+                        table: 'procurement_orders',
+                        joinField: 'buyer_id'
+                    },
+                    {
+                        alias: 'hr',
+                        type: 'hr_db',
+                        table: 'employees',
+                        joinField: 'employee_id'
+                    },
+                    {
+                        alias: 'relation',
+                        type: 'unified_db',
+                        table: 'person_relations',
+                        joinField: 'person_id'
+                    }
+                ],
+                config: {
+                    correlationFields: ['procurement.buyer_id', 'hr.employee_id', 'relation.person_id'],
+                    relationTypes: ['FAMILY', 'EQUITY', 'EMPLOYMENT'],
+                    alertCondition: 'relation.relation_type IN ("FAMILY", "EQUITY") AND procurement.amount > 100000'
+                },
+                priority: 95,
+                enabled: true,
+                alertLevel: 'HIGH',
+                groupId: 'cross_source_rules',
+                createdAt: new Date(baseTime.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString(),
+                updatedAt: now,
+                lastExecutionTime: new Date(baseTime.getTime() - 2 * 60 * 60 * 1000).toISOString(),
+                executionCount: 156,
+                matchCount: 8
+            },
+            {
+                id: 'RULE_CROSS_002',
+                ruleName: '合同金额超预算且无追加审批',
+                ruleType: 'THRESHOLD',
+                category: '财务监督',
+                description: '检测合同金额超出预算且未履行追加预算审批程序的情况',
+                dataSources: [
+                    {
+                        alias: 'contract',
+                        type: 'contract_db',
+                        table: 'contracts',
+                        joinField: 'project_id'
+                    },
+                    {
+                        alias: 'budget',
+                        type: 'finance_db',
+                        table: 'project_budgets',
+                        joinField: 'project_id'
+                    },
+                    {
+                        alias: 'approval',
+                        type: 'unified_db',
+                        table: 'approval_records',
+                        joinField: 'project_id'
+                    }
+                ],
+                config: {
+                    condition: '(contract.amount - budget.approved_amount) / budget.approved_amount > 0.1',
+                    checkApproval: 'approval.approval_type = "BUDGET_INCREASE" AND approval.status = "APPROVED"',
+                    threshold: 0.1,
+                    timeWindow: 'contract.sign_date'
+                },
+                priority: 90,
+                enabled: true,
+                alertLevel: 'HIGH',
+                groupId: 'cross_source_rules',
+                createdAt: new Date(baseTime.getTime() - 25 * 24 * 60 * 60 * 1000).toISOString(),
+                updatedAt: now,
+                lastExecutionTime: new Date(baseTime.getTime() - 4 * 60 * 60 * 1000).toISOString(),
+                executionCount: 203,
+                matchCount: 12
+            },
             // ========== 科研经费监督规则 ==========
             {
                 id: 'RULE_RESEARCH_001',
@@ -88,6 +169,14 @@ class RuleEngineService {
                 ruleType: 'THRESHOLD',
                 category: '科研监督',
                 description: '监测设备使用率低于30%且同类设备重复购置2台及以上的情况',
+                dataSources: [
+                    {
+                        alias: 'asset',
+                        type: 'asset_db',
+                        table: 'equipment_usage',
+                        joinField: null
+                    }
+                ],
                 config: {
                     field: 'usage_rate',
                     operator: '<',

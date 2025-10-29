@@ -843,3 +843,226 @@ textarea.form-control {
         max-height: 95vh;
     }
 }
+
+
+/* 核查组成员和任务分解样式 */
+.team-members-section,
+.tasks-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.team-member-item,
+.task-item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    padding: 12px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.team-member-item .member-select,
+.team-member-item .role-select {
+    flex: 1;
+}
+
+.task-item .task-title {
+    flex: 2;
+}
+
+.task-item .task-assignee,
+.task-item .task-deadline {
+    flex: 1;
+}
+
+.remove-member-btn,
+.remove-task-btn {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 详情页面的成员和任务列表样式 */
+.team-members-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.team-member-card {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.member-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 18px;
+    margin-right: 16px;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.member-role {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-card {
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.task-title-text {
+    font-weight: 600;
+    color: #111827;
+    flex: 1;
+}
+
+.task-status {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.task-status.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.task-status.in-progress {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.task-status.completed {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.task-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.task-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.task-meta-item i {
+    width: 16px;
+    text-align: center;
+}
+
+/* 讨论记录样式 */
+.discussion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.discussion-item {
+    display: flex;
+    gap: 12px;
+}
+
+.discussion-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.discussion-content {
+    flex: 1;
+}
+
+.discussion-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.discussion-author {
+    font-weight: 600;
+    color: #111827;
+}
+
+.discussion-time {
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.discussion-text {
+    color: #374151;
+    line-height: 1.6;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .team-member-item,
+    .task-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .remove-member-btn,
+    .remove-task-btn {
+        width: 100%;
+        display: block !important;
+    }
+}

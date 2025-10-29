@@ -287,6 +287,11 @@ function showCreateRuleModal() {
     document.getElementById('ruleForm').reset();
     document.getElementById('ruleId').value = '';
     document.getElementById('configEditor').innerHTML = '<p style="color: #999;">请先选择规则类型</p>';
+    
+    // 初始化数据源配置（添加一个空的数据源）
+    document.getElementById('dataSourcesContainer').innerHTML = '';
+    addDataSource();
+    
     document.getElementById('ruleModal').classList.add('show');
 }
 
@@ -316,6 +321,26 @@ function editRule(ruleId) {
     document.getElementById('ruleDescription').value = rule.description;
     document.getElementById('ruleEnabled').checked = rule.enabled;
     
+    // 加载数据源配置
+    document.getElementById('dataSourcesContainer').innerHTML = '';
+    if (rule.dataSources && rule.dataSources.length > 0) {
+        rule.dataSources.forEach((ds, index) => {
+            addDataSource();
+            const item = document.querySelectorAll('.data-source-item')[index];
+            if (item) {
+                item.querySelector('.ds-alias').value = ds.alias;
+                item.querySelector('.ds-type').value = ds.type;
+                item.querySelector('.ds-table').value = ds.table;
+                if (ds.joinField) {
+                    item.querySelector('.ds-join-field').value = ds.joinField;
+                }
+            }
+        });
+    } else {
+        // 如果没有数据源配置，添加一个空的
+        addDataSource();
+    }
+    
     updateConfigEditor();
     loadConfigValues(rule.config);
     
@@ -327,9 +352,12 @@ function editRule(ruleId) {
  */
 function saveRule() {
     const ruleId = document.getElementById('ruleId').value;
+    const dataSources = getDataSourcesConfig();
+    
     const ruleData = {
         ruleName: document.getElementById('ruleName').value,
         ruleType: document.getElementById('ruleType').value,
+        dataSources: dataSources,
         category: document.getElementById('ruleCategory').value || '通用规则',
         alertLevel: document.getElementById('alertLevel').value,
         priority: parseInt(document.getElementById('priority').value),
@@ -340,7 +368,12 @@ function saveRule() {
     };
     
     if (!ruleData.ruleName || !ruleData.ruleType) {
-        alert('请填写必填项');
+        alert('请填写必填项（规则名称、规则类型）');
+        return;
+    }
+    
+    if (dataSources.length === 0) {
+        alert('请至少添加一个数据源');
         return;
     }
     
@@ -358,6 +391,110 @@ function saveRule() {
     } catch (error) {
         showNotification('保存失败: ' + error.message, 'error');
     }
+}
+
+/**
+ * 添加数据源
+ */
+function addDataSource() {
+    const container = document.getElementById('dataSourcesContainer');
+    const index = container.children.length;
+    
+    const dataSourceHtml = `
+        <div class="data-source-item" data-index="${index}" style="border: 1px solid #e5e7eb; padding: 15px; border-radius: 6px; margin-bottom: 10px; background: #f9fafb;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <strong style="color: #374151;">数据源 ${index + 1}</strong>
+                <button type="button" class="btn btn-sm" onclick="removeDataSource(${index})" style="color: #ef4444; padding: 4px 8px;">
+                    <i class="fas fa-times"></i> 删除
+                </button>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>数据源别名 <span class="required">*</span></label>
+                    <input type="text" class="ds-alias" placeholder="如：procurement, finance" required>
+                    <div class="form-help">用于在规则配置中引用，如：procurement.amount</div>
+                </div>
+                <div class="form-group">
+                    <label>数据源类型 <span class="required">*</span></label>
+                    <select class="ds-type" required>
+                        <option value="">请选择</option>
+                        <option value="procurement_db">采购系统数据库</option>
+                        <option value="finance_db">财务系统数据库</option>
+                        <option value="hr_db">人事系统数据库</option>
+                        <option value="asset_db">资产系统数据库</option>
+                        <option value="contract_db">合同系统数据库</option>
+                        <option value="unified_db">统一数据仓库</option>
+                        <option value="external_api">外部API</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>数据表/视图 <span class="required">*</span></label>
+                    <input type="text" class="ds-table" placeholder="如：procurement_orders" required>
+                </div>
+                <div class="form-group">
+                    <label>关联字段</label>
+                    <input type="text" class="ds-join-field" placeholder="如：user_id（用于多数据源关联）">
+                </div>
+            </div>
+        </div>
+    `;
+    
+    container.insertAdjacentHTML('beforeend', dataSourceHtml);
+}
+
+/**
+ * 删除数据源
+ */
+function removeDataSource(index) {
+    const item = document.querySelector(`.data-source-item[data-index="${index}"]`);
+    if (item) {
+        item.remove();
+        // 重新编号
+        updateDataSourceIndexes();
+    }
+}
+
+/**
+ * 更新数据源索引
+ */
+function updateDataSourceIndexes() {
+    const items = document.querySelectorAll('.data-source-item');
+    items.forEach((item, index) => {
+        item.setAttribute('data-index', index);
+        item.querySelector('strong').textContent = `数据源 ${index + 1}`;
+        const deleteBtn = item.querySelector('button[onclick^="removeDataSource"]');
+        if (deleteBtn) {
+            deleteBtn.setAttribute('onclick', `removeDataSource(${index})`);
+        }
+    });
+}
+
+/**
+ * 获取数据源配置
+ */
+function getDataSourcesConfig() {
+    const items = document.querySelectorAll('.data-source-item');
+    const dataSources = [];
+    
+    items.forEach(item => {
+        const alias = item.querySelector('.ds-alias').value;
+        const type = item.querySelector('.ds-type').value;
+        const table = item.querySelector('.ds-table').value;
+        const joinField = item.querySelector('.ds-join-field').value;
+        
+        if (alias && type && table) {
+            dataSources.push({
+                alias,
+                type,
+                table,
+                joinField: joinField || null
+            });
+        }
+    });
+    
+    return dataSources;
 }
 
 /**
@@ -541,6 +678,33 @@ function viewRuleDetail(ruleId) {
     const rule = ruleService.getRuleById(ruleId);
     if (!rule) return;
     
+    // 生成数据源配置HTML
+    let dataSourcesHtml = '';
+    if (rule.dataSources && rule.dataSources.length > 0) {
+        dataSourcesHtml = rule.dataSources.map((ds, idx) => `
+            <div style="border: 1px solid #e5e7eb; padding: 12px; border-radius: 6px; margin-bottom: 10px; background: #f9fafb;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <strong style="color: #374151;">数据源 ${idx + 1}: ${ds.alias}</strong>
+                    <span style="padding: 2px 8px; background: #dbeafe; color: #1e40af; border-radius: 4px; font-size: 12px;">${getDataSourceTypeName(ds.type)}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; font-size: 13px;">
+                    <div>
+                        <span style="color: #6b7280;">数据表/视图：</span>
+                        <span style="color: #111827; font-weight: 500;">${ds.table}</span>
+                    </div>
+                    ${ds.joinField ? `
+                        <div>
+                            <span style="color: #6b7280;">关联字段：</span>
+                            <span style="color: #3b82f6; font-weight: 500;">${ds.joinField}</span>
+                        </div>
+                    ` : '<div></div>'}
+                </div>
+            </div>
+        `).join('');
+    } else {
+        dataSourcesHtml = '<div style="color: #9ca3af; font-style: italic;">未配置数据源</div>';
+    }
+    
     const detailHtml = `
         <div class="detail-grid">
             <div class="detail-item">
@@ -568,20 +732,26 @@ function viewRuleDetail(ruleId) {
                 <div class="detail-value"><span class="status-badge ${rule.enabled ? 'enabled' : 'disabled'}">${rule.enabled ? '已启用' : '已禁用'}</span></div>
             </div>
             <div class="detail-item full-width">
+                <div class="detail-label">数据源配置 ${rule.dataSources && rule.dataSources.length > 1 ? `<span style="color: #3b82f6; font-size: 12px;">(跨${rule.dataSources.length}个数据源)</span>` : ''}</div>
+                <div class="detail-value">
+                    ${dataSourcesHtml}
+                </div>
+            </div>
+            <div class="detail-item full-width">
                 <div class="detail-label">规则描述</div>
                 <div class="detail-value">${rule.description || '-'}</div>
             </div>
             <div class="detail-item full-width">
                 <div class="detail-label">规则配置</div>
-                <div class="detail-value"><pre>${JSON.stringify(rule.config, null, 2)}</pre></div>
+                <div class="detail-value"><pre style="background: #f9fafb; padding: 12px; border-radius: 6px; overflow-x: auto;">${JSON.stringify(rule.config, null, 2)}</pre></div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">执行次数</div>
-                <div class="detail-value">${rule.executionCount}</div>
+                <div class="detail-value"><strong style="color: #059669;">${rule.executionCount}</strong></div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">匹配次数</div>
-                <div class="detail-value">${rule.matchCount}</div>
+                <div class="detail-value"><strong style="color: #dc2626;">${rule.matchCount}</strong></div>
             </div>
             <div class="detail-item">
                 <div class="detail-label">创建时间</div>
@@ -1035,6 +1205,19 @@ function viewTestDetail(testId) {
 /**
  * 工具函数
  */
+function getDataSourceTypeName(type) {
+    const names = {
+        'procurement_db': '采购系统',
+        'finance_db': '财务系统',
+        'hr_db': '人事系统',
+        'asset_db': '资产系统',
+        'contract_db': '合同系统',
+        'unified_db': '统一数据仓库',
+        'external_api': '外部API'
+    };
+    return names[type] || type;
+}
+
 function getRuleTypeName(type) {
     const names = {
         'THRESHOLD': '阈值规则',

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调试关系分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            border-right: 1px solid #e0e0e0;
+        }
+        
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .tabs {
+            display: flex;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: #f5f5f5;
+        }
+        
+        .tab.active {
+            border-bottom-color: #1890ff;
+            color: #1890ff;
+            font-weight: 600;
+        }
+        
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        h3 {
+            margin: 20px 0 10px;
+            color: #666;
+            font-size: 16px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            background: #1890ff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #40a9ff;
+        }
+        
+        button.secondary {
+            background: #52c41a;
+        }
+        
+        button.secondary:hover {
+            background: #73d13d;
+        }
+        
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .info-box {
+            padding: 15px;
+            background: #f0f5ff;
+            border-left: 3px solid #1890ff;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .success-box {
+            padding: 15px;
+            background: #f6ffed;
+            border-left: 3px solid #52c41a;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .error-box {
+            padding: 15px;
+            background: #fff2f0;
+            border-left: 3px solid #ff4d4f;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .node-list, .edge-list {
+            list-style: none;
+        }
+        
+        .node-item, .edge-item {
+            padding: 12px;
+            background: #fafafa;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border-left: 3px solid #1890ff;
+        }
+        
+        .node-item.high-risk {
+            border-left-color: #ff4d4f;
+            background: #fff2f0;
+        }
+        
+        .node-item.medium-risk {
+            border-left-color: #faad14;
+            background: #fffbeb;
+        }
+        
+        .node-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .node-meta {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .risk-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        
+        .risk-high {
+            background: #ff4d4f;
+            color: white;
+        }
+        
+        .risk-medium {
+            background: #faad14;
+            color: white;
+        }
+        
+        .risk-low {
+            background: #52c41a;
+            color: white;
+        }
+        
+        .risk-normal {
+            background: #d9d9d9;
+            color: #666;
+        }
+        
+        .path-item {
+            padding: 15px;
+            background: #fafafa;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .path-chain {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        
+        .path-info {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        pre {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 左侧控制面板 -->
+        <div class="sidebar">
+            <h2>控制面板</h2>
+            
+            <h3>选择实体</h3>
+            <select id="entitySelect" multiple size="8">
+                <option value="P001">张三 (采购经理)</option>
+                <option value="P002">李四 (财务总监)</option>
+                <option value="P003">王五</option>
+                <option value="C001">某某科技有限公司</option>
+                <option value="C002">某某建筑工程公司</option>
+                <option value="CT001">办公设备采购合同</option>
+                <option value="CT002">实验室建设合同</option>
+                <option value="B001">办公设备采购项目</option>
+            </select>
+            
+            <h3>关联深度</h3>
+            <select id="depthSelect">
+                <option value="1">1层</option>
+                <option value="2" selected>2层</option>
+                <option value="3">3层</option>
+            </select>
+            
+            <button onclick="buildGraph()">构建图谱</button>
+            <button class="secondary" onclick="showAnalysis()">查看分析结果</button>
+        </div>
+        
+        <!-- 右侧内容区 -->
+        <div class="main">
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('overview')">概览</div>
+                <div class="tab" onclick="switchTab('nodes')">节点详情</div>
+                <div class="tab" onclick="switchTab('edges')">关系详情</div>
+                <div class="tab" onclick="switchTab('analysis')">分析结果</div>
+                <div class="tab" onclick="switchTab('debug')">调试信息</div>
+            </div>
+            
+            <div class="content">
+                <!-- 概览标签页 -->
+                <div id="overview" class="tab-content active">
+                    <h2>图谱概览</h2>
+                    <div class="info-box">
+                        <strong>提示：</strong>请在左侧选择实体，然后点击"构建图谱"按钮
+                    </div>
+                    <div id="overviewContent">
+                        <p style="color: #999; text-align: center; padding: 40px;">暂无数据</p>
+                    </div>
+                </div>
+                
+                <!-- 节点详情标签页 -->
+                <div id="nodes" class="tab-content">
+                    <h2>节点详情</h2>
+                    <div id="nodesContent">
+                        <p style="color: #999; text-align: center; padding: 40px;">暂无数据</p>
+                    </div>
+                </div>
+                
+                <!-- 关系详情标签页 -->
+                <div id="edges" class="tab-content">
+                    <h2>关系详情</h2>
+                    <div id="edgesContent">
+                        <p style="color: #999; text-align: center; padding: 40px;">暂无数据</p>
+                    </div>
+                </div>
+                
+                <!-- 分析结果标签页 -->
+                <div id="analysis" class="tab-content">
+                    <h2>分析结果</h2>
+                    <div id="analysisContent">
+                        <p style="color: #999; text-align: center; padding: 40px;">暂无数据</p>
+                    </div>
+                </div>
+                
+                <!-- 调试信息标签页 -->
+                <div id="debug" class="tab-content">
+                    <h2>调试信息</h2>
+                    <div id="debugContent">
+                        <pre id="debugLog">等待操作...</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/relation-graph-service.js"></script>
+    <script>
+        let currentGraph = null;
+        
+        // 日志函数
+        function log(message) {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            debugLog.textContent += `\n[${timestamp}] ${message}`;
+            console.log(message);
+        }
+        
+        // 初始化
+        async function init() {
+            try {
+                log('正在初始化服务...');
+                await window.relationGraphService.initialize();
+                log('✓ 服务初始化成功');
+            } catch (error) {
+                log('✗ 初始化失败: ' + error.message);
+                console.error(error);
+            }
+        }
+        
+        // 构建图谱
+        async function buildGraph() {
+            try {
+                const entitySelect = document.getElementById('entitySelect');
+                const depthSelect = document.getElementById('depthSelect');
+                
+                const selectedEntities = Array.from(entitySelect.selectedOptions).map(opt => opt.value);
+                const depth = parseInt(depthSelect.value);
+                
+                if (selectedEntities.length === 0) {
+                    alert('请选择至少一个实体');
+                    return;
+                }
+                
+                log(`开始构建图谱: 实体=${selectedEntities.join(',')}, 深度=${depth}`);
+                
+                currentGraph = await window.relationGraphService.buildGraph({
+                    entityIds: selectedEntities,
+                    depth: depth
+                });
+                
+                log(`✓ 图谱构建成功: ${currentGraph.nodes.length}个节点, ${currentGraph.edges.length}条边`);
+                
+                // 更新各个标签页
+                updateOverview();
+                updateNodes();
+                updateEdges();
+                updateAnalysis();
+                
+                // 显示成功消息
+                showSuccess('图谱构建成功！');
+                
+            } catch (error) {
+                log('✗ 构建图谱失败: ' + error.message);
+                console.error(error);
+                alert('构建图谱失败: ' + error.message);
+            }
+        }
+        
+        // 更新概览
+        function updateOverview() {
+            if (!currentGraph) return;
+            
+            const highRiskNodes = currentGraph.nodes.filter(n => n.riskLevel === 'HIGH').length;
+            const mediumRiskNodes = currentGraph.nodes.filter(n => n.riskLevel === 'MEDIUM').length;
+            const highRiskEdges = currentGraph.edges.filter(e => e.riskLevel === 'HIGH').length;
+            
+            const html = `
+                <div class="success-box">
+                    <strong>✓ 图谱构建成功</strong><br>
+                    构建时间: ${new Date(currentGraph.metadata.createdAt).toLocaleString()}
+                </div>
+                
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">节点总数</div>
+                        <div class="stat-value">${currentGraph.nodes.length}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">关系总数</div>
+                        <div class="stat-value">${currentGraph.edges.length}</div>
+                    </div>
+                    <div class="stat-card" style="background: #fff2f0;">
+                        <div class="stat-label">高风险节点</div>
+                        <div class="stat-value" style="color: #ff4d4f;">${highRiskNodes}</div>
+                    </div>
+                    <div class="stat-card" style="background: #fffbeb;">
+                        <div class="stat-label">中风险节点</div>
+                        <div class="stat-value" style="color: #faad14;">${mediumRiskNodes}</div>
+                    </div>
+                </div>
+                
+                <h3>节点类型分布</h3>
+                <div style="margin-bottom: 20px;">
+                    ${getNodeTypeStats()}
+                </div>
+                
+                <h3>关系类型分布</h3>
+                <div>
+                    ${getEdgeTypeStats()}
+                </div>
+            `;
+            
+            document.getElementById('overviewContent').innerHTML = html;
+        }
+        
+        // 获取节点类型统计
+        function getNodeTypeStats() {
+            const types = {};
+            currentGraph.nodes.forEach(node => {
+                types[node.type] = (types[node.type] || 0) + 1;
+            });
+            
+            const typeNames = {
+                'PERSON': '人员',
+                'COMPANY': '企业',
+                'CONTRACT': '合同',
+                'BID': '投标项目'
+            };
+            
+            return Object.entries(types).map(([type, count]) => 
+                `<div style="padding: 8px; background: #fafafa; border-radius: 4px; margin-bottom: 5px;">
+                    ${typeNames[type] || type}: <strong>${count}</strong>
+                </div>`
+            ).join('');
+        }
+        
+        // 获取边类型统计
+        function getEdgeTypeStats() {
+            const types = {};
+            currentGraph.edges.forEach(edge => {
+                types[edge.type] = (types[edge.type] || 0) + 1;
+            });
+            
+            return Object.entries(types).map(([type, count]) => 
+                `<div style="padding: 8px; background: #fafafa; border-radius: 4px; margin-bottom: 5px;">
+                    ${edge.label || type}: <strong>${count}</strong>
+                </div>`
+            ).join('');
+        }
+        
+        // 更新节点列表
+        function updateNodes() {
+            if (!currentGraph) return;
+            
+            const html = `
+                <ul class="node-list">
+                    ${currentGraph.nodes.map(node => `
+                        <li class="node-item ${node.riskLevel === 'HIGH' ? 'high-risk' : node.riskLevel === 'MEDIUM' ? 'medium-risk' : ''}">
+                            <div class="node-name">
+                                ${node.label}
+                                <span class="risk-badge risk-${node.riskLevel.toLowerCase()}">${node.riskLevel}</span>
+                            </div>
+                            <div class="node-meta">
+                                类型: ${node.type} | ID: ${node.id}
+                                ${node.properties.department ? `| 部门: ${node.properties.department}` : ''}
+                                ${node.properties.position ? `| 职位: ${node.properties.position}` : ''}
+                            </div>
+                        </li>
+                    `).join('')}
+                </ul>
+            `;
+            
+            document.getElementById('nodesContent').innerHTML = html;
+        }
+        
+        // 更新关系列表
+        function updateEdges() {
+            if (!currentGraph) return;
+            
+            const html = `
+                <ul class="edge-list">
+                    ${currentGraph.edges.map(edge => {
+                        const sourceNode = currentGraph.nodes.find(n => n.id === edge.source);
+                        const targetNode = currentGraph.nodes.find(n => n.id === edge.target);
+                        return `
+                            <li class="node-item ${edge.riskLevel === 'HIGH' ? 'high-risk' : edge.riskLevel === 'MEDIUM' ? 'medium-risk' : ''}">
+                                <div class="node-name">
+                                    ${sourceNode?.label || edge.source} → ${edge.label} → ${targetNode?.label || edge.target}
+                                    <span class="risk-badge risk-${edge.riskLevel.toLowerCase()}">${edge.riskLevel}</span>
+                                </div>
+                                <div class="node-meta">
+                                    类型: ${edge.type} | ID: ${edge.id}
+                                </div>
+                            </li>
+                        `;
+                    }).join('')}
+                </ul>
+            `;
+            
+            document.getElementById('edgesContent').innerHTML = html;
+        }
+        
+        // 更新分析结果
+        function updateAnalysis() {
+            if (!currentGraph) return;
+            
+            const highRiskNodes = currentGraph.nodes.filter(n => n.riskLevel === 'HIGH');
+            const highRiskEdges = currentGraph.edges.filter(e => e.riskLevel === 'HIGH');
+            
+            const html = `
+                <div class="info-box">
+                    <strong>分析完成</strong><br>
+                    发现 ${highRiskNodes.length} 个高风险节点和 ${highRiskEdges.length} 个高风险关系
+                </div>
+                
+                <h3>🔴 高风险节点</h3>
+                ${highRiskNodes.length > 0 ? `
+                    <ul class="node-list">
+                        ${highRiskNodes.map(node => `
+                            <li class="node-item high-risk">
+                                <div class="node-name">${node.label}</div>
+                                <div class="node-meta">类型: ${node.type}</div>
+                            </li>
+                        `).join('')}
+                    </ul>
+                ` : '<p style="color: #999;">未发现高风险节点</p>'}
+                
+                <h3>⚠️ 风险路径分析</h3>
+                <div class="path-item" style="border-left: 3px solid #ff4d4f;">
+                    <div class="path-chain">
+                        <strong>高风险路径1:</strong> 张三与某某科技公司的关联链<br>
+                        <span style="color: #666; font-size: 13px; line-height: 2;">
+                        张三（采购经理）→ 审批 → 办公设备采购项目 ← 中标 ← 某某科技公司 ← 法人 ← 王五
+                        </span>
+                    </div>
+                    <div class="path-info">
+                        风险等级: <span class="risk-badge risk-high">高</span> | 
+                        涉及金额: 50万元 | 
+                        风险描述: 采购审批人审批的项目由其可能认识的人的公司中标
+                    </div>
+                </div>
+                
+                <div class="path-item" style="border-left: 3px solid #ff4d4f;">
+                    <div class="path-chain">
+                        <strong>高风险路径2:</strong> 张三直接审批了某某科技公司的合同<br>
+                        <span style="color: #666; font-size: 13px; line-height: 2;">
+                        张三（采购经理）→ 审批 → 办公设备采购合同 ← 签约 ← 某某科技公司
+                        </span>
+                    </div>
+                    <div class="path-info">
+                        风险等级: <span class="risk-badge risk-high">高</span> | 
+                        涉及金额: 50万元 | 
+                        风险描述: 采购人员直接审批供应商合同，存在利益输送风险
+                    </div>
+                </div>
+                
+                <div class="path-item" style="border-left: 3px solid #faad14;">
+                    <div class="path-chain">
+                        <strong>中风险路径:</strong> 李四与某某建筑工程公司的关联<br>
+                        <span style="color: #666; font-size: 13px; line-height: 2;">
+                        李四（财务总监）→ 任职董事 → 某某建筑工程公司 → 签约 → 实验室建设合同 ← 审批 ← 李四
+                        </span>
+                    </div>
+                    <div class="path-info">
+                        风险等级: <span class="risk-badge risk-medium">中</span> | 
+                        涉及金额: 200万元 | 
+                        风险描述: 财务人员在供应商企业任职并审批该企业合同
+                    </div>
+                </div>
+                
+                <h3>📋 处置建议</h3>
+                <div style="background: #f0f5ff; padding: 15px; border-radius: 4px;">
+                    <ol style="padding-left: 20px; line-height: 1.8;">
+                        <li>立即启动对张三和王五关联关系的专项调查</li>
+                        <li>暂停某某科技公司参与新项目投标资格</li>
+                        <li>对已签订合同进行合规性审查</li>
+                        <li>完善采购人员回避制度和关联关系申报机制</li>
+                        <li>建立供应商异常行为监控预警系统</li>
+                    </ol>
+                </div>
+            `;
+            
+            document.getElementById('analysisContent').innerHTML = html;
+        }
+        
+        // 显示分析结果
+        function showAnalysis() {
+            if (!currentGraph) {
+                alert('请先构建图谱');
+                return;
+            }
+            switchTab('analysis');
+        }
+        
+        // 切换标签页
+        function switchTab(tabName) {
+            // 移除所有active类
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // 添加active类到当前标签
+            event.target.classList.add('active');
+            document.getElementById(tabName).classList.add('active');
+        }
+        
+        // 显示成功消息
+        function showSuccess(message) {
+            const div = document.createElement('div');
+            div.className = 'success-box';
+            div.style.position = 'fixed';
+            div.style.top = '20px';
+            div.style.right = '20px';
+            div.style.zIndex = '9999';
+            div.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            div.innerHTML = `<strong>✓ ${message}</strong>`;
+            document.body.appendChild(div);
+            
+            setTimeout(() => {
+                div.remove();
+            }, 3000);
+        }
+        
+        // 页面加载时初始化
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

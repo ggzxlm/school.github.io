@@ -97,11 +97,16 @@ class RelationGraphService {
             // 递归添加关联实体
             await this.addEntityToGraph(graph, targetId, depth, entityTypes, includeRelations, currentDepth + 1);
 
-            // 添加边
-            const edge = this.createEdge(relation);
-            if (!graph.edges.find(e => e.id === edge.id)) {
-                graph.edges.push(edge);
-                this.edges.set(edge.id, edge);
+            // 只有当源节点和目标节点都存在时才添加边
+            const sourceExists = graph.nodes.find(n => n.id === relation.sourceId);
+            const targetExists = graph.nodes.find(n => n.id === targetId);
+            
+            if (sourceExists && targetExists) {
+                const edge = this.createEdge(relation);
+                if (!graph.edges.find(e => e.id === edge.id)) {
+                    graph.edges.push(edge);
+                    this.edges.set(edge.id, edge);
+                }
             }
         }
     }
@@ -226,7 +231,8 @@ class RelationGraphService {
             EMPLOYMENT: '任职关系',
             APPROVAL: '审批关系',
             SIGN: '签约关系',
-            BID: '投标关系',
+            BID: '中标关系',
+            CONTRACT_OF: '合同关系',
             LEGAL_REP: '法人代表',
             SHAREHOLDER: '股东',
             DIRECTOR: '董事',
@@ -425,7 +431,7 @@ class RelationGraphService {
                 idCard: '110101198001011234',
                 department: '采购部',
                 position: '采购经理',
-                riskLevel: 'NORMAL'
+                riskLevel: 'HIGH'
             },
             'P002': {
                 id: 'P002',
@@ -434,13 +440,15 @@ class RelationGraphService {
                 idCard: '110101198502021234',
                 department: '财务部',
                 position: '财务总监',
-                riskLevel: 'NORMAL'
+                riskLevel: 'MEDIUM'
             },
             'P003': {
                 id: 'P003',
                 type: 'PERSON',
                 name: '王五',
                 idCard: '110101199003031234',
+                department: '无',
+                position: '企业法人',
                 riskLevel: 'HIGH'
             },
             'C001': {
@@ -449,14 +457,18 @@ class RelationGraphService {
                 name: '某某科技有限公司',
                 creditCode: '91110000MA001234XX',
                 legalRep: '王五',
+                registeredCapital: '500万元',
+                establishDate: '2018-03-15',
                 riskLevel: 'HIGH'
             },
             'C002': {
                 id: 'C002',
                 type: 'COMPANY',
                 name: '某某建筑工程公司',
-                creditCode: '91110000MA005678XX',
+                creditCode: '91110000MA005678YY',
                 legalRep: '赵六',
+                registeredCapital: '1000万元',
+                establishDate: '2015-06-20',
                 riskLevel: 'NORMAL'
             },
             'CT001': {
@@ -465,8 +477,8 @@ class RelationGraphService {
                 name: '办公设备采购合同',
                 amount: 500000,
                 date: '2024-01-15',
-                status: 'SIGNED',
-                riskLevel: 'MEDIUM'
+                status: '已签订',
+                riskLevel: 'HIGH'
             },
             'CT002': {
                 id: 'CT002',
@@ -474,8 +486,8 @@ class RelationGraphService {
                 name: '实验室建设合同',
                 amount: 2000000,
                 date: '2024-02-20',
-                status: 'EXECUTING',
-                riskLevel: 'HIGH'
+                status: '执行中',
+                riskLevel: 'MEDIUM'
             },
             'B001': {
                 id: 'B001',
@@ -483,8 +495,8 @@ class RelationGraphService {
                 name: '办公设备采购项目',
                 amount: 500000,
                 date: '2024-01-10',
-                status: 'COMPLETED',
-                riskLevel: 'MEDIUM'
+                status: '已完成',
+                riskLevel: 'HIGH'
             }
         };
     }
@@ -500,7 +512,7 @@ class RelationGraphService {
                 targetId: 'P002',
                 type: 'FAMILY',
                 properties: { relation: '配偶' },
-                riskLevel: 'NORMAL'
+                riskLevel: 'LOW'
             },
             // 张三审批了合同CT001
             {
@@ -508,14 +520,22 @@ class RelationGraphService {
                 targetId: 'CT001',
                 type: 'APPROVAL',
                 properties: { role: '审批人', date: '2024-01-14' },
-                riskLevel: 'MEDIUM'
+                riskLevel: 'HIGH'
+            },
+            // 张三审批了项目B001
+            {
+                sourceId: 'P001',
+                targetId: 'B001',
+                type: 'APPROVAL',
+                properties: { role: '项目负责人', date: '2024-01-10' },
+                riskLevel: 'HIGH'
             },
             // 王五是C001公司的法人
             {
                 sourceId: 'P003',
                 targetId: 'C001',
                 type: 'LEGAL_REP',
-                properties: { since: '2020-01-01' },
+                properties: { since: '2018-03-15' },
                 riskLevel: 'HIGH'
             },
             // C001公司中标了B001项目
@@ -523,23 +543,23 @@ class RelationGraphService {
                 sourceId: 'C001',
                 targetId: 'B001',
                 type: 'BID',
-                properties: { rank: 1, score: 95 },
+                properties: { rank: 1, score: 95, bidAmount: 480000 },
                 riskLevel: 'HIGH'
             },
-            // B001项目签订了CT001合同
+            // B001项目对应CT001合同
             {
                 sourceId: 'B001',
                 targetId: 'CT001',
-                type: 'SIGN',
+                type: 'CONTRACT_OF',
                 properties: { date: '2024-01-15' },
-                riskLevel: 'MEDIUM'
+                riskLevel: 'HIGH'
             },
             // C001公司签订了CT001合同
             {
                 sourceId: 'C001',
                 targetId: 'CT001',
                 type: 'SIGN',
-                properties: { role: '乙方', date: '2024-01-15' },
+                properties: { role: '乙方（供应商）', date: '2024-01-15' },
                 riskLevel: 'HIGH'
             },
             // 李四与C002有任职关系
@@ -555,7 +575,15 @@ class RelationGraphService {
                 sourceId: 'C002',
                 targetId: 'CT002',
                 type: 'SIGN',
-                properties: { role: '乙方', date: '2024-02-20' },
+                properties: { role: '乙方（承包商）', date: '2024-02-20' },
+                riskLevel: 'MEDIUM'
+            },
+            // 李四审批了CT002合同
+            {
+                sourceId: 'P002',
+                targetId: 'CT002',
+                type: 'APPROVAL',
+                properties: { role: '财务审批', date: '2024-02-19' },
                 riskLevel: 'MEDIUM'
             }
         ];

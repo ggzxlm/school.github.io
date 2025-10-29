@@ -313,6 +313,16 @@
                             </select>
                         </div>
                     </div>
+                    <div class="form-group full-width">
+                        <label>数据源配置 <span class="required">*</span></label>
+                        <div class="form-help" style="margin-bottom: 10px;">规则可以使用单个或多个数据源，支持跨系统关联分析</div>
+                        <div id="dataSourcesContainer">
+                            <!-- 数据源列表 -->
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="addDataSource()" style="margin-top: 10px;">
+                            <i class="fas fa-plus"></i> 添加数据源
+                        </button>
+                    </div>
                     <div class="form-row">
                         <div class="form-group">
                             <label>规则分类</label>

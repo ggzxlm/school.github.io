@@ -1,5 +1,44 @@
 // 监督指挥中心 JavaScript
 
+// 全局禁用ECharts的黑色边框和阴影
+if (typeof echarts !== 'undefined') {
+    // 设置全局默认配置
+    echarts.registerTheme('dark-custom', {
+        backgroundColor: 'transparent',
+        textStyle: {
+            color: '#e2e8f0'
+        }
+    });
+}
+
+// 移除ECharts黑色元素的辅助函数
+function removeBlackElements(chartDom) {
+    if (!chartDom) return;
+    
+    // 使用MutationObserver监听DOM变化
+    const observer = new MutationObserver(() => {
+        // 移除所有黑色填充的SVG元素
+        const rects = chartDom.querySelectorAll('rect');
+        rects.forEach(rect => {
+            const fill = rect.getAttribute('fill');
+            const stroke = rect.getAttribute('stroke');
+            if (fill && (fill.includes('0,0,0') || fill === '#000' || fill === 'black')) {
+                rect.style.display = 'none';
+            }
+            if (stroke && (stroke.includes('0,0,0') || stroke === '#000' || stroke === 'black')) {
+                rect.setAttribute('stroke', 'transparent');
+            }
+        });
+    });
+    
+    observer.observe(chartDom, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['fill', 'stroke']
+    });
+}
+
 // 模拟数据
 const mockData = {
     overview: [
@@ -232,18 +271,26 @@ function initAlertTrendChart() {
     }
     const chart = echarts.init(container);
     
+    // 移除黑色元素
+    removeBlackElements(container);
+    
     const option = {
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            borderColor: 'rgba(59, 130, 246, 0.5)',
-            borderWidth: 1,
+            borderColor: 'transparent',
+            borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
             axisPointer: {
-                type: 'cross',
+                type: 'line',
+                lineStyle: {
+                    color: 'rgba(59, 130, 246, 0.5)',
+                    width: 1,
+                    type: 'dashed'
+                },
                 label: {
-                    backgroundColor: 'rgba(59, 130, 246, 0.8)'
+                    show: false
                 }
             },
             formatter: function(params) {
@@ -380,19 +427,27 @@ function initUnitRiskChart() {
     }
     const chart = echarts.init(container);
     
+    // 移除黑色元素
+    removeBlackElements(container);
+    
     const option = {
         backgroundColor: 'transparent',
         tooltip: {
             trigger: 'axis',
             axisPointer: { 
-                type: 'shadow',
-                shadowStyle: {
-                    color: 'rgba(59, 130, 246, 0.1)'
+                type: 'line',
+                lineStyle: {
+                    color: 'rgba(59, 130, 246, 0.3)',
+                    width: 1,
+                    type: 'dashed'
+                },
+                label: {
+                    show: false
                 }
             },
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            borderColor: 'rgba(59, 130, 246, 0.5)',
-            borderWidth: 1,
+            borderColor: 'transparent',
+            borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
             formatter: function(params) {
                 const data = params[0];
@@ -498,6 +553,9 @@ function initRiskMapChart() {
     }
     const chart = echarts.init(container);
     
+    // 移除黑色元素
+    removeBlackElements(container);
+    
     // 模拟校园地图数据
     const mapData = [
         { name: '信息学院', value: [0.2, 0.3, 85] },
@@ -515,7 +573,8 @@ function initRiskMapChart() {
         tooltip: {
             trigger: 'item',
             backgroundColor: 'rgba(15, 23, 42, 0.9)',
-            borderColor: 'rgba(59, 130, 246, 0.5)',
+            borderColor: 'transparent',
+            borderWidth: 0,
             textStyle: { color: '#e2e8f0' },
             formatter: '{b}<br/>风险指数: {c}'
         },
@@ -548,7 +607,13 @@ function initRiskMapChart() {
             textStyle: { color: '#94a3b8' },
             inRange: {
                 color: ['#3b82f6', '#f59e0b', '#ef4444']
-            }
+            },
+            handleStyle: {
+                color: 'rgba(59, 130, 246, 0.8)',
+                borderColor: 'transparent'
+            },
+            borderColor: 'transparent',
+            backgroundColor: 'transparent'
         },
         series: [{
             type: 'scatter',
@@ -584,6 +649,9 @@ function initProblemTypeChart() {
     }
     const chart = echarts.init(container);
     
+    // 移除黑色元素
+    removeBlackElements(container);
+    
     const total = mockData.problemType.reduce((sum, item) => sum + item.value, 0);
     
     const option = {
@@ -591,8 +659,8 @@ function initProblemTypeChart() {
         tooltip: {
             trigger: 'item',
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            borderColor: 'rgba(59, 130, 246, 0.5)',
-            borderWidth: 1,
+            borderColor: 'transparent',
+            borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
             formatter: function(params) {
                 return `<div style="font-weight: bold; margin-bottom: 5px;">${params.name}</div>
@@ -668,6 +736,9 @@ function initRectificationChart() {
     }
     const chart = echarts.init(container);
     
+    // 移除黑色元素
+    removeBlackElements(container);
+    
     const { completed, inProgress, overdue, total } = mockData.rectification;
     const completionRate = ((completed / total) * 100).toFixed(1);
     
@@ -676,8 +747,8 @@ function initRectificationChart() {
         tooltip: {
             trigger: 'item',
             backgroundColor: 'rgba(15, 23, 42, 0.95)',
-            borderColor: 'rgba(59, 130, 246, 0.5)',
-            borderWidth: 1,
+            borderColor: 'transparent',
+            borderWidth: 0,
             textStyle: { color: '#e2e8f0', fontSize: 13 },
             formatter: function(params) {
                 const percent = ((params.value / total) * 100).toFixed(1);

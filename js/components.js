@@ -726,7 +726,8 @@ const SideNavbar = {
                 { id: 'alert-center', icon: 'fa-bell', text: '预警中心', link: 'alert-center.html' },
                 { id: 'clue-library', icon: 'fa-folder-open', text: '线索库', link: 'clue-library.html' },
                 { id: 'work-order', icon: 'fa-clipboard-list', text: '工单管理', link: 'work-order.html' },
-                { id: 'rectification', icon: 'fa-tasks', text: '整改管理', link: 'rectification.html' }
+                { id: 'rectification', icon: 'fa-tasks', text: '整改管理', link: 'rectification.html' },
+                { id: 'rectification-archive', icon: 'fa-archive', text: '整改归档查询', link: 'rectification-archive.html' }
             ]
         },
         {
@@ -784,8 +785,7 @@ const SideNavbar = {
             children: [
                 { id: 'data-analysis', icon: 'fa-chart-area', text: '数据分析', link: 'data-analysis.html' },
                 { id: 'relation-analysis', icon: 'fa-project-diagram', text: '关联分析', link: 'relation-analysis.html' },
-                { id: 'text-analysis', icon: 'fa-file-alt', text: '文本分析', link: 'text-analysis.html' },
-                { id: 'invoice-ocr', icon: 'fa-receipt', text: '票据OCR', link: 'invoice-ocr.html' }
+                { id: 'text-analysis', icon: 'fa-file-alt', text: '文本分析', link: 'intelligent-analysis.html' }
             ]
         },
         {
@@ -802,6 +802,7 @@ const SideNavbar = {
                 { id: 'datasource-mgmt', icon: 'fa-plug', text: '数据源管理', link: 'datasource-management.html' },
                 { id: 'collection-task', icon: 'fa-download', text: '采集任务', link: 'collection-task-management.html' },
                 { id: 'etl-mgmt', icon: 'fa-exchange-alt', text: 'ETL管理', link: 'etl-management.html' },
+                { id: 'data-viewer', icon: 'fa-eye', text: '数据查看', link: 'data-viewer.html' },
                 { id: 'master-data', icon: 'fa-table', text: '主数据管理', link: 'master-data-management.html' },
                 { id: 'data-quality', icon: 'fa-check-circle', text: '数据质量', link: 'data-quality-management.html' },
                 { id: 'metadata-mgmt', icon: 'fa-tags', text: '元数据管理', link: 'metadata-management.html' },
@@ -820,7 +821,8 @@ const SideNavbar = {
                 { id: 'org-mgmt', icon: 'fa-sitemap', text: '组织管理', link: 'system-management.html?type=org' },
                 { id: 'param-config', icon: 'fa-wrench', text: '参数配置', link: 'system-management.html?type=param' },
                 { id: 'system-monitoring', icon: 'fa-desktop', text: '系统监控', link: 'system-monitoring.html' },
-                { id: 'log-audit', icon: 'fa-history', text: '日志审计', link: 'system-management.html?type=log' }
+                { id: 'log-audit', icon: 'fa-history', text: '日志审计', link: 'system-management.html?type=log' },
+                { id: 'system-architecture', icon: 'fa-project-diagram', text: '系统架构', link: 'system-architecture.html' }
             ]
         }
     ],

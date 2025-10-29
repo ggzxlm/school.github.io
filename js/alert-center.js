@@ -25,21 +25,21 @@ const AlertCenter = {
             {
                 id: 'total',
                 title: '预警总数',
-                value: 248,
+                value: 268,
                 icon: 'fa-exclamation-triangle',
                 color: 'primary'
             },
             {
                 id: 'high',
                 title: '高风险',
-                value: 56,
+                value: 64,
                 icon: 'fa-exclamation-circle',
                 color: 'danger'
             },
             {
                 id: 'medium',
                 title: '中风险',
-                value: 112,
+                value: 124,
                 icon: 'fa-exclamation',
                 color: 'warning'
             },
@@ -53,13 +53,36 @@ const AlertCenter = {
             {
                 id: 'pending',
                 title: '待处理',
-                value: 89,
+                value: 97,
                 icon: 'fa-clock',
                 color: 'secondary'
             }
         ],
 
         alerts: [
+            {
+                id: 'ALERT001',
+                code: 'YJ-2025-022',
+                title: '采购人员与供应商关联关系预警',
+                type: 'procurement',
+                typeName: '采购管理',
+                risk: 'high',
+                status: 'pending',
+                statusName: '待核实',
+                department: '设备处',
+                person: '张三',
+                amount: '500万元',
+                project: '实验室设备采购项目',
+                source: '规则引擎',
+                rule: '采购人员关联关系检测规则',
+                threshold: '存在关联关系',
+                ruleDescription: '系统自动检测采购人员与供应商之间的关联关系，包括亲属关系、股权关系等',
+                description: '检测到采购经理张三与中标供应商某某科技公司存在关联关系。关系路径：张三(采购经理) → 配偶 → 李四 → 股东(30%) → 某某科技公司。涉及采购项目金额500万元，风险等级：高。',
+                time: '2025-10-22 09:15:00',
+                createdAt: '2025-10-22 09:15:00',
+                deadline: '2025-10-25',
+                handler: null
+            },
             {
                 id: 1,
                 code: 'YJ-2025-001',
@@ -165,6 +188,7 @@ const AlertCenter = {
             },
             {
                 id: 6,
+                code: 'YJ-2025-006',
                 title: '供应商关联冲突预警',
                 type: 'procurement',
                 typeName: '采购管理',
@@ -172,10 +196,18 @@ const AlertCenter = {
                 status: 'pending',
                 statusName: '待处理',
                 department: '采购中心',
+                person: '采购负责人',
+                amount: '380万元',
+                project: '实验设备采购项目',
                 source: '规则引擎',
+                rule: '供应商关联关系检测规则',
+                threshold: '2家及以上',
+                ruleDescription: '系统自动检测投标供应商之间的关联关系，包括法人代表、注册地址、股东结构等',
                 description: '在实验设备采购项目中，检测到3家投标供应商存在关联关系：法人代表为同一人的亲属关系，且注册地址相同。涉及项目金额：380万元。',
+                time: '2025-10-19 15:30:00',
                 createdAt: '2025-10-19 15:30:00',
-                deadline: '2025-10-22'
+                deadline: '2025-10-22',
+                handler: null
             },
             {
                 id: 7,
@@ -253,8 +285,8 @@ const AlertCenter = {
             {
                 id: 12,
                 title: '权限异常访问',
-                type: 'asset',
-                typeName: '固定资产',
+                type: 'it',
+                typeName: 'IT治理',
                 risk: 'high',
                 status: 'pending',
                 statusName: '待处理',
@@ -263,6 +295,161 @@ const AlertCenter = {
                 description: '检测到某账号在非工作时段（凌晨2:00-3:00）访问学生成绩数据库，且访问频次异常（200次/小时）。账号：admin_zhang。',
                 createdAt: '2025-10-17 08:45:00',
                 deadline: '2025-10-20'
+            },
+            {
+                id: 13,
+                code: 'YJ-2025-013',
+                title: '招生学籍异常变动',
+                type: 'enrollment',
+                typeName: '招生学籍',
+                risk: 'high',
+                status: 'pending',
+                statusName: '待处理',
+                department: '教务处',
+                person: '学籍管理员',
+                count: '5例',
+                source: '审计发现',
+                rule: '学籍异常变动检测',
+                threshold: '3例及以上',
+                ruleDescription: '监控学籍异常变动情况，包括转专业、休学、退学等',
+                description: '发现5名学生在未提交完整审批材料的情况下完成了转专业操作，涉及计算机、金融等热门专业。',
+                time: '2025-10-16 14:20:00',
+                createdAt: '2025-10-16 14:20:00',
+                deadline: '2025-10-19',
+                handler: null
+            },
+            {
+                id: 14,
+                code: 'YJ-2025-014',
+                title: '薪酬发放异常',
+                type: 'salary',
+                typeName: '薪酬社保',
+                risk: 'medium',
+                status: 'assigned',
+                statusName: '已分发',
+                department: '人事处',
+                person: '薪酬专员',
+                amount: '120,000元',
+                source: '规则引擎',
+                rule: '薪酬异常检测规则',
+                threshold: '超过标准30%',
+                ruleDescription: '检测薪酬发放是否符合标准，包括基本工资、津贴、奖金等',
+                description: '某部门本月薪酬发放总额超出预算30%，其中绩效奖金部分异常增长，涉及金额12万元。',
+                time: '2025-10-15 10:30:00',
+                createdAt: '2025-10-15 10:30:00',
+                deadline: '2025-10-22',
+                handler: '张经理',
+                assignedTo: '张经理'
+            },
+            {
+                id: 15,
+                title: '第一议题执行不规范',
+                type: 'first-topic',
+                typeName: '第一议题',
+                risk: 'medium',
+                status: 'processing',
+                statusName: '处理中',
+                department: '党委办公室',
+                source: '巡查发现',
+                description: '某二级学院党委会议记录显示，连续3次会议未将学习贯彻习近平新时代中国特色社会主义思想作为第一议题。',
+                createdAt: '2025-10-14 16:00:00',
+                deadline: '2025-10-21',
+                assignedTo: '党办主任'
+            },
+            {
+                id: 16,
+                code: 'YJ-2025-016',
+                title: '重大决策程序不完整',
+                type: 'major-decision',
+                typeName: '重大决策',
+                risk: 'high',
+                status: 'pending',
+                statusName: '待处理',
+                department: '校长办公室',
+                amount: '500万元',
+                source: '纪检监督',
+                rule: '重大决策程序检查',
+                threshold: '金额≥500万',
+                ruleDescription: '监督重大决策是否履行集体讨论、专家论证、风险评估等程序',
+                description: '某重大采购项目（金额500万元）在决策过程中缺少专家论证和风险评估环节，未完全履行重大决策程序。',
+                time: '2025-10-13 09:00:00',
+                createdAt: '2025-10-13 09:00:00',
+                deadline: '2025-10-16',
+                handler: null
+            },
+            {
+                id: 17,
+                title: '三重一大事项未报备',
+                type: 'three-major',
+                typeName: '三重一大',
+                risk: 'high',
+                status: 'pending',
+                statusName: '待处理',
+                department: '后勤处',
+                amount: '300万元',
+                source: '纪检监督',
+                description: '后勤处与某物业公司签订3年期服务合同，金额300万元，属于"三重一大"事项，但未按规定提交党委会集体研究。',
+                createdAt: '2025-10-12 11:30:00',
+                deadline: '2025-10-15'
+            },
+            {
+                id: 18,
+                code: 'YJ-2025-018',
+                title: 'IT系统安全漏洞',
+                type: 'it',
+                typeName: 'IT治理',
+                risk: 'high',
+                status: 'processing',
+                statusName: '处理中',
+                department: '信息中心',
+                count: '12个漏洞',
+                source: '安全扫描',
+                rule: '系统安全检测',
+                threshold: '高危漏洞≥5个',
+                ruleDescription: '定期扫描系统安全漏洞，发现高危漏洞及时预警',
+                description: '教务系统安全扫描发现12个安全漏洞，其中高危漏洞5个，可能导致学生信息泄露风险。',
+                time: '2025-10-11 15:45:00',
+                createdAt: '2025-10-11 15:45:00',
+                deadline: '2025-10-14',
+                handler: '技术主管',
+                assignedTo: '技术主管'
+            },
+            {
+                id: 19,
+                title: '社保缴纳基数异常',
+                type: 'salary',
+                typeName: '薪酬社保',
+                risk: 'medium',
+                status: 'completed',
+                statusName: '已完成',
+                department: '人事处',
+                count: '8人',
+                source: '审计发现',
+                description: '发现8名员工社保缴纳基数低于实际工资标准，存在合规风险。已要求人事处整改并补缴。',
+                createdAt: '2025-10-10 10:00:00',
+                completedAt: '2025-10-12 16:00:00'
+            },
+            {
+                id: 20,
+                code: 'YJ-2025-020',
+                title: '基建采购串标嫌疑',
+                type: 'infrastructure',
+                typeName: '基建采购',
+                risk: 'high',
+                status: 'pending',
+                statusName: '待处理',
+                department: '基建处',
+                amount: '1200万元',
+                project: '图书馆改造工程',
+                source: '纪检监督',
+                rule: '串标围标检测',
+                threshold: '投标文件相似度≥80%',
+                ruleDescription: '通过技术手段检测投标文件相似度，发现串标围标行为',
+                description: '图书馆改造工程招标中，3家投标单位的技术方案高度相似，相似度达85%，存在串标嫌疑。',
+                time: '2025-10-09 14:00:00',
+                createdAt: '2025-10-09 14:00:00',
+                deadline: '2025-10-12',
+                handler: null
             }
         ]
     },
@@ -274,6 +461,22 @@ const AlertCenter = {
         this.renderStatsCards();
         this.renderAlertList();
         this.bindEvents();
+        
+        // 检查URL参数，如果有id参数则自动打开详情
+        const urlParams = new URLSearchParams(window.location.search);
+        const alertId = urlParams.get('id');
+        if (alertId) {
+            // 根据预警编号查找预警
+            const alert = this.mockData.alerts.find(a => a.code === alertId || a.id == alertId);
+            if (alert) {
+                // 延迟打开详情，确保页面已完全加载
+                setTimeout(() => {
+                    this.viewAlertDetail(alert.id);
+                }, 300);
+            } else {
+                Toast.warning(`未找到预警：${alertId}`);
+            }
+        }
     },
 
     /**

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>清除规则缓存</title>
+</head>
+<body>
+    <h1>清除规则引擎缓存</h1>
+    <button onclick="clearCache()">清除缓存并重新加载</button>
+    <div id="result"></div>
+    
+    <script>
+        function clearCache() {
+            localStorage.removeItem('rule_engine_rules');
+            localStorage.removeItem('rule_executions');
+            localStorage.removeItem('rule_test_results');
+            document.getElementById('result').innerHTML = '<p style="color: green;">缓存已清除！</p>';
+            setTimeout(() => {
+                window.location.href = 'rule-engine-management.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

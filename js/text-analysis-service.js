@@ -462,11 +462,19 @@ class TextAnalysisService {
 
         // 检查敏感词
         if (sensitiveWords.length > 0) {
+            // 转换敏感词格式以匹配显示需求
+            const formattedDetails = sensitiveWords.map(sw => ({
+                line: sw.line,
+                content: sw.context,
+                keyword: sw.word,
+                type: 'sensitive'
+            }));
+            
             risks.push({
                 type: 'sensitive_words',
                 level: 'high',
                 description: `发现${sensitiveWords.length}个敏感词`,
-                details: sensitiveWords
+                details: formattedDetails
             });
         }
 

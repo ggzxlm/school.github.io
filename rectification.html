@@ -30,6 +30,10 @@
                         <p class="page-subtitle">跟踪整改进度，确保问题整改到位</p>
                     </div>
                     <div class="page-actions">
+                        <button class="btn btn-secondary" onclick="window.location.href='rectification-archive.html'">
+                            <i class="fas fa-archive"></i>
+                            查看归档
+                        </button>
                         <button class="btn btn-secondary" onclick="exportData()">
                             <i class="fas fa-download"></i>
                             导出
@@ -235,6 +239,44 @@
                                 <span class="progress-text" id="detailProgressText">0%</span>
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <!-- 来源追溯 -->
+                <div class="detail-section">
+                    <h4 class="detail-section-title">
+                        <i class="fas fa-link"></i>
+                        来源追溯
+                    </h4>
+                    
+                    <!-- 关联工单 -->
+                    <div class="relation-card" id="workOrderCard">
+                        <div class="relation-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="relation-content">
+                            <div class="relation-title" id="relatedWorkOrderTitle">-</div>
+                            <div class="relation-meta" id="relatedWorkOrderMeta">-</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary" id="viewRelatedWorkOrderBtn" style="display: none;">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看工单详情
+                        </button>
+                    </div>
+                    
+                    <!-- 关联线索 -->
+                    <div class="relation-card" id="clueCard" style="display: none;">
+                        <div class="relation-icon" style="background: #10b981;">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <div class="relation-content">
+                            <div class="relation-title" id="relatedClueTitle">-</div>
+                            <div class="relation-meta" id="relatedClueMeta">-</div>
+                        </div>
+                        <button class="btn btn-sm btn-primary" id="viewRelatedClueBtn">
+                            <i class="fas fa-external-link-alt"></i>
+                            查看线索详情
+                        </button>
                     </div>
                 </div>
 

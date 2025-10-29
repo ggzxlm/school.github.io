@@ -10,6 +10,127 @@ const ProcurementProjectService = {
     getProjectDetail(projectId) {
         // 模拟采购项目数据
         const projects = {
+            'P2025003': {
+                id: 'P2025003',
+                name: '实验室设备采购项目',
+                code: 'CG-2025-003',
+                type: '货物类',
+                amount: 500,
+                unit: '万元',
+                department: '设备处',
+                leader: '张三',
+                leaderRole: '采购经理',
+                status: '待审核',
+                createTime: '2025-10-15',
+                
+                // 全流程数据
+                phases: [
+                    {
+                        id: 1,
+                        name: '论证',
+                        status: 'completed',
+                        completedTime: '2025-10-16',
+                        alerts: [],
+                        data: {
+                            meetingDate: '2025-10-16',
+                            participants: [
+                                { name: '李教授', title: '实验设备专家', organization: '本校', professional: true },
+                                { name: '王工程师', title: '仪器专家', organization: '外校', professional: true }
+                            ],
+                            professionalRate: 100,
+                            conclusion: '项目具有必要性和可行性，建议立项'
+                        }
+                    },
+                    {
+                        id: 2,
+                        name: '立项',
+                        status: 'completed',
+                        completedTime: '2025-10-17',
+                        alerts: [],
+                        data: {
+                            approvalDate: '2025-10-17',
+                            approvalDepartment: '校长办公会',
+                            budget: 500,
+                            similarProjects: [],
+                            documents: [
+                                { name: '项目建议书', status: 'complete' },
+                                { name: '可行性研究报告', status: 'complete' },
+                                { name: '需求分析报告', status: 'complete' }
+                            ]
+                        }
+                    },
+                    {
+                        id: 3,
+                        name: '评标',
+                        status: 'completed',
+                        completedTime: '2025-10-20',
+                        alerts: [
+                            {
+                                id: 'A101',
+                                level: 'high',
+                                type: '关联关系',
+                                title: '采购负责人与中标供应商存在关联关系',
+                                description: '系统检测到采购经理张三与中标供应商某某科技公司存在关联关系。关系路径：张三(采购经理) → 配偶 → 李四 → 股东(30%) → 某某科技公司',
+                                suggestion: '建议立即暂停项目，核查关联关系真实性，评估利益冲突风险，必要时重新组织招标',
+                                riskScore: 95,
+                                relatedPerson: '张三',
+                                relatedCompany: '某某科技公司',
+                                relationPath: '张三 → 配偶 → 李四 → 股东 → 某某科技公司'
+                            },
+                            {
+                                id: 'A102',
+                                level: 'medium',
+                                type: '价格异常',
+                                title: '中标价格高于市场价',
+                                description: '中标价格为500万元，经市场调研，同类设备市场均价约420万元，溢价率19%',
+                                suggestion: '建议进行价格复核，要求供应商提供详细报价清单',
+                                riskScore: 68
+                            }
+                        ],
+                        data: {
+                            biddingDate: '2025-10-20',
+                            bidders: 3,
+                            validBids: 3,
+                            complaints: [],
+                            evaluationProgress: 100,
+                            method: '公开招标',
+                            winner: '某某科技公司',
+                            winnerPrice: 500,
+                            biddersList: [
+                                { name: '某某科技公司', price: 500, rank: 1, selected: true },
+                                { name: '某某仪器公司', price: 480, rank: 2, selected: false },
+                                { name: '某某设备公司', price: 520, rank: 3, selected: false }
+                            ]
+                        }
+                    },
+                    {
+                        id: 4,
+                        name: '合同签订',
+                        status: 'pending',
+                        alerts: [
+                            {
+                                id: 'A103',
+                                level: 'high',
+                                type: '合规风险',
+                                title: '存在利益冲突，建议暂停签约',
+                                description: '鉴于采购负责人与中标供应商存在关联关系，建议在完成关联关系核查和风险评估前，暂停合同签订',
+                                suggestion: '1) 核实家庭关系真实性；2) 调查历史采购项目；3) 评估利益冲突风险；4) 必要时重新招标',
+                                riskScore: 98
+                            }
+                        ]
+                    }
+                ],
+                
+                // 统计信息
+                statistics: {
+                    totalAlerts: 3,
+                    highAlerts: 2,
+                    mediumAlerts: 1,
+                    lowAlerts: 0,
+                    totalRiskScore: 95,
+                    complianceRate: 45
+                }
+            },
             'P2025001': {
                 id: 'P2025001',
                 name: '新图书馆智能化系统采购项目',
@@ -495,6 +616,19 @@ const ProcurementProjectService = {
      */
     getProjectList() {
         return [
+            {
+                id: 'P2025003',
+                name: '实验室设备采购项目',
+                code: 'CG-2025-003',
+                type: '货物类',
+                amount: 500,
+                department: '设备处',
+                leader: '张三',
+                status: '待审核',
+                alertCount: 3,
+                riskLevel: 'high',
+                createTime: '2025-10-21'
+            },
             {
                 id: 'P2025001',
                 name: '新图书馆智能化系统采购项目',

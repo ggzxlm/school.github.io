@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,8 +14,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 
-                         'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB',
+                'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
@@ -284,12 +285,14 @@
                 background: white;
                 padding: 0;
             }
+
             .container {
                 box-shadow: none;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div class="header">
@@ -310,23 +313,45 @@
                         实现纪检监督、审计监督、线索管理、风险预警等功能的一体化管理。系统采用分层架构设计，
                         包含表现层、业务层、数据层和基础设施层，支持海量数据处理和实时预警分析。
                     </p>
+                    <p style="font-size: 15px; line-height: 1.8; color: #64748b; margin-bottom: 20px;">
+                        <strong style="color: #1e40af;">核心特色：</strong>
+                        覆盖纪检监督9大领域、审计监督10大领域，实现采购项目8阶段全流程监控，
+                        支持线索-工单-整改全闭环管理，集成图谱关联分析、NLP文本分析、OCR票据识别等智能分析能力，
+                        构建ODS/DWD/DWS/ADS四层数据仓库架构，实现数据采集、治理、分析、应用的全链路管理。
+                    </p>
 
                     <div class="stats-grid">
                         <div class="stat-card">
-                            <div class="stat-number">10+</div>
+                            <div class="stat-number">12</div>
                             <div class="stat-label">核心业务模块</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">60+</div>
+                            <div class="stat-number">69</div>
                             <div class="stat-label">数据表设计</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-number">100+</div>
+                            <div class="stat-number">150+</div>
                             <div class="stat-label">功能点</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-number">4层</div>
                             <div class="stat-label">数据仓库架构</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">19</div>
+                            <div class="stat-label">监督领域</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">8</div>
+                            <div class="stat-label">采购监控阶段</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">3</div>
+                            <div class="stat-label">智能分析能力</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">10+</div>
+                            <div class="stat-label">系统集成</div>
                         </div>
                     </div>
                 </div>
@@ -338,7 +363,7 @@
                     <i class="fas fa-layer-group"></i>
                     系统架构分层
                 </h2>
-                
+
                 <!-- 表现层 -->
                 <div class="layer">
                     <div class="layer-title">
@@ -385,7 +410,7 @@
                         </div>
                         <div class="module">
                             <div class="module-name"><i class="fas fa-database"></i> 数据治理</div>
-                            <div class="module-desc">数据源、ETL、主数据、数据质量、元数据</div>
+                            <div class="module-desc">数据源、ETL、主数据、数据质量、元数据、数据安全、数据分类</div>
                         </div>
                         <div class="module">
                             <div class="module-name"><i class="fas fa-cog"></i> 系统管理</div>
@@ -569,7 +594,7 @@
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
                     </div>
-                    
+
                     <div class="flow-step">
                         <div class="flow-box">
                             <div class="flow-box-title">ODS层 (明细层)</div>
@@ -577,7 +602,7 @@
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
                     </div>
-                    
+
                     <div class="flow-step">
                         <div class="flow-box">
                             <div class="flow-box-title">DWD层 (中间层)</div>
@@ -585,7 +610,7 @@
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
                     </div>
-                    
+
                     <div class="flow-step">
                         <div class="flow-box">
                             <div class="flow-box-title">DWS层 (汇总层)</div>
@@ -593,7 +618,7 @@
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
                     </div>
-                    
+
                     <div class="flow-step">
                         <div class="flow-box">
                             <div class="flow-box-title">ADS层 (应用层)</div>
@@ -601,7 +626,7 @@
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
                     </div>
-                    
+
                     <div class="flow-step">
                         <div class="flow-box">
                             <div class="flow-box-title">业务应用</div>
@@ -625,7 +650,7 @@
                             个人工作台、监督指挥大屏、风险地图、通知公告、全局搜索
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-lightbulb"></i></div>
                         <div class="feature-title">线索管理与闭环处置</div>
@@ -633,7 +658,7 @@
                             线索库、预警处置、工单协同、取证材料、核查报告、整改管理
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-gavel"></i></div>
                         <div class="feature-title">纪检监督检查</div>
@@ -641,7 +666,7 @@
                             第一议题、重大决策、招生录取、科研经费、基建采购、财务管理、八项规定、三重一大
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-file-invoice"></i></div>
                         <div class="feature-title">审计监督检查</div>
@@ -649,7 +674,7 @@
                             预算执行、科研经费、采购管理、固定资产、招生学籍、工程项目、薪酬社保、IT治理
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-cubes"></i></div>
                         <div class="feature-title">监督模型库</div>
@@ -657,7 +682,7 @@
                             内置模型库、自定义建模、模型评估、模型优化、历史回测
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-cogs"></i></div>
                         <div class="feature-title">规则与预警引擎</div>
@@ -673,7 +698,7 @@
                             图谱关联分析、NLP文本分析、票据OCR识别、审批链还原
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-file-alt"></i></div>
                         <div class="feature-title">报表与可视化</div>
@@ -681,7 +706,7 @@
                             指标库、自助报表、订阅分发、多维分析、数据导出
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-database"></i></div>
                         <div class="feature-title">数据采集与治理</div>
@@ -689,7 +714,7 @@
                             数据源管理、增量同步、ETL处理、主数据管理、数据质量、元数据、数据安全
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-cog"></i></div>
                         <div class="feature-title">系统管理支撑</div>
@@ -735,7 +760,7 @@
                             <li><i class="fas fa-check"></i> 冷热数据分层</li>
                         </ul>
                     </div>
-                    
+
                     <div class="tech-card">
                         <div class="tech-card-title">
                             <i class="fas fa-brain"></i>
@@ -749,7 +774,7 @@
                             <li><i class="fas fa-check"></i> 规则引擎</li>
                         </ul>
                     </div>
-                    
+
                     <div class="tech-card">
                         <div class="tech-card-title">
                             <i class="fas fa-server"></i>
@@ -775,7 +800,8 @@
                 </h2>
                 <div class="architecture-diagram">
                     <div class="features-grid">
-                        <div class="feature-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                        <div class="feature-card"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
                             <div class="feature-icon" style="background: #f59e0b;">
                                 <i class="fas fa-layer-group"></i>
                             </div>
@@ -784,8 +810,9 @@
                                 表现层、业务层、数据层、基础设施层清晰分离，易于维护和扩展
                             </div>
                         </div>
-                        
-                        <div class="feature-card" style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4;">
+
+                        <div class="feature-card"
+                            style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4;">
                             <div class="feature-icon" style="background: #ec4899;">
                                 <i class="fas fa-warehouse"></i>
                             </div>
@@ -794,8 +821,9 @@
                                 ODS/DWD/DWS/ADS四层架构，支持海量数据存储和高效查询
                             </div>
                         </div>
-                        
-                        <div class="feature-card" style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #a5b4fc;">
+
+                        <div class="feature-card"
+                            style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #a5b4fc;">
                             <div class="feature-icon" style="background: #6366f1;">
                                 <i class="fas fa-bolt"></i>
                             </div>
@@ -804,8 +832,9 @@
                                 实时/准实时预警引擎，自动触发检查，分级分类处置
                             </div>
                         </div>
-                        
-                        <div class="feature-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #93c5fd;">
+
+                        <div class="feature-card"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #93c5fd;">
                             <div class="feature-icon" style="background: #3b82f6;">
                                 <i class="fas fa-brain"></i>
                             </div>
@@ -815,7 +844,8 @@
                             </div>
                         </div>
 
-                        <div class="feature-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #6ee7b7;">
+                        <div class="feature-card"
+                            style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #6ee7b7;">
                             <div class="feature-icon" style="background: #10b981;">
                                 <i class="fas fa-shield-alt"></i>
                             </div>
@@ -824,8 +854,9 @@
                                 数据脱敏、加密存储、水印追踪、访问控制、操作审计
                             </div>
                         </div>
-                        
-                        <div class="feature-card" style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5;">
+
+                        <div class="feature-card"
+                            style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5;">
                             <div class="feature-icon" style="background: #ef4444;">
                                 <i class="fas fa-sync-alt"></i>
                             </div>
@@ -899,56 +930,341 @@
                 </h2>
                 <div class="data-flow">
                     <h3 style="color: #1e40af; margin-bottom: 20px; font-size: 18px;">
-                        <i class="fas fa-exclamation-triangle"></i> 预警处置流程
+                        <i class="fas fa-exclamation-triangle"></i> 预警处置流程（含线索转化）
                     </h3>
                     <div class="flow-step">
-                        <div class="flow-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
                             <div class="flow-box-title" style="color: #92400e;">1. 数据采集</div>
                             <div class="flow-box-desc">从各业务系统采集数据到ODS层</div>
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="flow-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
                             <div class="flow-box-title" style="color: #92400e;">2. 规则检测</div>
                             <div class="flow-box-desc">规则引擎自动检测异常</div>
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="flow-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
                             <div class="flow-box-title" style="color: #92400e;">3. 预警生成</div>
                             <div class="flow-box-desc">生成预警并分级分类</div>
                         </div>
                     </div>
-                    
+
                     <div class="flow-step" style="margin-top: 20px;">
-                        <div class="flow-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
-                            <div class="flow-box-title" style="color: #1e3a8a;">4. 预警分发</div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4;">
+                            <div class="flow-box-title" style="color: #831843;">4. 预警转线索</div>
+                            <div class="flow-box-desc">预警经审核后转为问题线索</div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">5. 预警分发</div>
                             <div class="flow-box-desc">按职责自动分发给相关人员</div>
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="flow-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
-                            <div class="flow-box-title" style="color: #1e3a8a;">5. 工单创建</div>
-                            <div class="flow-box-desc">创建核查工单并组建核查组</div>
-                        </div>
-                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="flow-box" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
-                            <div class="flow-box-title" style="color: #1e3a8a;">6. 协同核查</div>
-                            <div class="flow-box-desc">跨部门协同核查取证</div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">6. 工单创建</div>
+                            <div class="flow-box-desc">从线索创建核查工单</div>
                         </div>
                     </div>
-                    
+
                     <div class="flow-step" style="margin-top: 20px;">
-                        <div class="flow-box" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
-                            <div class="flow-box-title" style="color: #064e3b;">7. 整改计划</div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #a5b4fc;">
+                            <div class="flow-box-title" style="color: #312e81;">7. 协同核查</div>
+                            <div class="flow-box-desc">跨部门协同核查取证</div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                            <div class="flow-box-title" style="color: #064e3b;">8. 整改计划</div>
                             <div class="flow-box-desc">制定整改计划和措施</div>
                         </div>
                         <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="flow-box" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
-                            <div class="flow-box-title" style="color: #064e3b;">8. 进度跟踪</div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                            <div class="flow-box-title" style="color: #064e3b;">9. 进度跟踪</div>
                             <div class="flow-box-desc">跟踪整改进度和佐证</div>
                         </div>
-                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
-                        <div class="flow-box" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
-                            <div class="flow-box-title" style="color: #064e3b;">9. 复查销号</div>
+                    </div>
+
+                    <div class="flow-step" style="margin-top: 20px;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                            <div class="flow-box-title" style="color: #064e3b;">10. 复查销号</div>
                             <div class="flow-box-desc">复查验收并归档销号</div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #1e40af; margin: 40px 0 20px 0; font-size: 18px;">
+                        <i class="fas fa-shopping-cart"></i> 采购项目全流程监控
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                            <div class="flow-box-title" style="color: #92400e;">1. 论证阶段</div>
+                            <div class="flow-box-desc">专家专业性、倾向性检查</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                            <div class="flow-box-title" style="color: #92400e;">2. 立项阶段</div>
+                            <div class="flow-box-desc">重复建设、资料完整性</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                            <div class="flow-box-title" style="color: #92400e;">3. 需求阶段</div>
+                            <div class="flow-box-desc">举报线索、倾向性参数</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                            <div class="flow-box-title" style="color: #92400e;">4. 公告阶段</div>
+                            <div class="flow-box-desc">平台合规、期限审查</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">5. 专家抽取</div>
+                            <div class="flow-box-desc">专家比例、部门参与</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">6. 评标阶段</div>
+                            <div class="flow-box-desc">投诉质疑、评分合理性</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">7. 结果公示</div>
+                            <div class="flow-box-desc">公示期限、异议处理</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">8. 合同签订</div>
+                            <div class="flow-box-desc">内容匹配、金额差异</div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #1e40af; margin: 40px 0 20px 0; font-size: 18px;">
+                        <i class="fas fa-recycle"></i> 线索-工单-整改闭环流程
+                    </h3>
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                            <div class="flow-box-title" style="color: #92400e;">线索来源</div>
+                            <div class="flow-box-desc">系统预警转化、举报投诉、巡查发现、上级交办</div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4;">
+                            <div class="flow-box-title" style="color: #831843;">线索登记</div>
+                            <div class="flow-box-desc">线索库登记、分类分级、初步研判</div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #a5b4fc;">
+                            <div class="flow-box-title" style="color: #312e81;">工单核查</div>
+                            <div class="flow-box-desc">创建工单、组建核查组、协同调查取证</div>
+                        </div>
+                    </div>
+                    <div class="flow-step" style="margin-top: 20px;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #6ee7b7;">
+                            <div class="flow-box-title" style="color: #064e3b;">整改跟踪</div>
+                            <div class="flow-box-desc">制定整改计划、跟踪进度、复查销号</div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-right"></i></div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">归档管理</div>
+                            <div class="flow-box-desc">整改归档、经验总结、知识沉淀</div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #1e40af; margin: 40px 0 20px 0; font-size: 18px;">
+                        <i class="fas fa-brain"></i> 智能分析流程
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px;">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5;">
+                            <div class="flow-box-title" style="color: #7f1d1d;">关联分析</div>
+                            <div class="flow-box-desc">图谱构建、关系挖掘、风险路径分析</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5;">
+                            <div class="flow-box-title" style="color: #7f1d1d;">文本分析</div>
+                            <div class="flow-box-desc">NLP处理、要点抽取、敏感词识别</div>
+                        </div>
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5;">
+                            <div class="flow-box-title" style="color: #7f1d1d;">票据识别</div>
+                            <div class="flow-box-desc">OCR识别、字段抽取、真伪查验</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据流程图 -->
+            <div class="section">
+                <h2 class="section-title">
+                    <i class="fas fa-database"></i>
+                    数据流程图
+                </h2>
+                <div class="data-flow">
+                    <h3 style="color: #1e40af; margin-bottom: 20px; font-size: 18px;">
+                        <i class="fas fa-layer-group"></i> 数据仓库ETL流程
+                    </h3>
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24; flex: 1;">
+                            <div class="flow-box-title" style="color: #92400e;">数据源</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                财务系统、科研系统、资产系统<br>
+                                采购系统、人事系统、合同系统<br>
+                                招生系统、审批系统、外部数据
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #a5b4fc; flex: 1;">
+                            <div class="flow-box-title" style="color: #312e81;">数据采集</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                全量采集 | 增量采集 | CDC同步<br>
+                                API接口 | 数据库直连 | 文件导入<br>
+                                实时采集 | 定时调度 | 手动触发
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6; flex: 1;">
+                            <div class="flow-box-title" style="color: #1e3a8a;">ODS层 - 明细层</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                原始数据存储，保持源系统结构<br>
+                                支持全量/增量加载，按日分区<br>
+                                20+张表，数据保留90天
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981; flex: 1;">
+                            <div class="flow-box-title" style="color: #064e3b;">数据清洗转换</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                数据清洗：去重、补全、纠错<br>
+                                数据转换：标准化、格式化、编码转换<br>
+                                数据质量：规则校验、异常检测
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4; flex: 1;">
+                            <div class="flow-box-title" style="color: #831843;">DWD层 - 中间层</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                维度表+事实表，星型模型设计<br>
+                                标准化数据，统一编码和口径<br>
+                                17张表，数据保留1年
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5; flex: 1;">
+                            <div class="flow-box-title" style="color: #7f1d1d;">DWS层 - 汇总层</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                预聚合数据，按维度汇总<br>
+                                时间维度：日、周、月、季、年<br>
+                                17张表，数据保留3年
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #7dd3fc; flex: 1;">
+                            <div class="flow-box-title" style="color: #0c4a6e;">ADS层 - 应用层</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                指标数据集市、报表数据集市<br>
+                                领导驾驶舱、专题分析<br>
+                                15张表，数据保留5年
+                            </div>
+                        </div>
+                        <div class="flow-arrow"><i class="fas fa-arrow-down"></i></div>
+                    </div>
+
+                    <div class="flow-step">
+                        <div class="flow-box"
+                            style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-color: #bae6fd; flex: 1;">
+                            <div class="flow-box-title" style="color: #0c4a6e;">业务应用</div>
+                            <div class="flow-box-desc" style="font-size: 11px;">
+                                监督指挥大屏 | 报表中心 | 预警分析<br>
+                                线索管理 | 工单管理 | 整改管理<br>
+                                智能分析 | 数据可视化 | 移动应用
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: #1e40af; margin: 40px 0 20px 0; font-size: 18px;">
+                        <i class="fas fa-cogs"></i> 规则引擎执行流程
+                    </h3>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="flow-box"
+                                style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #fbbf24;">
+                                <div class="flow-box-title" style="color: #92400e;">1. 规则配置</div>
+                                <div class="flow-box-desc">定义规则条件、阈值、触发条件</div>
+                            </div>
+                            <div class="flow-arrow" style="transform: rotate(90deg); margin: 0;"><i
+                                    class="fas fa-arrow-down"></i></div>
+                            <div class="flow-box"
+                                style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #3b82f6;">
+                                <div class="flow-box-title" style="color: #1e3a8a;">2. 数据监控</div>
+                                <div class="flow-box-desc">实时/定时监控数据变化</div>
+                            </div>
+                            <div class="flow-arrow" style="transform: rotate(90deg); margin: 0;"><i
+                                    class="fas fa-arrow-down"></i></div>
+                            <div class="flow-box"
+                                style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-color: #10b981;">
+                                <div class="flow-box-title" style="color: #064e3b;">3. 规则匹配</div>
+                                <div class="flow-box-desc">执行规则引擎，匹配异常数据</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div class="flow-box"
+                                style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-color: #f9a8d4;">
+                                <div class="flow-box-title" style="color: #831843;">4. 预警生成</div>
+                                <div class="flow-box-desc">生成预警记录，计算风险评分</div>
+                            </div>
+                            <div class="flow-arrow" style="transform: rotate(90deg); margin: 0;"><i
+                                    class="fas fa-arrow-down"></i></div>
+                            <div class="flow-box"
+                                style="background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); border-color: #a5b4fc;">
+                                <div class="flow-box-title" style="color: #312e81;">5. 预警分发</div>
+                                <div class="flow-box-desc">按职责自动分发给相关人员</div>
+                            </div>
+                            <div class="flow-arrow" style="transform: rotate(90deg); margin: 0;"><i
+                                    class="fas fa-arrow-down"></i></div>
+                            <div class="flow-box"
+                                style="background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%); border-color: #fca5a5;">
+                                <div class="flow-box-title" style="color: #7f1d1d;">6. 处置跟踪</div>
+                                <div class="flow-box-desc">跟踪处置进度，闭环管理</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1020,7 +1336,7 @@
                             SSO单点登录、LDAP/CAS集成、多因子认证、密码策略
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
                         <div class="feature-title">权限控制</div>
@@ -1028,7 +1344,7 @@
                             RBAC角色权限、数据权限（行列级）、功能权限、审批流程
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-key"></i></div>
                         <div class="feature-title">数据加密</div>
@@ -1036,7 +1352,7 @@
                             传输加密（HTTPS/TLS）、存储加密、密钥管理、证书管理
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-eye-slash"></i></div>
                         <div class="feature-title">数据脱敏</div>
@@ -1044,7 +1360,7 @@
                             静态脱敏、动态脱敏、敏感字段识别、脱敏策略配置
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-history"></i></div>
                         <div class="feature-title">操作审计</div>
@@ -1052,7 +1368,7 @@
                             全量操作日志、访问日志、变更日志、审计报表
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-fingerprint"></i></div>
                         <div class="feature-title">数据水印</div>
@@ -1121,7 +1437,7 @@
                             CPU、内存、磁盘、网络等资源监控，实时告警
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
                         <div class="feature-title">性能监控</div>
@@ -1129,7 +1445,7 @@
                             接口响应时间、数据库性能、慢查询分析
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-file-alt"></i></div>
                         <div class="feature-title">日志监控</div>
@@ -1137,7 +1453,7 @@
                             日志采集、检索、分析、异常告警
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-bell"></i></div>
                         <div class="feature-title">告警通知</div>
@@ -1145,7 +1461,7 @@
                             多渠道告警（邮件、短信、IM）、告警升级
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-save"></i></div>
                         <div class="feature-title">备份恢复</div>
@@ -1153,7 +1469,7 @@
                             定期备份、增量备份、容灾恢复、演练
                         </div>
                     </div>
-                    
+
                     <div class="feature-card">
                         <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
                         <div class="feature-title">容量规划</div>
@@ -1209,15 +1525,20 @@
             </div>
 
             <!-- 页脚 -->
-            <div style="text-align: center; padding: 30px 0; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 40px;">
+            <div
+                style="text-align: center; padding: 30px 0; color: #64748b; border-top: 1px solid #e2e8f0; margin-top: 40px;">
                 <p style="margin-bottom: 10px;">
                     <i class="fas fa-copyright"></i> 2025 高校纪检审计监管一体化平台
                 </p>
                 <p style="font-size: 14px;">
-                    广东绿力网格科技有限公司 | 版本 1.0.0
+                    广东绿力网格科技有限公司 | 版本 2.0.0
                 </p>
                 <p style="font-size: 12px; margin-top: 10px; color: #94a3b8;">
                     本架构图展示了系统的整体设计和技术实现，包含表现层、业务层、数据层和基础设施层的完整架构
+                </p>
+                <p style="font-size: 12px; margin-top: 5px; color: #94a3b8;">
+                    <i class="fas fa-calendar-alt"></i> 最后更新：2025-10-29 |
+                    <i class="fas fa-code-branch"></i> 包含核心业务流程图和数据流程图
                 </p>
             </div>
         </div>
@@ -1261,4 +1582,5 @@
         });
     </script>
 </body>
+
 </html>

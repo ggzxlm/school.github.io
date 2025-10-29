@@ -411,3 +411,106 @@
 .alert-scroll-list::-webkit-scrollbar-thumb:hover {
     background: rgba(59, 130, 246, 0.5);
 }
+
+/* 修复ECharts tooltip和axisPointer黑色边框问题 */
+.chart-body .echarts-tooltip-box,
+.chart-body [class*="echarts-tooltip"] {
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 隐藏ECharts默认的边框 */
+.chart-body canvas {
+    outline: none !important;
+}
+
+/* ECharts容器样式优化 */
+.chart-body > div[_echarts_instance_] {
+    outline: none !important;
+}
+
+/* 隐藏axisPointer的黑色矩形框 */
+.chart-body div[class*="echarts-axis-pointer"] {
+    display: none !important;
+}
+
+/* 隐藏所有可能的黑色边框元素 */
+.chart-body rect[fill="#000"],
+.chart-body rect[fill="#000000"],
+.chart-body rect[fill="black"],
+.chart-body rect[stroke="#000"],
+.chart-body rect[stroke="#000000"],
+.chart-body rect[stroke="black"] {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+/* 隐藏axisPointer的label */
+.chart-body .echarts-axis-pointer-label {
+    display: none !important;
+}
+
+/* 隐藏visualMap的手柄黑色边框 */
+.chart-body .echarts-visual-map-handle {
+    stroke: transparent !important;
+    fill: rgba(59, 130, 246, 0.8) !important;
+}
+
+/* 隐藏所有SVG中的黑色矩形 */
+.chart-body svg rect[fill="rgb(0,0,0)"],
+.chart-body svg rect[fill="rgba(0,0,0,1)"] {
+    fill: transparent !important;
+    stroke: transparent !important;
+}
+
+/* 隐藏dataZoom的黑色边框 */
+.chart-body .echarts-datazoom-handle {
+    stroke: rgba(59, 130, 246, 0.5) !important;
+}
+
+/* 确保所有黑色填充都被隐藏 */
+.chart-body [fill="#000"],
+.chart-body [fill="#000000"],
+.chart-body [fill="rgb(0, 0, 0)"],
+.chart-body [fill="rgba(0, 0, 0, 1)"] {
+    fill: transparent !important;
+    opacity: 0 !important;
+}
+
+/* 确保tooltip样式正确 */
+div[class*="echarts-tooltip"] {
+    background: rgba(15, 23, 42, 0.95) !important;
+    border: 1px solid rgba(59, 130, 246, 0.3) !important;
+    border-radius: 6px !important;
+    padding: 8px 12px !important;
+    color: #e2e8f0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+
+/* 强制隐藏canvas上的黑色边框和阴影 */
+.chart-body canvas[data-zr-dom-id] {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* 隐藏ZRender的黑色元素 */
+canvas[data-zr-dom-id] + div {
+    display: none !important;
+}
+
+/* 确保canvas容器没有黑色背景 */
+.chart-body > div {
+    background: transparent !important;
+}
+
+/* 隐藏ECharts内部的黑色遮罩层 */
+.chart-body div[style*="position: absolute"] {
+    background: transparent !important;
+}
+
+/* 针对性隐藏可能的黑色overlay */
+.chart-body > div > div[style*="position: absolute"][style*="pointer-events"] {
+    display: none !important;
+}

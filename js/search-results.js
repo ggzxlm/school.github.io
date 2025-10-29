@@ -5,6 +5,18 @@
 // 模拟搜索数据
 const mockSearchData = [
     {
+        id: 'P2025003',
+        type: 'procurement',
+        title: '实验室设备采购项目',
+        description: '项目金额500万元，负责人：张三（采购经理）。项目已完成招标，中标单位：某某科技公司。系统检测到负责人与中标供应商存在关联关系，已生成预警。',
+        category: '设备采购监督',
+        time: '2025-10-21 14:20',
+        status: '待审核',
+        alertCount: 3,
+        riskLevel: '高',
+        leader: '张三'
+    },
+    {
         id: 'P2025001',
         type: 'procurement',
         title: '新图书馆智能化系统采购项目',
@@ -27,6 +39,18 @@ const mockSearchData = [
         riskLevel: '低'
     },
     {
+        id: 'ALERT001',
+        type: 'alert',
+        title: '采购人员与供应商关联关系预警',
+        description: '检测到采购经理张三与中标供应商某某科技公司存在关联关系。关系路径：张三(采购经理) → 配偶 → 李四 → 股东(30%) → 某某科技公司。涉及采购项目金额500万元，风险等级：高。',
+        category: '采购监督',
+        time: '2025-10-22 09:15',
+        status: '待核实',
+        level: '高',
+        relatedPerson: '张三',
+        relatedCompany: '某某科技公司'
+    },
+    {
         id: 1,
         type: 'alert',
         title: '科研经费异常支出预警',
@@ -37,6 +61,17 @@ const mockSearchData = [
         level: '高'
     },
     {
+        id: 'CLUE001',
+        type: 'clue',
+        title: '采购项目利益输送线索',
+        description: '群众举报：采购经理张三在实验室设备采购项目中存在利益输送行为，其配偶李四为中标供应商某某科技公司股东。经初步核查，关联关系属实，涉及金额500万元。',
+        category: '采购监督',
+        time: '2025-10-21 16:30',
+        status: '核查中',
+        source: '群众举报',
+        relatedPerson: '张三'
+    },
+    {
         id: 2,
         type: 'clue',
         title: '招生录取异常线索',
@@ -45,6 +80,17 @@ const mockSearchData = [
         time: '2025-10-19 10:15',
         status: '调查中',
         source: '数据分析'
+    },
+    {
+        id: 'WO001',
+        type: 'workorder',
+        title: '采购人员关联关系核查工单',
+        description: '核查采购经理张三与供应商某某科技公司的关联关系。任务：1) 核实家庭关系真实性；2) 调查历史采购项目；3) 评估利益冲突风险；4) 提出处理建议。',
+        category: '采购监督',
+        time: '2025-10-22 10:00',
+        status: '进行中',
+        assignee: '王审计',
+        relatedPerson: '张三'
     },
     {
         id: 3,
